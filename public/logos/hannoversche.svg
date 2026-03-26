@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 40">
-  <rect width="130" height="40" fill="#005A9A"/>
-  <text x="8" y="16" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="white" letter-spacing="0.2">HANNOVERSCHE</text>
-  <text x="8" y="31" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="rgba(255,255,255,0.8)">Leben</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <rect width="80" height="80" rx="14" fill="#005A9A"/>
+  <text x="40" y="36" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="white" text-anchor="middle" dominant-baseline="middle" letter-spacing="0.3">HANNOVERSCHE</text>
+  <text x="40" y="52" font-family="Arial,sans-serif" font-size="13" font-weight="400" fill="rgba(255,255,255,0.9)" text-anchor="middle" dominant-baseline="middle">Leben</text>
 </svg>

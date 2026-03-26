@@ -1,5 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40">
-  <rect width="120" height="40" fill="#C8002A"/>
-  <text x="8" y="16" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="white" letter-spacing="0.5">ALTE LEIPZIGER</text>
-  <text x="8" y="32" font-family="Arial,sans-serif" font-size="10" font-weight="400" fill="rgba(255,255,255,0.85)">Versicherung</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80">
+  <rect width="80" height="80" rx="14" fill="#C8002A"/>
+  <text x="40" y="34" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="white" text-anchor="middle" dominant-baseline="middle" letter-spacing="0.8">ALTE</text>
+  <text x="40" y="47" font-family="Arial,sans-serif" font-size="9" font-weight="700" fill="white" text-anchor="middle" dominant-baseline="middle" letter-spacing="0.8">LEIPZIGER</text>
+  <text x="40" y="60" font-family="Arial,sans-serif" font-size="8" font-weight="400" fill="rgba(255,255,255,0.75)" text-anchor="middle" dominant-baseline="middle">Versicherung</text>
 </svg>
