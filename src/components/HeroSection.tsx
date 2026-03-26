@@ -17,13 +17,26 @@ export default function HeroSection() {
 
       <div className="relative z-10 px-4 pt-0 pb-8">
         {/* LOYAGO brand header — sits on the sky */}
-        <div className="flex items-center justify-between pt-12 pb-2">
+        <div className="flex items-center justify-between pb-2" style={{ paddingTop: "max(env(safe-area-inset-top), 14px)" }}>
           <span
             className="font-black tracking-tight"
             style={{ fontSize: "22px", color: "#1a1f3a", letterSpacing: "-0.5px" }}
           >
             LOYAGO
           </span>
+          <div
+            className="relative flex items-center justify-center rounded-xl"
+            style={{ width: 36, height: 36, background: "rgba(255,255,255,0.45)", backdropFilter: "blur(8px)" }}
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1a1f3a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+            <span
+              className="absolute rounded-full"
+              style={{ width: 8, height: 8, background: "#ef4444", top: 7, right: 7, border: "1.5px solid rgba(203,218,251,0.9)" }}
+            />
+          </div>
         </div>
         {/* Score ring */}
         <motion.div
