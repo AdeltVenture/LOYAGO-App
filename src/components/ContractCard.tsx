@@ -12,13 +12,13 @@ function InsurerLogo({ insurer }: { insurer: string }) {
     return (
       <div
         className="flex items-center justify-center rounded-xl flex-shrink-0 overflow-hidden"
-        style={{ width: 44, height: 44, background: "#f1f5f9", border: "1px solid #e2e8f0" }}
+        style={{ width: 44, height: 44, background: "white", border: "1px solid #e2e8f0" }}
       >
         <img
           src={brand.logoUrl}
           alt={insurer}
           onError={() => setImgFailed(true)}
-          style={{ width: 32, height: 32, objectFit: "contain" }}
+          style={{ width: 40, height: 40, objectFit: "cover", borderRadius: 10 }}
         />
       </div>
     );

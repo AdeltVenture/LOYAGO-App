@@ -2,16 +2,16 @@ export type ContractStatus = "optimal" | "gut" | "mangelhaft";
 
 /** Brand colors + abbreviation for each insurer (used as logo badge fallback) */
 export const insurerBrands: Record<string, { color: string; textColor: string; abbr: string; logoUrl?: string }> = {
-  "Allianz":                    { color: "#003781", textColor: "white", abbr: "AL",   logoUrl: "https://logo.clearbit.com/allianz.com" },
-  "Alte Leipziger":             { color: "#C8002A", textColor: "white", abbr: "ALT",  logoUrl: "https://logo.clearbit.com/alte-leipziger.de" },
-  "AXA":                        { color: "#00008F", textColor: "white", abbr: "AXA",  logoUrl: "https://logo.clearbit.com/axa.de" },
-  "R+V":                        { color: "#E30613", textColor: "white", abbr: "R+V",  logoUrl: "https://logo.clearbit.com/ruv.de" },
-  "Hannoversche Leben":         { color: "#005A9A", textColor: "white", abbr: "HL",   logoUrl: "https://logo.clearbit.com/hannoversche.de" },
-  "ADAC":                       { color: "#F9BC00", textColor: "#1a1f3a", abbr: "ADAC", logoUrl: "https://logo.clearbit.com/adac.de" },
-  "Deutsche Rentenversicherung":{ color: "#003882", textColor: "white", abbr: "DRV" },
-  "HUK-COBURG":                 { color: "#004A97", textColor: "white", abbr: "HUK",  logoUrl: "https://logo.clearbit.com/huk.de" },
-  "ERGO":                       { color: "#E4002B", textColor: "white", abbr: "ERGO", logoUrl: "https://logo.clearbit.com/ergo.de" },
-  "Generali":                   { color: "#CC0000", textColor: "white", abbr: "GEN",  logoUrl: "https://logo.clearbit.com/generali.de" },
+  "Allianz":                    { color: "#003781", textColor: "white", abbr: "AL",   logoUrl: "/LOYAGO-App/logos/allianz.svg" },
+  "Alte Leipziger":             { color: "#C8002A", textColor: "white", abbr: "ALT",  logoUrl: "/LOYAGO-App/logos/alte-leipziger.svg" },
+  "AXA":                        { color: "#00008F", textColor: "white", abbr: "AXA" },
+  "R+V":                        { color: "#E30613", textColor: "white", abbr: "R+V",  logoUrl: "/LOYAGO-App/logos/ruv.svg" },
+  "Hannoversche Leben":         { color: "#005A9A", textColor: "white", abbr: "HL",   logoUrl: "/LOYAGO-App/logos/hannoversche.svg" },
+  "ADAC":                       { color: "#F9BC00", textColor: "#1a1f3a", abbr: "ADAC", logoUrl: "/LOYAGO-App/logos/adac.svg" },
+  "Deutsche Rentenversicherung":{ color: "#003882", textColor: "white", abbr: "DRV",  logoUrl: "/LOYAGO-App/logos/drv.svg" },
+  "HUK-COBURG":                 { color: "#004A97", textColor: "white", abbr: "HUK" },
+  "ERGO":                       { color: "#E4002B", textColor: "white", abbr: "ERGO" },
+  "Generali":                   { color: "#CC0000", textColor: "white", abbr: "GEN" },
 };
 
 export interface Contract {
