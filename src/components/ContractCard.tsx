@@ -35,6 +35,8 @@ function CategoryIcon({ icon, index, status }: { icon: string; index: number; st
         initial={{ scale: 0.6, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 380, damping: 20, delay: index * 0.055 + 0.04 }}
+        whileHover={{ scale: 1.13, transition: { type: "spring", stiffness: 500, damping: 16 } }}
+        whileTap={{ scale: 0.92 }}
         className="flex items-center justify-center rounded-2xl relative"
         style={{ width: 46, height: 46, background: bg }}
       >
