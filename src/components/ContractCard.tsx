@@ -1,8 +1,44 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronRight, Bell } from "lucide-react";
-import { type Contract } from "../data/contracts";
+import { type Contract, insurerBrands } from "../data/contracts";
 import StatusBadge from "./StatusBadge";
-import CategoryIcon from "./CategoryIcon";
+
+function InsurerLogo({ insurer }: { insurer: string }) {
+  const brand = insurerBrands[insurer];
+  const [imgFailed, setImgFailed] = useState(false);
+
+  if (brand?.logoUrl && !imgFailed) {
+    return (
+      <div
+        className="flex items-center justify-center rounded-xl flex-shrink-0 overflow-hidden"
+        style={{ width: 44, height: 44, background: "#f1f5f9", border: "1px solid #e2e8f0" }}
+      >
+        <img
+          src={brand.logoUrl}
+          alt={insurer}
+          onError={() => setImgFailed(true)}
+          style={{ width: 32, height: 32, objectFit: "contain" }}
+        />
+      </div>
+    );
+  }
+
+  const bg = brand?.color ?? "#64748b";
+  const textColor = brand?.textColor ?? "white";
+  const abbr = brand?.abbr ?? insurer.slice(0, 2).toUpperCase();
+
+  return (
+    <div
+      className="flex items-center justify-center rounded-xl flex-shrink-0"
+      style={{ width: 44, height: 44, background: bg }}
+    >
+      <span style={{ color: textColor, fontSize: abbr.length > 3 ? 9 : abbr.length > 2 ? 10 : 12, fontWeight: 800, letterSpacing: "-0.5px" }}>
+        {abbr}
+      </span>
+    </div>
+  );
+}
 
 interface ContractCardProps {
   contract: Contract;
@@ -44,7 +80,7 @@ export default function ContractCard({ contract, index, onClick }: ContractCardP
           : "3px solid transparent",
       }}
     >
-      <CategoryIcon icon={contract.categoryIcon} color={contract.color} size={20} />
+      <InsurerLogo insurer={contract.insurer} />
 
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-sm leading-tight truncate" style={{ color: "#1a1f3a" }}>

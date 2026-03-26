@@ -114,17 +114,12 @@ export default function ExpertChat({ onBack, onCall }: ExpertChatProps) {
 
         <div className="flex items-center gap-3 flex-1">
           <div className="relative">
-            <div
-              className="rounded-full flex items-center justify-center text-white font-bold text-sm"
-              style={{
-                width: 40,
-                height: 40,
-                background: "linear-gradient(135deg, #cbdafb 0%, #7ba3f5 100%)",
-                color: "#1a1f3a",
-              }}
-            >
-              LB
-            </div>
+            <img
+              src="/LOYAGO-App/expert.jpg"
+              alt="Ihr LOYAGO-Experte"
+              className="rounded-full object-cover object-top"
+              style={{ width: 40, height: 40 }}
+            />
             <div
               className="absolute -bottom-0.5 -right-0.5 rounded-full border-2 border-white"
               style={{ width: 12, height: 12, background: "#22c55e" }}
@@ -132,7 +127,7 @@ export default function ExpertChat({ onBack, onCall }: ExpertChatProps) {
           </div>
           <div>
             <p className="text-sm font-bold" style={{ color: "#1a1f3a" }}>
-              LOYAGO Experte
+              Ihr LOYAGO-Experte
             </p>
             <p className="text-xs" style={{ color: "#22c55e" }}>
               Online – antwortet sofort
@@ -163,17 +158,12 @@ export default function ExpertChat({ onBack, onCall }: ExpertChatProps) {
             className={`flex ${msg.from === "user" ? "justify-end" : "justify-start"}`}
           >
             {msg.from === "expert" && (
-              <div
-                className="rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-auto mb-1 flex-shrink-0"
-                style={{
-                  width: 28,
-                  height: 28,
-                  background: "linear-gradient(135deg, #cbdafb 0%, #7ba3f5 100%)",
-                  color: "#1a1f3a",
-                }}
-              >
-                L
-              </div>
+              <img
+                src="/LOYAGO-App/expert.jpg"
+                alt="Experte"
+                className="rounded-full object-cover object-top mr-2 mt-auto mb-1 flex-shrink-0"
+                style={{ width: 28, height: 28 }}
+              />
             )}
             <div
               className="max-w-xs rounded-2xl px-4 py-3 text-sm leading-relaxed"
@@ -204,17 +194,12 @@ export default function ExpertChat({ onBack, onCall }: ExpertChatProps) {
               exit={{ opacity: 0 }}
               className="flex justify-start items-end gap-2"
             >
-              <div
-                className="rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-                style={{
-                  width: 28,
-                  height: 28,
-                  background: "linear-gradient(135deg, #cbdafb 0%, #7ba3f5 100%)",
-                  color: "#1a1f3a",
-                }}
-              >
-                L
-              </div>
+              <img
+                src="/LOYAGO-App/expert.jpg"
+                alt="Experte"
+                className="rounded-full object-cover object-top flex-shrink-0"
+                style={{ width: 28, height: 28 }}
+              />
               <div
                 className="rounded-2xl px-4 py-3 flex gap-1.5 items-center"
                 style={{ background: "white", borderBottomLeftRadius: 4 }}
