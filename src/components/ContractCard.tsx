@@ -1,41 +1,49 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronRight, Bell } from "lucide-react";
-import { type Contract, insurerBrands } from "../data/contracts";
+import { ChevronRight, Bell, Car, Shield, Home, Heart, Plane, TrendingUp, FileText, Umbrella, Stethoscope, Zap } from "lucide-react";
+import { type Contract } from "../data/contracts";
 import StatusBadge from "./StatusBadge";
 
-function InsurerLogo({ insurer }: { insurer: string }) {
-  const brand = insurerBrands[insurer];
-  const [imgFailed, setImgFailed] = useState(false);
+const iconMap: Record<string, React.ElementType> = {
+  car:          Car,
+  shield:       Shield,
+  home:         Home,
+  heart:        Heart,
+  plane:        Plane,
+  "trending-up": TrendingUp,
+  umbrella:     Umbrella,
+  stethoscope:  Stethoscope,
+  zap:          Zap,
+};
 
-  if (brand?.logoUrl && !imgFailed) {
-    return (
-      <div
-        className="rounded-xl flex-shrink-0 overflow-hidden"
-        style={{ width: 44, height: 44 }}
-      >
-        <img
-          src={brand.logoUrl}
-          alt={insurer}
-          onError={() => setImgFailed(true)}
-          style={{ width: 44, height: 44, objectFit: "fill", display: "block" }}
-        />
-      </div>
-    );
-  }
-
-  const bg = brand?.color ?? "#64748b";
-  const textColor = brand?.textColor ?? "white";
-  const abbr = brand?.abbr ?? insurer.slice(0, 2).toUpperCase();
+function CategoryIcon({ icon, color, index, status }: { icon: string; color: string; index: number; status: string }) {
+  const Icon = iconMap[icon] ?? FileText;
+  const isUrgent = status === "mangelhaft";
 
   return (
-    <div
-      className="flex items-center justify-center rounded-xl flex-shrink-0"
-      style={{ width: 44, height: 44, background: bg }}
-    >
-      <span style={{ color: textColor, fontSize: abbr.length > 3 ? 9 : abbr.length > 2 ? 10 : 12, fontWeight: 800, letterSpacing: "-0.5px" }}>
-        {abbr}
-      </span>
+    <div className="relative flex-shrink-0">
+      {isUrgent && (
+        <motion.div
+          className="absolute inset-0 rounded-2xl"
+          style={{ background: color }}
+          animate={{ opacity: [0.35, 0, 0.35] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+        />
+      )}
+      <motion.div
+        initial={{ scale: 0.55, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 420, damping: 18, delay: index * 0.06 + 0.05 }}
+        whileHover={{ scale: 1.08 }}
+        className="flex items-center justify-center rounded-2xl relative"
+        style={{
+          width: 46,
+          height: 46,
+          background: `linear-gradient(140deg, ${color}ee 0%, ${color}99 100%)`,
+          boxShadow: `0 4px 14px ${color}45`,
+        }}
+      >
+        <Icon size={22} color="white" strokeWidth={2.2} />
+      </motion.div>
     </div>
   );
 }
@@ -80,7 +88,7 @@ export default function ContractCard({ contract, index, onClick }: ContractCardP
           : "3px solid transparent",
       }}
     >
-      <InsurerLogo insurer={contract.insurer} />
+      <CategoryIcon icon={contract.categoryIcon} color={contract.color} index={index} status={contract.status} />
 
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-sm leading-tight truncate" style={{ color: "#1a1f3a" }}>
