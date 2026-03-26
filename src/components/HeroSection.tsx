@@ -15,7 +15,16 @@ export default function HeroSection() {
     <div className="relative overflow-hidden" style={{ minHeight: "340px" }}>
       <CloudBackground />
 
-      <div className="relative z-10 px-4 pt-4 pb-8">
+      <div className="relative z-10 px-4 pt-0 pb-8">
+        {/* LOYAGO brand header — sits on the sky */}
+        <div className="flex items-center justify-between pt-12 pb-2">
+          <span
+            className="font-black tracking-tight"
+            style={{ fontSize: "22px", color: "#1a1f3a", letterSpacing: "-0.5px" }}
+          >
+            LOYAGO
+          </span>
+        </div>
         {/* Score ring */}
         <motion.div
           className="flex flex-col items-center mb-6"

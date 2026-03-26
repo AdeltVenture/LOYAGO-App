@@ -107,8 +107,8 @@ export default function App() {
       className="relative mx-auto"
       style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}
     >
-      {/* Top bar — non-sticky, on all tabs */}
-      {screen === "main" && (
+      {/* Top bar — non-sticky, only on non-home tabs */}
+      {screen === "main" && tab !== "home" && (
         <div className="flex items-center justify-between px-4 pt-12 pb-3">
           <span
             className="font-black tracking-tight"
