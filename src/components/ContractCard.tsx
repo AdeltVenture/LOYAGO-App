@@ -3,20 +3,22 @@ import { ChevronRight, Bell, Car, Shield, Home, Heart, Plane, TrendingUp, FileTe
 import { type Contract } from "../data/contracts";
 import StatusBadge from "./StatusBadge";
 
-const iconMap: Record<string, React.ElementType> = {
-  car:          Car,
-  shield:       Shield,
-  home:         Home,
-  heart:        Heart,
-  plane:        Plane,
-  "trending-up": TrendingUp,
-  umbrella:     Umbrella,
-  stethoscope:  Stethoscope,
-  zap:          Zap,
+// Curated palette: cool pastels tuned to harmonise with the app's navy (#1a1f3a)
+const iconPalette: Record<string, { bg: string; fg: string; Icon: React.ElementType }> = {
+  shield:        { bg: "#eaeff8", fg: "#4a6da8", Icon: Shield },
+  home:          { bg: "#edeaf7", fg: "#5e559c", Icon: Home },
+  car:           { bg: "#e5edf6", fg: "#3a6a94", Icon: Car },
+  "trending-up": { bg: "#e4f2ec", fg: "#2e7d62", Icon: TrendingUp },
+  heart:         { bg: "#f2eaef", fg: "#8a4a68", Icon: Heart },
+  plane:         { bg: "#e4eff5", fg: "#2e7a92", Icon: Plane },
+  umbrella:      { bg: "#e8edf8", fg: "#4a62a8", Icon: Umbrella },
+  stethoscope:   { bg: "#eaf1f0", fg: "#3a7a78", Icon: Stethoscope },
+  zap:           { bg: "#edeaf5", fg: "#6a559c", Icon: Zap },
 };
 
-function CategoryIcon({ icon, color, index, status }: { icon: string; color: string; index: number; status: string }) {
-  const Icon = iconMap[icon] ?? FileText;
+function CategoryIcon({ icon, index, status }: { icon: string; index: number; status: string }) {
+  const entry = iconPalette[icon] ?? { bg: "#eaeff8", fg: "#4a6da8", Icon: FileText };
+  const { bg, fg, Icon } = entry;
   const isUrgent = status === "mangelhaft";
 
   return (
@@ -24,25 +26,19 @@ function CategoryIcon({ icon, color, index, status }: { icon: string; color: str
       {isUrgent && (
         <motion.div
           className="absolute inset-0 rounded-2xl"
-          style={{ background: color }}
-          animate={{ opacity: [0.35, 0, 0.35] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+          style={{ background: "#ef4444" }}
+          animate={{ opacity: [0.18, 0, 0.18] }}
+          transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
         />
       )}
       <motion.div
-        initial={{ scale: 0.55, opacity: 0 }}
+        initial={{ scale: 0.6, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", stiffness: 420, damping: 18, delay: index * 0.06 + 0.05 }}
-        whileHover={{ scale: 1.08 }}
+        transition={{ type: "spring", stiffness: 380, damping: 20, delay: index * 0.055 + 0.04 }}
         className="flex items-center justify-center rounded-2xl relative"
-        style={{
-          width: 46,
-          height: 46,
-          background: `linear-gradient(140deg, ${color}ee 0%, ${color}99 100%)`,
-          boxShadow: `0 4px 14px ${color}45`,
-        }}
+        style={{ width: 46, height: 46, background: bg }}
       >
-        <Icon size={22} color="white" strokeWidth={2.2} />
+        <Icon size={21} color={fg} strokeWidth={2} />
       </motion.div>
     </div>
   );
@@ -88,7 +84,7 @@ export default function ContractCard({ contract, index, onClick }: ContractCardP
           : "3px solid transparent",
       }}
     >
-      <CategoryIcon icon={contract.categoryIcon} color={contract.color} index={index} status={contract.status} />
+      <CategoryIcon icon={contract.categoryIcon} index={index} status={contract.status} />
 
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-sm leading-tight truncate" style={{ color: "#1a1f3a" }}>
