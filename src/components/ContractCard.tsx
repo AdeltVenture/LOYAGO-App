@@ -33,9 +33,11 @@ export default function ContractCard({ contract, index, onClick }: ContractCardP
       onClick={() => onClick(contract)}
       className="flex items-center gap-3 p-4 rounded-2xl cursor-pointer relative overflow-hidden"
       style={{
-        background: "white",
-        boxShadow: "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)",
-        borderLeft: renewalUrgent
+        background: contract.status === "mangelhaft" ? "#fff5f5" : "white",
+        boxShadow: contract.status === "mangelhaft"
+          ? "0 1px 3px rgba(239,68,68,0.12), 0 1px 2px rgba(239,68,68,0.08)"
+          : "0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04)",
+        borderLeft: renewalUrgent || contract.status === "mangelhaft"
           ? "3px solid #ef4444"
           : renewalSoon
           ? "3px solid #f59e0b"

@@ -15,7 +15,7 @@ export default function HeroSection() {
     <div className="relative overflow-hidden" style={{ minHeight: "340px" }}>
       <CloudBackground />
 
-      <div className="relative z-10 px-4 pt-12 pb-8">
+      <div className="relative z-10 px-4 pt-4 pb-8">
         {/* Score ring */}
         <motion.div
           className="flex flex-col items-center mb-6"
@@ -139,13 +139,15 @@ export default function HeroSection() {
             {optimalCount} Optimal
           </div>
           {issueCount > 0 && (
-            <div
-              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium"
-              style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(12px)", color: "#d97706" }}
+            <motion.div
+              className="flex items-center gap-1.5 rounded-full px-4 py-1.5 text-xs font-bold"
+              style={{ background: "#ef4444", color: "white", boxShadow: "0 0 0 0 rgba(239,68,68,0.5)" }}
+              animate={{ boxShadow: ["0 0 0 0 rgba(239,68,68,0.5)", "0 0 0 7px rgba(239,68,68,0)", "0 0 0 0 rgba(239,68,68,0)"] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
             >
               <AlertTriangle size={13} />
               {issueCount} Handlungsbedarf
-            </div>
+            </motion.div>
           )}
         </motion.div>
       </div>

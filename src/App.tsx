@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bell, Plus } from "lucide-react";
+import { Bell } from "lucide-react";
 
 import HeroSection from "./components/HeroSection";
 import WalletView from "./components/WalletView";
@@ -52,49 +52,13 @@ export default function App() {
     home: (
       <div>
         <HeroSection />
-        {/* Betreuungswunsch CTA banner */}
-        <div className="px-4 pt-5 pb-3">
-          <motion.button
-            whileTap={{ scale: 0.97 }}
-            onClick={handleOpenOnboarding}
-            className="w-full flex items-center gap-3 p-4 rounded-2xl"
-            style={{
-              background: "linear-gradient(135deg, #cbdafb 0%, #b8cdfa 100%)",
-              border: "none",
-            }}
-          >
-            <div
-              className="flex items-center justify-center rounded-xl flex-shrink-0"
-              style={{ width: 42, height: 42, background: "rgba(255,255,255,0.6)" }}
-            >
-              <span style={{ fontSize: 20 }}>🛡️</span>
-            </div>
-            <div className="flex-1 text-left">
-              <p className="text-sm font-bold" style={{ color: "#1a1f3a" }}>
-                Betreuungswunsch für weiteren Vertrag
-              </p>
-              <p className="text-xs mt-0.5" style={{ color: "#3d4a6a" }}>
-                Kostenlos & unverbindlich · Dauert 3 Minuten
-              </p>
-            </div>
-            <Plus size={18} style={{ color: "#1a1f3a", flexShrink: 0 }} />
-          </motion.button>
-        </div>
-        <div className="px-4 pb-2">
-          <h3 className="text-sm font-bold mb-1" style={{ color: "#1a1f3a" }}>
-            Meine Verträge
-          </h3>
-          <p className="text-xs" style={{ color: "#94a3b8" }}>
-            Schnellübersicht
-          </p>
-        </div>
         <div className="px-4 pb-32">
           <WalletView onSelectContract={handleSelectContract} onAddContract={handleOpenOnboarding} />
         </div>
       </div>
     ),
     wallet: (
-      <div className="px-4 pt-12 pb-32">
+      <div className="px-4 pt-4 pb-32">
         <div className="mb-5">
           <h2 className="text-xl font-bold" style={{ color: "#1a1f3a" }}>
             Meine Verträge
@@ -107,7 +71,7 @@ export default function App() {
       </div>
     ),
     more: (
-      <div className="px-4 pt-12 pb-32">
+      <div className="px-4 pt-4 pb-32">
         <div className="mb-5">
           <h2 className="text-xl font-bold" style={{ color: "#1a1f3a" }}>
             Mehr
@@ -143,8 +107,8 @@ export default function App() {
       className="relative mx-auto"
       style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}
     >
-      {/* Top bar — non-sticky, only on non-home tabs */}
-      {screen === "main" && tab !== "home" && (
+      {/* Top bar — non-sticky, on all tabs */}
+      {screen === "main" && (
         <div className="flex items-center justify-between px-4 pt-12 pb-3">
           <span
             className="font-black tracking-tight"
