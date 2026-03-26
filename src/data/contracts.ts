@@ -1,4 +1,4 @@
-export type ContractStatus = "optimal" | "gut" | "mangelhaft" | "pruefen";
+export type ContractStatus = "optimal" | "gut" | "mangelhaft";
 
 export interface Contract {
   id: string;
@@ -112,7 +112,7 @@ export const contracts: Contract[] = [
     categoryIcon: "plane",
     monthlyPremium: 4.50,
     annualPremium: 54,
-    status: "pruefen",
+    status: "gut",
     policyNumber: "ADAC-RK-2024-99123",
     startDate: "01.01.2024",
     renewalDate: "01.01.2026",
@@ -127,12 +127,10 @@ export const statusLabels: Record<ContractStatus, string> = {
   optimal: "OPTIMAL",
   gut: "GUT",
   mangelhaft: "MANGELHAFT",
-  pruefen: "PRÜFEN",
 };
 
 export const statusColors: Record<ContractStatus, { bg: string; text: string; dot: string }> = {
   optimal: { bg: "#dcfce7", text: "#16a34a", dot: "#22c55e" },
   gut: { bg: "#dbeafe", text: "#1d4ed8", dot: "#3b82f6" },
   mangelhaft: { bg: "#fee2e2", text: "#dc2626", dot: "#ef4444" },
-  pruefen: { bg: "#fef3c7", text: "#d97706", dot: "#f59e0b" },
 };

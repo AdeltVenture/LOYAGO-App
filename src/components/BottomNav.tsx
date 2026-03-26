@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
-import { Home, Wallet, BarChart2, MessageCircle, Menu, type LucideProps } from "lucide-react";
+import { Home, Wallet, MessageCircle, Menu, type LucideProps } from "lucide-react";
 
-export type Tab = "home" | "wallet" | "analysis" | "expert" | "more";
+export type Tab = "home" | "wallet" | "expert" | "more";
 
 interface BottomNavProps {
   active: Tab;
@@ -11,7 +11,6 @@ interface BottomNavProps {
 const items: { tab: Tab; icon: React.FC<LucideProps>; label: string }[] = [
   { tab: "home", icon: Home, label: "Start" },
   { tab: "wallet", icon: Wallet, label: "Verträge" },
-  { tab: "analysis", icon: BarChart2, label: "Analyse" },
   { tab: "expert", icon: MessageCircle, label: "Experte" },
   { tab: "more", icon: Menu, label: "Mehr" },
 ];

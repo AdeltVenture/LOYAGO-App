@@ -6,7 +6,6 @@ import HeroSection from "./components/HeroSection";
 import WalletView from "./components/WalletView";
 import ContractDetail from "./components/ContractDetail";
 import ExpertChat from "./components/ExpertChat";
-import AnalysisView from "./components/AnalysisView";
 import OnboardingFlow from "./components/OnboardingFlow";
 import BottomNav, { type Tab } from "./components/BottomNav";
 import FloatingActions from "./components/FloatingActions";
@@ -72,7 +71,7 @@ export default function App() {
             </div>
             <div className="flex-1 text-left">
               <p className="text-sm font-bold" style={{ color: "#1a1f3a" }}>
-                Verträge von LOYAGO betreuen lassen
+                Betreuungswunsch für weiteren Vertrag
               </p>
               <p className="text-xs mt-0.5" style={{ color: "#3d4a6a" }}>
                 Kostenlos & unverbindlich · Dauert 3 Minuten
@@ -95,7 +94,7 @@ export default function App() {
       </div>
     ),
     wallet: (
-      <div className="px-4 pt-6 pb-32">
+      <div className="px-4 pt-12 pb-32">
         <div className="mb-5">
           <h2 className="text-xl font-bold" style={{ color: "#1a1f3a" }}>
             Meine Verträge
@@ -107,21 +106,8 @@ export default function App() {
         <WalletView onSelectContract={handleSelectContract} onAddContract={handleOpenOnboarding} />
       </div>
     ),
-    analysis: (
-      <div className="px-4 pt-6 pb-32">
-        <div className="mb-5">
-          <h2 className="text-xl font-bold" style={{ color: "#1a1f3a" }}>
-            Analyse
-          </h2>
-          <p className="text-sm mt-1" style={{ color: "#94a3b8" }}>
-            Ihr Versicherungsüberblick
-          </p>
-        </div>
-        <AnalysisView />
-      </div>
-    ),
     more: (
-      <div className="px-4 pt-6 pb-32">
+      <div className="px-4 pt-12 pb-32">
         <div className="mb-5">
           <h2 className="text-xl font-bold" style={{ color: "#1a1f3a" }}>
             Mehr
@@ -157,45 +143,23 @@ export default function App() {
       className="relative mx-auto"
       style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}
     >
-      {/* Top bar (only on main screen) */}
-      {screen === "main" && (
-        <div
-          className="flex items-center justify-between px-4 pt-12 pb-3 sticky top-0 z-20"
-          style={{
-            background: tab === "home" ? "transparent" : "rgba(244,248,254,0.92)",
-            backdropFilter: tab === "home" ? "none" : "blur(12px)",
-          }}
-        >
-          {/* LOYAGO wordmark */}
-          <div className="flex items-center">
-            <span
-              className="font-black tracking-tight"
-              style={{ fontSize: "22px", color: "#1a1f3a", letterSpacing: "-0.5px" }}
-            >
-              LOYAGO
-            </span>
-          </div>
+      {/* Top bar — non-sticky, only on non-home tabs */}
+      {screen === "main" && tab !== "home" && (
+        <div className="flex items-center justify-between px-4 pt-12 pb-3">
+          <span
+            className="font-black tracking-tight"
+            style={{ fontSize: "22px", color: "#1a1f3a", letterSpacing: "-0.5px" }}
+          >
+            LOYAGO
+          </span>
           <button
             className="relative flex items-center justify-center rounded-xl"
-            style={{
-              width: 38,
-              height: 38,
-              background: "white",
-              boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
-            }}
+            style={{ width: 38, height: 38, background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
           >
             <Bell size={17} style={{ color: "#1a1f3a" }} />
-            {/* Notification dot */}
             <span
               className="absolute rounded-full"
-              style={{
-                width: 8,
-                height: 8,
-                background: "#ef4444",
-                top: 8,
-                right: 9,
-                border: "1.5px solid white",
-              }}
+              style={{ width: 8, height: 8, background: "#ef4444", top: 8, right: 9, border: "1.5px solid white" }}
             />
           </button>
         </div>
@@ -210,7 +174,6 @@ export default function App() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            style={{ marginTop: tab === "home" ? "-64px" : 0 }}
           >
             {tabContent[tab as keyof typeof tabContent]}
           </motion.div>
@@ -250,13 +213,10 @@ export default function App() {
 
       {/* Bottom nav */}
       {screen === "main" && (
-        <BottomNav
-          active={tab}
-          onChange={handleTabChange}
-        />
+        <BottomNav active={tab} onChange={handleTabChange} />
       )}
 
-      {/* Floating action button (only on main screen) */}
+      {/* Floating action button */}
       {screen === "main" && (
         <FloatingActions
           onChat={() => setScreen("chat")}
@@ -264,7 +224,6 @@ export default function App() {
         />
       )}
 
-      {/* Call modal */}
       <CallModal isOpen={callModalOpen} onClose={() => setCallModalOpen(false)} />
     </div>
   );

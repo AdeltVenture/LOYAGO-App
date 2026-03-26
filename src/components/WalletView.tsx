@@ -14,7 +14,6 @@ const filters: { label: string; value: ContractStatus | "all" }[] = [
   { label: "Optimal", value: "optimal" },
   { label: "Gut", value: "gut" },
   { label: "Mangelhaft", value: "mangelhaft" },
-  { label: "Prüfen", value: "pruefen" },
 ];
 
 export default function WalletView({ onSelectContract, onAddContract }: WalletViewProps) {
@@ -121,7 +120,7 @@ export default function WalletView({ onSelectContract, onAddContract }: WalletVi
           border: "none",
         }}
       >
-        + Betreuungswunsch einrichten
+        + Betreuungswunsch für weiteren Vertrag
       </motion.button>
     </div>
   );

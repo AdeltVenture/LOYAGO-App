@@ -7,9 +7,7 @@ export default function HeroSection() {
   const totalMonthly = contracts.reduce((s, c) => s + c.monthlyPremium, 0);
   const totalAnnual = contracts.reduce((s, c) => s + c.annualPremium, 0);
   const optimalCount = contracts.filter((c) => c.status === "optimal" || c.status === "gut").length;
-  const issueCount = contracts.filter(
-    (c) => c.status === "mangelhaft" || c.status === "pruefen"
-  ).length;
+  const issueCount = contracts.filter((c) => c.status === "mangelhaft").length;
 
   const coverageScore = Math.round((optimalCount / contracts.length) * 100);
 
