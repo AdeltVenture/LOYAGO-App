@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bell } from "lucide-react";
+import { Bell, Plus } from "lucide-react";
 
 import HeroSection from "./components/HeroSection";
 import WalletView from "./components/WalletView";
 import ContractDetail from "./components/ContractDetail";
 import ExpertChat from "./components/ExpertChat";
 import AnalysisView from "./components/AnalysisView";
+import OnboardingFlow from "./components/OnboardingFlow";
 import BottomNav, { type Tab } from "./components/BottomNav";
 import FloatingActions from "./components/FloatingActions";
 import CallModal from "./components/CallModal";
 import { type Contract } from "./data/contracts";
 
-type Screen = "main" | "detail" | "chat";
+type Screen = "main" | "detail" | "chat" | "onboarding";
 
 export default function App() {
   const [tab, setTab] = useState<Tab>("home");
@@ -39,11 +40,48 @@ export default function App() {
     setSelectedContract(null);
   }
 
+  function handleOpenOnboarding() {
+    setScreen("onboarding");
+  }
+
+  function handleFinishOnboarding() {
+    setScreen("main");
+    setTab("wallet");
+  }
+
   const tabContent: Record<Exclude<Tab, "expert">, React.ReactNode> = {
     home: (
       <div>
         <HeroSection />
-        <div className="px-4 pt-5 pb-2">
+        {/* Betreuungswunsch CTA banner */}
+        <div className="px-4 pt-5 pb-3">
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={handleOpenOnboarding}
+            className="w-full flex items-center gap-3 p-4 rounded-2xl"
+            style={{
+              background: "linear-gradient(135deg, #cbdafb 0%, #b8cdfa 100%)",
+              border: "none",
+            }}
+          >
+            <div
+              className="flex items-center justify-center rounded-xl flex-shrink-0"
+              style={{ width: 42, height: 42, background: "rgba(255,255,255,0.6)" }}
+            >
+              <span style={{ fontSize: 20 }}>🛡️</span>
+            </div>
+            <div className="flex-1 text-left">
+              <p className="text-sm font-bold" style={{ color: "#1a1f3a" }}>
+                Verträge von LOYAGO betreuen lassen
+              </p>
+              <p className="text-xs mt-0.5" style={{ color: "#3d4a6a" }}>
+                Kostenlos & unverbindlich · Dauert 3 Minuten
+              </p>
+            </div>
+            <Plus size={18} style={{ color: "#1a1f3a", flexShrink: 0 }} />
+          </motion.button>
+        </div>
+        <div className="px-4 pb-2">
           <h3 className="text-sm font-bold mb-1" style={{ color: "#1a1f3a" }}>
             Meine Verträge
           </h3>
@@ -52,7 +90,7 @@ export default function App() {
           </p>
         </div>
         <div className="px-4 pb-32">
-          <WalletView onSelectContract={handleSelectContract} />
+          <WalletView onSelectContract={handleSelectContract} onAddContract={handleOpenOnboarding} />
         </div>
       </div>
     ),
@@ -66,7 +104,7 @@ export default function App() {
             Alle Versicherungen im Überblick
           </p>
         </div>
-        <WalletView onSelectContract={handleSelectContract} />
+        <WalletView onSelectContract={handleSelectContract} onAddContract={handleOpenOnboarding} />
       </div>
     ),
     analysis: (
@@ -195,6 +233,18 @@ export default function App() {
       <AnimatePresence>
         {screen === "chat" && (
           <ExpertChat onBack={handleBack} onCall={() => setCallModalOpen(true)} />
+        )}
+      </AnimatePresence>
+
+      {/* Onboarding overlay */}
+      <AnimatePresence>
+        {screen === "onboarding" && (
+          <OnboardingFlow
+            onClose={handleBack}
+            onFinish={handleFinishOnboarding}
+            onChat={() => { setScreen("chat"); }}
+            onCall={() => { setScreen("main"); setCallModalOpen(true); }}
+          />
         )}
       </AnimatePresence>
 

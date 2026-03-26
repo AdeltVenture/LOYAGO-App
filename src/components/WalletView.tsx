@@ -6,6 +6,7 @@ import ContractCard from "./ContractCard";
 
 interface WalletViewProps {
   onSelectContract: (contract: Contract) => void;
+  onAddContract?: () => void;
 }
 
 const filters: { label: string; value: ContractStatus | "all" }[] = [
@@ -16,7 +17,7 @@ const filters: { label: string; value: ContractStatus | "all" }[] = [
   { label: "Prüfen", value: "pruefen" },
 ];
 
-export default function WalletView({ onSelectContract }: WalletViewProps) {
+export default function WalletView({ onSelectContract, onAddContract }: WalletViewProps) {
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState<ContractStatus | "all">("all");
 
@@ -112,6 +113,7 @@ export default function WalletView({ onSelectContract }: WalletViewProps) {
       {/* Add contract CTA */}
       <motion.button
         whileTap={{ scale: 0.97 }}
+        onClick={onAddContract}
         className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-semibold mt-2"
         style={{
           background: "linear-gradient(135deg, #cbdafb 0%, #a8c0f8 100%)",
@@ -119,7 +121,7 @@ export default function WalletView({ onSelectContract }: WalletViewProps) {
           border: "none",
         }}
       >
-        + Vertrag hinzufügen
+        + Betreuungswunsch einrichten
       </motion.button>
     </div>
   );
