@@ -6,7 +6,7 @@ import { CheckCircle, AlertTriangle, Phone } from "lucide-react";
 export default function HeroSection({ onCall }: { onCall: () => void }) {
   const totalMonthly = contracts.reduce((s, c) => s + c.monthlyPremium, 0);
   const totalAnnual = contracts.reduce((s, c) => s + c.annualPremium, 0);
-  const optimalCount = contracts.filter((c) => c.status === "optimal" || c.status === "gut").length;
+  const optimalCount = contracts.filter((c) => c.status === "gut").length;
   const issueCount = contracts.filter((c) => c.status === "mangelhaft").length;
 
   const coverageScore = Math.round((optimalCount / contracts.length) * 100);
@@ -119,7 +119,7 @@ export default function HeroSection({ onCall }: { onCall: () => void }) {
             transition={{ delay: 0.8 }}
           >
             <h2 className="font-bold text-2xl" style={{ color: "#1a1f3a" }}>
-              {coverageScore >= 80 ? "Gut versichert" : "Verbesserungsbedarf"}
+              {coverageScore >= 80 ? "Gut versichert" : "Optimierungsbedarf"}
             </h2>
             <p className="text-sm mt-1" style={{ color: "#3d4a6a" }}>
               {contracts.length} aktive Verträge
@@ -170,7 +170,7 @@ export default function HeroSection({ onCall }: { onCall: () => void }) {
             style={{ background: "rgba(255,255,255,0.75)", backdropFilter: "blur(12px)", color: "#16a34a" }}
           >
             <CheckCircle size={13} />
-            {optimalCount} Optimal
+            {optimalCount} Gut
           </div>
           {issueCount > 0 && (
             <motion.div

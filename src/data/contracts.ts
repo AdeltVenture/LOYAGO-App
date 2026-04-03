@@ -1,4 +1,4 @@
-export type ContractStatus = "optimal" | "gut" | "mangelhaft";
+export type ContractStatus = "gut" | "mangelhaft";
 
 export const insurerBrands: Record<string, { color: string; textColor: string; abbr: string }> = {
   "Ammerländer Versicherung": { color: "#1a4a72", textColor: "white", abbr: "AV"   },
@@ -65,7 +65,7 @@ export const contracts: Contract[] = [
     categoryIcon: "shield",
     monthlyPremium: 6.69,
     annualPremium: 80.33,
-    status: "optimal",
+    status: "gut",
     policyNumber: "37262920/PK",
     startDate: "06.01.2025",
     renewalDate: "05.01.2027",
@@ -106,7 +106,7 @@ export const contracts: Contract[] = [
     categoryIcon: "heart",
     monthlyPremium: 85.63,
     annualPremium: 1027.56,
-    status: "optimal",
+    status: "gut",
     policyNumber: "L 190479 317 012",
     startDate: "01.06.2020",
     renewalDate: "01.06.2039",
@@ -119,13 +119,11 @@ export const contracts: Contract[] = [
 ];
 
 export const statusLabels: Record<ContractStatus, string> = {
-  optimal: "OPTIMAL",
-  gut: "GUT",
+  gut:        "GUT",
   mangelhaft: "MANGELHAFT",
 };
 
 export const statusColors: Record<ContractStatus, { bg: string; text: string; dot: string }> = {
-  optimal:    { bg: "#dcfce7", text: "#16a34a", dot: "#22c55e" },
-  gut:        { bg: "#dbeafe", text: "#1d4ed8", dot: "#3b82f6" },
+  gut:        { bg: "#dcfce7", text: "#16a34a", dot: "#22c55e" },
   mangelhaft: { bg: "#fee2e2", text: "#dc2626", dot: "#ef4444" },
 };

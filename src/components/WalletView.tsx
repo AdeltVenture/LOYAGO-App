@@ -11,7 +11,6 @@ interface WalletViewProps {
 
 const filters: { label: string; value: ContractStatus | "all" }[] = [
   { label: "Alle", value: "all" },
-  { label: "Optimal", value: "optimal" },
   { label: "Gut", value: "gut" },
   { label: "Mangelhaft", value: "mangelhaft" },
 ];
