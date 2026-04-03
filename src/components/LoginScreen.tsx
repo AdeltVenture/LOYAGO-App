@@ -2,9 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Mail, Lock, AlertCircle, CheckCircle } from "lucide-react";
 import CloudBackground from "./CloudBackground";
-
-const DEMO_EMAIL = "marco.adelt@gmx.de";
-const DEMO_PASSWORD = "Test123";
+import { supabase } from "../lib/supabase";
 
 interface LoginScreenProps {
   onLogin: () => void;
@@ -20,7 +18,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotSent, setForgotSent] = useState(false);
 
-  function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
@@ -30,23 +28,26 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     }
 
     setLoading(true);
-    // Simulate network delay
-    setTimeout(() => {
-      if (
-        email.trim().toLowerCase() === DEMO_EMAIL.toLowerCase() &&
-        password === DEMO_PASSWORD
-      ) {
-        onLogin();
-      } else {
-        setError("E-Mail oder Passwort ist nicht korrekt.");
-        setLoading(false);
-      }
-    }, 800);
+    const { error: authError } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+
+    if (authError) {
+      setError("E-Mail oder Passwort ist nicht korrekt.");
+      setLoading(false);
+    } else {
+      onLogin();
+    }
   }
 
-  function handleForgot(e: React.FormEvent) {
+  async function handleForgot(e: React.FormEvent) {
     e.preventDefault();
     if (!forgotEmail.trim()) return;
+    await supabase.auth.resetPasswordForEmail(forgotEmail.trim(), {
+      redirectTo: `${window.location.origin}/LOYAGO-App/`,
+    });
+    // Always show success (security best practice – don't reveal if email exists)
     setForgotSent(true);
   }
 

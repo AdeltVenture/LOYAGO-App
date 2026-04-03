@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, X } from "lucide-react";
+import { supabase } from "../lib/supabase";
 import Step1Welcome from "./onboarding/Step1Welcome";
 import StepPhotoUpload from "./onboarding/StepPhotoUpload";
 import Step2PersonalData from "./onboarding/Step2PersonalData";
@@ -111,7 +112,23 @@ export default function OnboardingFlow({
               <Step2PersonalData data={data} onChange={updateData} onNext={next} />
             )}
             {step === 4 && (
-              <Step4Consent data={data} onChange={updateData} onSubmit={next} />
+              <Step4Consent data={data} onChange={updateData} onSubmit={async () => {
+                // Store Betreuungswunsch in Supabase
+                const { data: { session } } = await supabase.auth.getSession();
+                await supabase.from("care_requests").insert({
+                  user_id: session?.user?.id ?? null,
+                  first_name: data.firstName,
+                  last_name: data.lastName,
+                  email: data.email,
+                  phone: data.phone || null,
+                  street: data.street,
+                  zip: data.zip,
+                  city: data.city,
+                  insurers: data.selectedInsurers,
+                  consent_given: data.consentGiven,
+                });
+                next();
+              }} />
             )}
             {step === 5 && (
               <Step5Success

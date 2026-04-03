@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Phone, User, HelpCircle, Building2, Lock, Leaf, FileText } from "lucide-react";
+import { supabase } from "./lib/supabase";
+import { useAuth } from "./hooks/useAuth";
 
 const menuItemStyle = { background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" } as const;
-import { Phone, User, HelpCircle, Building2, Lock, Leaf, FileText } from "lucide-react";
 
 import HeroSection from "./components/HeroSection";
 import WalletView from "./components/WalletView";
@@ -27,10 +29,12 @@ export default function App() {
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
   const [callModalOpen, setCallModalOpen] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [legalPage, setLegalPage] = useState<LegalType | null>(null);
   const [showFaq, setShowFaq] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+
+  const { session, loading: authLoading } = useAuth();
+  const isLoggedIn = !!session;
 
   useEffect(() => {
     const t = setTimeout(() => setShowSplash(false), 5000);
@@ -154,8 +158,8 @@ export default function App() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {!showSplash && !isLoggedIn && (
-          <LoginScreen key="login" onLogin={() => setIsLoggedIn(true)} />
+        {!showSplash && !authLoading && !isLoggedIn && (
+          <LoginScreen key="login" onLogin={() => {}} />
         )}
       </AnimatePresence>
 
@@ -262,9 +266,9 @@ export default function App() {
         <ProfilePage
           key="profile"
           onBack={() => setShowProfile(false)}
-          onLogout={() => {
+          onLogout={async () => {
+            await supabase.auth.signOut();
             setShowProfile(false);
-            setIsLoggedIn(false);
             setTab("home");
             setScreen("main");
           }}
