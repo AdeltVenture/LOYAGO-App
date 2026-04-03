@@ -18,12 +18,14 @@ export default function HeroSection() {
       <div className="relative z-10 px-4 pt-0 pb-8">
         {/* LOYAGO brand header — sits on the sky */}
         <div className="flex items-center justify-between pb-2" style={{ paddingTop: "max(env(safe-area-inset-top), 14px)" }}>
-          <span
-            className="font-black tracking-tight"
-            style={{ fontSize: "22px", color: "#1a1f3a", letterSpacing: "-0.5px" }}
-          >
-            LOYAGO
-          </span>
+          <div>
+            <span
+              className="font-black tracking-tight"
+              style={{ fontSize: "22px", color: "#1a1f3a", letterSpacing: "-0.5px" }}
+            >
+              LOYAGO
+            </span>
+          </div>
           <div
             className="relative flex items-center justify-center rounded-xl"
             style={{ width: 36, height: 36, background: "rgba(255,255,255,0.45)", backdropFilter: "blur(8px)" }}
@@ -38,6 +40,21 @@ export default function HeroSection() {
             />
           </div>
         </div>
+        {/* Personal greeting */}
+        <motion.div
+          className="text-center mb-4"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <p className="font-semibold" style={{ fontSize: "15px", color: "#1a1f3a" }}>
+            Hallo, Marco 👋
+          </p>
+          <p className="text-xs mt-0.5" style={{ color: "#3d4a6a", opacity: 0.8 }}>
+            Ihr persönliches Versicherungscockpit
+          </p>
+        </motion.div>
+
         {/* Score ring */}
         <motion.div
           className="flex flex-col items-center mb-6"

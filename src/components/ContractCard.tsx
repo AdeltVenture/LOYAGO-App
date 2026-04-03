@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ChevronRight, Bell, Car, Shield, Home, Heart, Plane, TrendingUp, FileText, Umbrella, Stethoscope, Zap } from "lucide-react";
+import { ChevronRight, Bell, Car, Shield, Home, Heart, Plane, TrendingUp, FileText, Umbrella, Stethoscope, Zap, Scale } from "lucide-react";
 import { type Contract } from "../data/contracts";
 import StatusBadge from "./StatusBadge";
 
@@ -14,6 +14,7 @@ const iconPalette: Record<string, { bg: string; fg: string; Icon: React.ElementT
   umbrella:      { bg: "#e8edf8", fg: "#4a62a8", Icon: Umbrella },
   stethoscope:   { bg: "#eaf1f0", fg: "#3a7a78", Icon: Stethoscope },
   zap:           { bg: "#edeaf5", fg: "#6a559c", Icon: Zap },
+  scale:         { bg: "#eaecf5", fg: "#4a5294", Icon: Scale },
 };
 
 function CategoryIcon({ icon, index, status }: { icon: string; index: number; status: string }) {
