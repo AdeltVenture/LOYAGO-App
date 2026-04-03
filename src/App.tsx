@@ -155,9 +155,9 @@ export default function App() {
         )}
       </AnimatePresence>
 
-    <div
+    {isLoggedIn && <div
       className="relative mx-auto"
-      style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe", display: isLoggedIn ? undefined : "none" }}
+      style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}
     >
       {/* Top bar — non-sticky, only on non-home tabs */}
       {screen === "main" && tab !== "home" && (
@@ -267,7 +267,7 @@ export default function App() {
         />
       )}
       </AnimatePresence>
-    </div>
+    </div>}
     </>
   );
 }
