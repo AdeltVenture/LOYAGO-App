@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Phone, User, HelpCircle, Building2, Lock, Leaf, FileText } from "lucide-react";
+import { Phone, User, HelpCircle, Building2, Lock, Leaf, FileText, ShieldCheck } from "lucide-react";
+import AdminPage from "./components/AdminPage";
 import { supabase } from "./lib/supabase";
 import { useAuth } from "./hooks/useAuth";
 import { useContracts } from "./hooks/useContracts";
@@ -35,6 +36,7 @@ export default function App() {
   const [legalPage, setLegalPage] = useState<LegalType | null>(null);
   const [showFaq, setShowFaq] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
 
   const { session, loading: authLoading } = useAuth();
   const isLoggedIn = !!session;
@@ -108,6 +110,9 @@ export default function App() {
           {([
             { label: "Profil & Einstellungen", Icon: User,        action: () => setShowProfile(true) },
             { label: "Hilfe & FAQ",            Icon: HelpCircle,  action: () => setShowFaq(true) },
+            ...(profile?.role === "admin"
+              ? [{ label: "Admin – Anfragen", Icon: ShieldCheck, action: () => setShowAdmin(true) }]
+              : []),
           ] as const).map((item) => (
             <motion.button
               key={item.label}
@@ -280,6 +285,13 @@ export default function App() {
           }}
         />
       )}
+      </AnimatePresence>
+
+      {/* Admin */}
+      <AnimatePresence>
+        {showAdmin && (
+          <AdminPage key="admin" onBack={() => setShowAdmin(false)} />
+        )}
       </AnimatePresence>
     </div>}
     </>

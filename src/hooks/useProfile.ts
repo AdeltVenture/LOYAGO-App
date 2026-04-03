@@ -11,6 +11,7 @@ export interface UserProfile {
   zip: string;
   city: string;
   score: number;
+  role: "user" | "admin";
 }
 
 interface DbProfile {
@@ -23,6 +24,7 @@ interface DbProfile {
   zip: string | null;
   city: string | null;
   score: number | null;
+  role: string | null;
 }
 
 export function useProfile() {
@@ -51,6 +53,7 @@ export function useProfile() {
               zip: row.zip ?? "",
               city: row.city ?? "",
               score: row.score ?? 75,
+              role: (row.role === "admin" ? "admin" : "user"),
             });
           }
           setLoading(false);
