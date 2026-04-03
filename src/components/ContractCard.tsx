@@ -72,6 +72,7 @@ export default function ContractCard({ contract, index, onClick }: ContractCardP
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.06, duration: 0.35, ease: "easeOut" }}
+      whileHover={{ y: -2, boxShadow: contract.status === "mangelhaft" ? "0 6px 18px rgba(239,68,68,0.15)" : "0 6px 18px rgba(26,31,58,0.10)" }}
       whileTap={{ scale: 0.98 }}
       onClick={() => onClick(contract)}
       className="flex items-center gap-3 p-4 rounded-2xl cursor-pointer relative overflow-hidden"

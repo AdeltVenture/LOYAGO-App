@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+
+const menuItemStyle = { background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" } as const;
 import { Phone, User, HelpCircle, Building2, Lock, Leaf, FileText } from "lucide-react";
 
 import HeroSection from "./components/HeroSection";
@@ -97,11 +99,13 @@ export default function App() {
             { label: "Profil & Einstellungen", Icon: User,        action: () => setShowProfile(true) },
             { label: "Hilfe & FAQ",            Icon: HelpCircle,  action: () => setShowFaq(true) },
           ] as const).map((item) => (
-            <button
+            <motion.button
               key={item.label}
               onClick={"action" in item ? item.action : undefined}
+              whileHover={{ y: -1, boxShadow: "0 4px 12px rgba(26,31,58,0.09)" }}
+              whileTap={{ scale: 0.98 }}
               className="flex items-center gap-3 w-full px-4 py-4 rounded-2xl text-left"
-              style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}
+              style={menuItemStyle}
             >
               <div className="flex items-center justify-center rounded-xl flex-shrink-0"
                 style={{ width: 36, height: 36, background: "#eaeff8" }}>
@@ -109,7 +113,7 @@ export default function App() {
               </div>
               <span className="flex-1 text-sm font-medium" style={{ color: "#1a1f3a" }}>{item.label}</span>
               <span style={{ color: "#cbd5e1", fontSize: 18 }}>›</span>
-            </button>
+            </motion.button>
           ))}
         </div>
 
@@ -124,11 +128,13 @@ export default function App() {
             { label: "Transparenz",     Icon: Leaf,       type: "transparenz"     },
             { label: "Erstinformation", Icon: FileText,   type: "erstinformation" },
           ] as const).map((item) => (
-            <button
+            <motion.button
               key={item.label}
               onClick={() => setLegalPage(item.type)}
+              whileHover={{ y: -1, boxShadow: "0 4px 12px rgba(26,31,58,0.09)" }}
+              whileTap={{ scale: 0.98 }}
               className="flex items-center gap-3 w-full px-4 py-4 rounded-2xl text-left"
-              style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}
+              style={menuItemStyle}
             >
               <div className="flex items-center justify-center rounded-xl flex-shrink-0"
                 style={{ width: 36, height: 36, background: "#eaeff8" }}>
@@ -136,7 +142,7 @@ export default function App() {
               </div>
               <span className="flex-1 text-sm font-medium" style={{ color: "#1a1f3a" }}>{item.label}</span>
               <span style={{ color: "#cbd5e1", fontSize: 18 }}>›</span>
-            </button>
+            </motion.button>
           ))}
         </div>
       </div>
