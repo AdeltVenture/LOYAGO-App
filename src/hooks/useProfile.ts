@@ -27,38 +27,53 @@ interface DbProfile {
   role: string | null;
 }
 
+async function fetchProfile(userId: string): Promise<UserProfile | null> {
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", userId)
+    .single();
+  if (!data) return null;
+  const row = data as DbProfile;
+  return {
+    id: row.id,
+    firstName: row.first_name ?? "",
+    lastName: row.last_name ?? "",
+    title: row.title ?? "",
+    phone: row.phone ?? "",
+    street: row.street ?? "",
+    zip: row.zip ?? "",
+    city: row.city ?? "",
+    score: row.score ?? 75,
+    role: row.role === "admin" ? "admin" : "user",
+  };
+}
+
 export function useProfile() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Load profile for current session
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (!session) { setLoading(false); return; }
-
-      supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .single()
-        .then(({ data }) => {
-          if (data) {
-            const row = data as DbProfile;
-            setProfile({
-              id: row.id,
-              firstName: row.first_name ?? "",
-              lastName: row.last_name ?? "",
-              title: row.title ?? "",
-              phone: row.phone ?? "",
-              street: row.street ?? "",
-              zip: row.zip ?? "",
-              city: row.city ?? "",
-              score: row.score ?? 75,
-              role: (row.role === "admin" ? "admin" : "user"),
-            });
-          }
-          setLoading(false);
-        });
+      setProfile(await fetchProfile(session.user.id));
+      setLoading(false);
     });
+
+    // Re-load whenever auth state changes (login / logout / user switch)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        if (!session) {
+          setProfile(null);
+        } else {
+          setProfile(await fetchProfile(session.user.id));
+        }
+        setLoading(false);
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
   return { profile, loading };

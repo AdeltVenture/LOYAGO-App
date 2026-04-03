@@ -54,7 +54,8 @@ export function useContracts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  function load() {
+    setLoading(true);
     supabase
       .from("contracts")
       .select("*")
@@ -62,11 +63,23 @@ export function useContracts() {
       .then(({ data, error }) => {
         if (error) {
           setError(error.message);
+          setContracts([]);
         } else {
           setContracts((data as DbContract[]).map(toContract));
         }
         setLoading(false);
       });
+  }
+
+  useEffect(() => {
+    load();
+
+    // Re-fetch when user changes (login / logout / switch)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      load();
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   return { contracts, loading, error };
