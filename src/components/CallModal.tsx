@@ -65,10 +65,10 @@ export default function CallModal({ isOpen, onClose }: CallModalProps) {
               </div>
               <div>
                 <p className="text-sm font-semibold" style={{ color: "#1a1f3a" }}>
-                  Mo–Fr 08:00–20:00 Uhr
+                  Mo–Fr 08:00–18:00 Uhr
                 </p>
-                <p className="text-sm" style={{ color: "#64748b" }}>
-                  Sa 09:00–17:00 Uhr
+                <p className="text-sm" style={{ color: "#94a3b8" }}>
+                  Sa–So kein Service
                 </p>
               </div>
             </div>
