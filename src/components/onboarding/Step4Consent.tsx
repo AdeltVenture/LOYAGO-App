@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { FileText, ShieldCheck, Info } from "lucide-react";
+import { FileText, ShieldCheck, ChevronDown } from "lucide-react";
 import { type OnboardingData, popularInsurers } from "../../data/onboarding";
 
 interface Step4ConsentProps {
@@ -9,10 +10,16 @@ interface Step4ConsentProps {
 }
 
 export default function Step4Consent({ data, onChange, onSubmit }: Step4ConsentProps) {
+  const [legalExpanded, setLegalExpanded] = useState(false);
+
   const selectedInsurerNames = data.selectedInsurers.map((id) => {
     const found = popularInsurers.find((ins) => ins.id === id);
     return found ? found.name : id.replace("custom-", "").replace(/-/g, " ");
   });
+
+  const insurerList = selectedInsurerNames.length > 0
+    ? selectedInsurerNames.join(", ")
+    : "die angegebenen Versicherungsgesellschaften";
 
   return (
     <motion.div
@@ -20,73 +27,132 @@ export default function Step4Consent({ data, onChange, onSubmit }: Step4ConsentP
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -30 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col gap-4"
+      className="flex flex-col gap-4 pt-4"
     >
       <div className="mb-1">
         <h3 className="text-lg font-bold" style={{ color: "#1a1f3a" }}>
-          Betreuungswunsch bestätigen
+          Betreuungsauftrag erteilen
         </h3>
         <p className="text-sm mt-1" style={{ color: "#64748b" }}>
-          Bitte lesen und bestätigen Sie kurz, was wir für Sie tun.
+          Bitte lesen Sie die nachstehenden Hinweise und bestätigen Sie Ihren Auftrag.
         </p>
       </div>
 
-      {/* Summary card */}
+      {/* Summary */}
       <div
         className="rounded-2xl p-4"
         style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}
       >
         <p className="text-xs font-semibold uppercase mb-3" style={{ color: "#94a3b8", letterSpacing: "0.05em" }}>
-          Ihre Angaben
+          Zusammenfassung Ihrer Angaben
         </p>
         <div className="flex flex-col gap-2 text-sm">
-          <div className="flex justify-between">
-            <span style={{ color: "#64748b" }}>Name</span>
-            <span className="font-medium" style={{ color: "#1a1f3a" }}>
+          <div className="flex justify-between gap-3">
+            <span style={{ color: "#64748b", flexShrink: 0 }}>Name</span>
+            <span className="font-medium text-right" style={{ color: "#1a1f3a" }}>
               {data.firstName} {data.lastName}
             </span>
           </div>
-          <div className="flex justify-between">
-            <span style={{ color: "#64748b" }}>E-Mail</span>
-            <span className="font-medium" style={{ color: "#1a1f3a" }}>
-              {data.email}
+          <div className="flex justify-between gap-3">
+            <span style={{ color: "#64748b", flexShrink: 0 }}>E-Mail</span>
+            <span className="font-medium text-right" style={{ color: "#1a1f3a" }}>
+              {data.email || "–"}
             </span>
           </div>
           {selectedInsurerNames.length > 0 && (
             <div className="flex justify-between items-start gap-3">
               <span style={{ color: "#64748b", flexShrink: 0 }}>Versicherer</span>
               <span className="font-medium text-right" style={{ color: "#1a1f3a" }}>
-                {selectedInsurerNames.join(", ")}
+                {insurerList}
               </span>
             </div>
           )}
         </div>
       </div>
 
-      {/* What we do */}
+      {/* Legal mandate box */}
       <div
-        className="rounded-2xl p-4"
-        style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd" }}
+        className="rounded-2xl overflow-hidden"
+        style={{ border: "1.5px solid #e2e8f0", background: "white" }}
       >
-        <div className="flex items-center gap-2 mb-3">
-          <Info size={15} style={{ color: "#0284c7" }} />
-          <p className="text-xs font-semibold" style={{ color: "#0284c7" }}>
-            Was LOYAGO für Sie tut
-          </p>
+        {/* Header */}
+        <div className="px-4 py-3" style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
+          <div className="flex items-center gap-2">
+            <FileText size={14} style={{ color: "#4a6da8" }} />
+            <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "#1a1f3a" }}>
+              Betreuungsauftrag gem. § 59 VVG
+            </span>
+          </div>
         </div>
-        <ul className="flex flex-col gap-2">
-          {[
-            "Wir fordern bei Ihren Versicherern Ihre Vertragsunterlagen an",
-            "Wir analysieren Ihren Versicherungsschutz und geben Empfehlungen",
-            "Sie erhalten einen persönlichen Ansprechpartner",
-            "Der Service ist für Sie kostenlos und unverbindlich",
-          ].map((item) => (
-            <li key={item} className="flex items-start gap-2 text-xs" style={{ color: "#0c4a6e" }}>
-              <span className="mt-0.5 flex-shrink-0" style={{ color: "#0284c7" }}>✓</span>
-              {item}
-            </li>
-          ))}
-        </ul>
+
+        {/* Legal text */}
+        <div className="px-4 py-3">
+          <p className="text-xs leading-relaxed mb-3" style={{ color: "#334155" }}>
+            Hiermit beauftrage ich die <strong>LOYAGO Versicherungsservice GmbH</strong>{" "}
+            (nachfolgend „LOYAGO"), die Betreuung meiner bestehenden
+            Versicherungsverträge bei <strong>{insurerList}</strong> zu übernehmen.
+          </p>
+          <p className="text-xs leading-relaxed mb-3" style={{ color: "#334155" }}>
+            Ich ermächtige LOYAGO, in meinem Namen und auf meine Rechnung bei den
+            genannten Versicherungsgesellschaften als betreuender Vermittler
+            eingetragen zu werden sowie Vertragsunterlagen, Beitragsübersichten und
+            sonstige vertragsrelevante Informationen anzufordern und entgegenzunehmen.
+          </p>
+
+          {/* Expandable section */}
+          <motion.div
+            initial={false}
+            animate={{ height: legalExpanded ? "auto" : 0 }}
+            style={{ overflow: "hidden" }}
+          >
+            <p className="text-xs leading-relaxed mb-3" style={{ color: "#334155" }}>
+              Dieser Auftrag stellt keinen Maklerauftrag im Sinne des § 659 BGB
+              dar. LOYAGO handelt als gebundener Vermittler bzw. Mehrfachagent und
+              ist nicht verpflichtet, einen marktweiten Vergleich durchzuführen.
+              Eine Verpflichtung zur Kündigung oder zum Wechsel bestehender Verträge
+              wird hiermit ausdrücklich <em>nicht</em> erteilt.
+            </p>
+            <p className="text-xs leading-relaxed mb-3" style={{ color: "#334155" }}>
+              Durch die Erteilung dieses Betreuungsauftrags entstehen mir keine
+              zusätzlichen Kosten. Die Vergütung von LOYAGO erfolgt ausschließlich
+              durch die jeweilige Versicherungsgesellschaft in Form einer Courtage
+              oder Bestandsprovision, die im Beitrag bereits eingerechnet ist und
+              sich durch diesen Auftrag nicht erhöht.
+            </p>
+            <p className="text-xs leading-relaxed mb-3" style={{ color: "#334155" }}>
+              Ich bin jederzeit berechtigt, diesen Betreuungsauftrag ohne Angabe
+              von Gründen zu widerrufen. Der Widerruf ist formlos möglich, z. B.
+              per E-Mail an <strong>service@loyago.de</strong> oder telefonisch
+              unter <strong>069 247 471 400</strong>. Im Fall des Widerrufs wird
+              LOYAGO bei der betreffenden Versicherungsgesellschaft als
+              Betreuer abgemeldet.
+            </p>
+            <p className="text-xs leading-relaxed" style={{ color: "#334155" }}>
+              Die Verarbeitung meiner personenbezogenen Daten erfolgt gemäß
+              Art. 6 Abs. 1 lit. b DSGVO zur Vertragserfüllung sowie auf
+              Grundlage meiner nachfolgenden Einwilligung. Ich nehme zur
+              Kenntnis, dass meine Daten ausschließlich zum Zweck der
+              Vertragsbetreuung und -verwaltung verarbeitet werden und nicht
+              ohne meine ausdrückliche Zustimmung an Dritte weitergegeben werden.
+              Näheres entnehmen Sie bitte unserer{" "}
+              <span style={{ color: "#3b82f6" }}>Datenschutzerklärung</span>.
+            </p>
+          </motion.div>
+
+          {/* Toggle */}
+          <button
+            onClick={() => setLegalExpanded(v => !v)}
+            className="flex items-center gap-1 mt-2"
+            style={{ color: "#4a6da8" }}
+          >
+            <span className="text-xs font-semibold">
+              {legalExpanded ? "Weniger anzeigen" : "Vollständigen Text lesen"}
+            </span>
+            <motion.div animate={{ rotate: legalExpanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
+              <ChevronDown size={14} />
+            </motion.div>
+          </button>
+        </div>
       </div>
 
       {/* Consent checkbox */}
@@ -121,23 +187,24 @@ export default function Step4Consent({ data, onChange, onSubmit }: Step4ConsentP
           )}
         </div>
         <p className="text-xs leading-relaxed" style={{ color: "#475569" }}>
-          Ich beauftrage LOYAGO Mehrfachagentur GmbH, meinen{" "}
-          <strong>Betreuungswunsch</strong> für die oben genannten Versicherungsverträge
-          zu übernehmen. Ich bestätige, dass meine Angaben korrekt sind.{" "}
-          <span style={{ color: "#3b82f6" }}>Datenschutzerklärung & Details</span>
+          Ich habe den vorstehenden Betreuungsauftrag gelesen und erteile hiermit
+          ausdrücklich meine Zustimmung. Ich bestätige, Inhaber der genannten
+          Versicherungsverträge zu sein und volljährig zu sein. Mir ist bekannt,
+          dass ich diesen Auftrag jederzeit widerrufen kann.
         </p>
       </motion.button>
 
-      {/* Legal note */}
+      {/* Small print */}
       <div
         className="rounded-xl p-3 flex items-start gap-2"
-        style={{ background: "#fafafa", border: "1px solid #f1f5f9" }}
+        style={{ background: "#f8fafc", border: "1px solid #f1f5f9" }}
       >
-        <ShieldCheck size={14} style={{ color: "#94a3b8", flexShrink: 0, marginTop: 1 }} />
-        <p className="text-xs" style={{ color: "#94a3b8", lineHeight: 1.5 }}>
-          LOYAGO ist eine eingetragene Mehrfachagentur, kein Makler. Sie erteilen uns
-          keinen Maklerauftrag, sondern einen unverbindlichen Betreuungswunsch.
-          Jederzeit widerrufbar.
+        <ShieldCheck size={13} style={{ color: "#94a3b8", flexShrink: 0, marginTop: 1 }} />
+        <p className="text-xs" style={{ color: "#94a3b8", lineHeight: 1.55 }}>
+          LOYAGO Versicherungsservice GmbH · Registriert bei der IHK Frankfurt a. M. ·
+          Eintrag im Vermittlerregister unter Nr. D-XXXX-XXXXXX-XX ·
+          Aufsichtsbehörde: Bundesanstalt für Finanzdienstleistungsaufsicht (BaFin) ·
+          Pflichtangaben gem. § 11 VersVermV
         </p>
       </div>
 
@@ -145,18 +212,15 @@ export default function Step4Consent({ data, onChange, onSubmit }: Step4ConsentP
         whileTap={{ scale: 0.97 }}
         onClick={onSubmit}
         disabled={!data.consentGiven}
-        className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-base font-bold"
+        className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-sm font-bold"
         style={{
-          background: data.consentGiven
-            ? "linear-gradient(135deg, #1a1f3a 0%, #2d3561 100%)"
-            : "#e2e8f0",
+          background: data.consentGiven ? "#1a1f3a" : "#e2e8f0",
           color: data.consentGiven ? "white" : "#94a3b8",
-          border: "none",
           transition: "background 0.2s",
         }}
       >
-        <FileText size={17} />
-        Betreuungswunsch abschicken
+        <FileText size={16} />
+        Betreuungsauftrag verbindlich erteilen
       </motion.button>
     </motion.div>
   );
