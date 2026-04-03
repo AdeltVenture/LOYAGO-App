@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
 import CloudBackground from "./CloudBackground";
 import { contracts } from "../data/contracts";
-import { CheckCircle, AlertTriangle } from "lucide-react";
+import { CheckCircle, AlertTriangle, Phone } from "lucide-react";
 
-export default function HeroSection() {
+export default function HeroSection({ onCall }: { onCall: () => void }) {
   const totalMonthly = contracts.reduce((s, c) => s + c.monthlyPremium, 0);
   const totalAnnual = contracts.reduce((s, c) => s + c.annualPremium, 0);
   const optimalCount = contracts.filter((c) => c.status === "optimal" || c.status === "gut").length;
@@ -26,19 +26,14 @@ export default function HeroSection() {
               LOYAGO
             </span>
           </div>
-          <div
-            className="relative flex items-center justify-center rounded-xl"
-            style={{ width: 36, height: 36, background: "rgba(255,255,255,0.45)", backdropFilter: "blur(8px)" }}
+          <button
+            onClick={onCall}
+            className="flex items-center gap-2 rounded-xl px-3"
+            style={{ height: 36, background: "rgba(255,255,255,0.55)", backdropFilter: "blur(10px)" }}
           >
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#1a1f3a" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-            </svg>
-            <span
-              className="absolute rounded-full"
-              style={{ width: 8, height: 8, background: "#ef4444", top: 7, right: 7, border: "1.5px solid rgba(203,218,251,0.9)" }}
-            />
-          </div>
+            <Phone size={14} color="#1a1f3a" strokeWidth={2.2} />
+            <span className="text-xs font-semibold" style={{ color: "#1a1f3a" }}>Anrufen</span>
+          </button>
         </div>
         {/* Personal greeting */}
         <motion.div

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bell, User, BellIcon, HelpCircle, Building2, Lock, Leaf, FileText } from "lucide-react";
+import { Phone, User, BellIcon, HelpCircle, Building2, Lock, Leaf, FileText } from "lucide-react";
 
 import HeroSection from "./components/HeroSection";
 import WalletView from "./components/WalletView";
@@ -62,7 +62,7 @@ export default function App() {
   const tabContent: Record<Exclude<Tab, "expert">, React.ReactNode> = {
     home: (
       <div>
-        <HeroSection />
+        <HeroSection onCall={() => setCallModalOpen(true)} />
         <div className="px-4 pb-32">
           <WalletView onSelectContract={handleSelectContract} onAddContract={handleOpenOnboarding} />
         </div>
@@ -160,14 +160,12 @@ export default function App() {
             LOYAGO
           </span>
           <button
-            className="relative flex items-center justify-center rounded-xl"
-            style={{ width: 38, height: 38, background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
+            onClick={() => setCallModalOpen(true)}
+            className="flex items-center gap-2 rounded-xl px-3"
+            style={{ height: 36, background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
           >
-            <Bell size={17} style={{ color: "#1a1f3a" }} />
-            <span
-              className="absolute rounded-full"
-              style={{ width: 8, height: 8, background: "#ef4444", top: 8, right: 9, border: "1.5px solid white" }}
-            />
+            <Phone size={15} color="#1a1f3a" strokeWidth={2.2} />
+            <span className="text-xs font-semibold" style={{ color: "#1a1f3a" }}>Anrufen</span>
           </button>
         </div>
       )}
