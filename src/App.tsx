@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Phone, User, BellIcon, HelpCircle, Building2, Lock, Leaf, FileText } from "lucide-react";
+import { Phone, User, HelpCircle, Building2, Lock, Leaf, FileText } from "lucide-react";
 
 import HeroSection from "./components/HeroSection";
 import WalletView from "./components/WalletView";
@@ -13,6 +13,7 @@ import CallModal from "./components/CallModal";
 import SplashScreen from "./components/SplashScreen";
 import LegalPage, { type LegalType } from "./components/LegalPage";
 import FaqPage from "./components/FaqPage";
+import ProfilePage from "./components/ProfilePage";
 import { type Contract } from "./data/contracts";
 
 type Screen = "main" | "detail" | "chat" | "onboarding";
@@ -25,6 +26,7 @@ export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [legalPage, setLegalPage] = useState<LegalType | null>(null);
   const [showFaq, setShowFaq] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setShowSplash(false), 5000);
@@ -90,9 +92,8 @@ export default function App() {
         {/* General items */}
         <div className="flex flex-col gap-3 mb-6">
           {([
-            { label: "Profil & Einstellungen", Icon: User },
-            { label: "Benachrichtigungen",     Icon: BellIcon },
-            { label: "Hilfe & FAQ", Icon: HelpCircle, action: () => setShowFaq(true) },
+            { label: "Profil & Einstellungen", Icon: User,        action: () => setShowProfile(true) },
+            { label: "Hilfe & FAQ",            Icon: HelpCircle,  action: () => setShowFaq(true) },
           ] as const).map((item) => (
             <button
               key={item.label}
@@ -241,6 +242,11 @@ export default function App() {
       {/* FAQ */}
       <AnimatePresence>
         {showFaq && <FaqPage key="faq" onBack={() => setShowFaq(false)} />}
+      </AnimatePresence>
+
+      {/* Profile */}
+      <AnimatePresence>
+        {showProfile && <ProfilePage key="profile" onBack={() => setShowProfile(false)} />}
       </AnimatePresence>
     </div>
     </>
