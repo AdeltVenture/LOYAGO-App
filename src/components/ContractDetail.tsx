@@ -8,10 +8,14 @@ import {
   ChevronRight,
   MessageCircle,
   Phone,
+  Sparkles,
+  CalendarClock,
 } from "lucide-react";
+import { useState } from "react";
 import { type Contract } from "../data/contracts";
 import StatusBadge from "./StatusBadge";
 import CategoryIcon from "./CategoryIcon";
+import BookingSheet from "./BookingSheet";
 
 interface ContractDetailProps {
   contract: Contract;
@@ -55,6 +59,8 @@ export default function ContractDetail({
   onAskExpert,
   onCall,
 }: ContractDetailProps) {
+  const [showBooking, setShowBooking] = useState(false);
+
   return (
     <AnimatePresence>
       <motion.div
@@ -150,6 +156,59 @@ export default function ContractDetail({
             </div>
           </motion.div>
 
+          {/* Optimization CTA — only shown when contract has optimization data */}
+          {contract.optimization && (
+            <motion.div
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.13 }}
+              className="rounded-3xl overflow-hidden mb-4"
+              style={{ background: "#1a1f3a" }}
+            >
+              {/* Amber accent bar */}
+              <div style={{ height: 4, background: "linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b)", backgroundSize: "200% 100%" }} />
+
+              <div className="p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="flex items-center justify-center rounded-lg" style={{ width: 30, height: 30, background: "rgba(245,158,11,0.18)" }}>
+                    <Sparkles size={15} color="#fbbf24" />
+                  </div>
+                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: "#fbbf24", letterSpacing: "0.1em" }}>
+                    Optimierungspotenzial
+                  </span>
+                </div>
+
+                <p className="font-bold mb-2" style={{ fontSize: 22, color: "white", lineHeight: 1.2 }}>
+                  {contract.optimization.headline}
+                </p>
+                <p className="text-sm mb-5" style={{ color: "rgba(255,255,255,0.65)", lineHeight: 1.6 }}>
+                  {contract.optimization.detail}
+                </p>
+
+                <div className="flex gap-3">
+                  <motion.button
+                    whileTap={{ scale: 0.96 }}
+                    onClick={onAskExpert}
+                    className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold"
+                    style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1.5px solid rgba(255,255,255,0.18)" }}
+                  >
+                    <MessageCircle size={15} />
+                    Im Chat besprechen
+                  </motion.button>
+                  <motion.button
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => setShowBooking(true)}
+                    className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold"
+                    style={{ background: "#f59e0b", color: "#1a1f3a" }}
+                  >
+                    <CalendarClock size={15} />
+                    Termin buchen
+                  </motion.button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {/* Details card */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
@@ -244,11 +303,7 @@ export default function ContractDetail({
               whileTap={{ scale: 0.96 }}
               onClick={onAskExpert}
               className="flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold"
-              style={{
-                background: "linear-gradient(135deg, #cbdafb 0%, #a8c0f8 100%)",
-                color: "#1a1f3a",
-                border: "none",
-              }}
+              style={{ background: "linear-gradient(135deg, #cbdafb 0%, #a8c0f8 100%)", color: "#1a1f3a" }}
             >
               <MessageCircle size={16} />
               Experte fragen
@@ -257,11 +312,7 @@ export default function ContractDetail({
               whileTap={{ scale: 0.96 }}
               onClick={onCall}
               className="flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold"
-              style={{
-                background: "#1a1f3a",
-                color: "white",
-                border: "none",
-              }}
+              style={{ background: "#1a1f3a", color: "white" }}
             >
               <Phone size={16} />
               Jetzt anrufen
@@ -269,6 +320,16 @@ export default function ContractDetail({
           </div>
         </div>
       </motion.div>
+
+      {/* Booking sheet */}
+      <AnimatePresence>
+        {showBooking && (
+          <BookingSheet
+            contractName={contract.name}
+            onClose={() => setShowBooking(false)}
+          />
+        )}
+      </AnimatePresence>
     </AnimatePresence>
   );
 }

@@ -97,6 +97,15 @@ export default function ContractCard({ contract, index, onClick }: ContractCardP
           {contract.insurer}
         </p>
 
+        {contract.optimization && !renewalSoon && (
+          <div className="flex items-center gap-1 mt-1">
+            <span className="text-xs font-bold" style={{ color: "#d97706" }}>↗</span>
+            <p className="text-xs font-semibold" style={{ color: "#d97706" }}>
+              {contract.optimization.saving} Einsparpotenzial
+            </p>
+          </div>
+        )}
+
         {renewalSoon ? (
           <div className="flex items-center gap-1 mt-1">
             <Bell

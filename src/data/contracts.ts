@@ -12,6 +12,12 @@ export const insurerBrands: Record<string, { color: string; textColor: string; a
   "ERGO":                     { color: "#E4002B", textColor: "white", abbr: "ERGO" },
 };
 
+export interface ContractOptimization {
+  headline: string;
+  saving: string;
+  detail: string;
+}
+
 export interface Contract {
   id: string;
   name: string;
@@ -28,6 +34,7 @@ export interface Contract {
   deductible: string;
   notes?: string;
   color: string;
+  optimization?: ContractOptimization;
 }
 
 export const contracts: Contract[] = [
@@ -73,7 +80,7 @@ export const contracts: Contract[] = [
     categoryIcon: "scale",
     monthlyPremium: 24.40,
     annualPremium: 292.85,
-    status: "optimal",
+    status: "mangelhaft",
     policyNumber: "11 0052 1440 1146",
     startDate: "30.03.2025",
     renewalDate: "30.03.2027",
@@ -81,6 +88,11 @@ export const contracts: Contract[] = [
     deductible: "–",
     notes: "Jährliche Zahlungsweise",
     color: "#4a5294",
+    optimization: {
+      headline: "Bis zu 88 € / Jahr einsparen",
+      saving: "ca. 88 €",
+      detail: "Gleichwertiger Rechtsschutz mit identischer Deckung ist bei anderen Anbietern günstiger verfügbar. Ein Wechsel lohnt sich – besonders vor dem nächsten Verlängerungstermin.",
+    },
   },
   {
     id: "4",
