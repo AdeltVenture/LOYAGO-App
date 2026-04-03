@@ -15,15 +15,15 @@ export default function StatusBadge({ status, size = "md" }: StatusBadgeProps) {
       style={{
         backgroundColor: colors.bg,
         color: colors.text,
-        fontSize: size === "sm" ? "10px" : "11px",
-        padding: size === "sm" ? "2px 8px" : "4px 10px",
+        fontSize: size === "sm" ? "12px" : "13px",
+        padding: size === "sm" ? "3px 9px" : "4px 11px",
       }}
     >
       <span
         className="rounded-full flex-shrink-0"
         style={{
-          width: size === "sm" ? 5 : 6,
-          height: size === "sm" ? 5 : 6,
+          width: size === "sm" ? 7 : 8,
+          height: size === "sm" ? 7 : 8,
           backgroundColor: colors.dot,
         }}
       />

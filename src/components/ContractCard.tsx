@@ -91,17 +91,17 @@ export default function ContractCard({ contract, index, onClick }: ContractCardP
       <CategoryIcon icon={contract.categoryIcon} index={index} status={contract.status} />
 
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-sm leading-tight truncate" style={{ color: "#1a1f3a" }}>
+        <p className="font-semibold leading-tight truncate" style={{ fontSize: "15px", color: "#1a1f3a" }}>
           {contract.category}
         </p>
-        <p className="text-xs mt-0.5" style={{ color: "#94a3b8" }}>
+        <p className="mt-0.5" style={{ fontSize: "13px", color: "#94a3b8" }}>
           {contract.insurer}
         </p>
 
         {contract.optimization && !renewalSoon && (
           <div className="flex items-center gap-1 mt-1">
-            <span className="text-xs font-bold" style={{ color: "#d97706" }}>↗</span>
-            <p className="text-xs font-semibold" style={{ color: "#d97706" }}>
+            <span className="font-bold" style={{ fontSize: "13px", color: "#d97706" }}>↗</span>
+            <p className="font-semibold" style={{ fontSize: "13px", color: "#d97706" }}>
               {contract.optimization.saving} Einsparpotenzial
             </p>
           </div>
@@ -123,7 +123,7 @@ export default function ContractCard({ contract, index, onClick }: ContractCardP
             </p>
           </div>
         ) : (
-          <p className="text-xs mt-1 font-medium" style={{ color: "#475569" }}>
+          <p className="mt-1 font-medium" style={{ fontSize: "13px", color: "#475569" }}>
             {contract.annualPremium > 0
               ? `${contract.annualPremium.toLocaleString("de-DE")} € / Jahr`
               : "Beitragsfreie Leistung"}

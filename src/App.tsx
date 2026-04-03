@@ -103,7 +103,6 @@ export default function App() {
               key={item.label}
               onClick={"action" in item ? item.action : undefined}
               whileHover={{ y: -1, boxShadow: "0 4px 12px rgba(26,31,58,0.09)" }}
-              whileTap={{ scale: 0.98 }}
               className="flex items-center gap-3 w-full px-4 py-4 rounded-2xl text-left"
               style={menuItemStyle}
             >
@@ -132,7 +131,6 @@ export default function App() {
               key={item.label}
               onClick={() => setLegalPage(item.type)}
               whileHover={{ y: -1, boxShadow: "0 4px 12px rgba(26,31,58,0.09)" }}
-              whileTap={{ scale: 0.98 }}
               className="flex items-center gap-3 w-full px-4 py-4 rounded-2xl text-left"
               style={menuItemStyle}
             >
