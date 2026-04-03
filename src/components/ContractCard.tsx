@@ -91,7 +91,7 @@ export default function ContractCard({ contract, index, onClick }: ContractCardP
 
       <div className="flex-1 min-w-0">
         <p className="font-semibold text-sm leading-tight truncate" style={{ color: "#1a1f3a" }}>
-          {contract.name}
+          {contract.category}
         </p>
         <p className="text-xs mt-0.5" style={{ color: "#94a3b8" }}>
           {contract.insurer}
