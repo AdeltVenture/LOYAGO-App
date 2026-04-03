@@ -12,6 +12,7 @@ import FloatingActions from "./components/FloatingActions";
 import CallModal from "./components/CallModal";
 import SplashScreen from "./components/SplashScreen";
 import LegalPage, { type LegalType } from "./components/LegalPage";
+import FaqPage from "./components/FaqPage";
 import { type Contract } from "./data/contracts";
 
 type Screen = "main" | "detail" | "chat" | "onboarding";
@@ -23,6 +24,7 @@ export default function App() {
   const [callModalOpen, setCallModalOpen] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
   const [legalPage, setLegalPage] = useState<LegalType | null>(null);
+  const [showFaq, setShowFaq] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setShowSplash(false), 5000);
@@ -90,10 +92,11 @@ export default function App() {
           {([
             { label: "Profil & Einstellungen", Icon: User },
             { label: "Benachrichtigungen",     Icon: BellIcon },
-            { label: "Hilfe & FAQ",            Icon: HelpCircle },
+            { label: "Hilfe & FAQ", Icon: HelpCircle, action: () => setShowFaq(true) },
           ] as const).map((item) => (
             <button
               key={item.label}
+              onClick={"action" in item ? item.action : undefined}
               className="flex items-center gap-3 w-full px-4 py-4 rounded-2xl text-left"
               style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}
             >
@@ -235,6 +238,11 @@ export default function App() {
         {legalPage && (
           <LegalPage key={legalPage} type={legalPage} onBack={() => setLegalPage(null)} />
         )}
+      </AnimatePresence>
+
+      {/* FAQ */}
+      <AnimatePresence>
+        {showFaq && <FaqPage key="faq" onBack={() => setShowFaq(false)} />}
       </AnimatePresence>
     </div>
     </>
