@@ -88,9 +88,9 @@ export default function Step4Consent({ data, onChange, onSubmit }: Step4ConsentP
         {/* Legal text */}
         <div className="px-4 py-3">
           <p className="text-xs leading-relaxed mb-3" style={{ color: "#334155" }}>
-            Hiermit beauftrage ich die <strong>LOYAGO Versicherungsservice GmbH</strong>{" "}
-            (nachfolgend „LOYAGO"), die Betreuung meiner bestehenden
-            Versicherungsverträge bei <strong>{insurerList}</strong> zu übernehmen.
+            Hiermit beauftrage ich die <strong>LOYAGO GmbH</strong>, Europa-Allee 165,
+            60486 Frankfurt am Main (nachfolgend „LOYAGO"), die Betreuung meiner
+            bestehenden Versicherungsverträge bei <strong>{insurerList}</strong> zu übernehmen.
           </p>
           <p className="text-xs leading-relaxed mb-3" style={{ color: "#334155" }}>
             Ich ermächtige LOYAGO, in meinem Namen und auf meine Rechnung bei den
@@ -122,7 +122,7 @@ export default function Step4Consent({ data, onChange, onSubmit }: Step4ConsentP
             <p className="text-xs leading-relaxed mb-3" style={{ color: "#334155" }}>
               Ich bin jederzeit berechtigt, diesen Betreuungsauftrag ohne Angabe
               von Gründen zu widerrufen. Der Widerruf ist formlos möglich, z. B.
-              per E-Mail an <strong>service@loyago.de</strong> oder telefonisch
+              per E-Mail an <strong>info@loyago.de</strong> oder telefonisch
               unter <strong>069 247 471 400</strong>. Im Fall des Widerrufs wird
               LOYAGO bei der betreffenden Versicherungsgesellschaft als
               Betreuer abgemeldet.
@@ -201,8 +201,11 @@ export default function Step4Consent({ data, onChange, onSubmit }: Step4ConsentP
       >
         <ShieldCheck size={13} style={{ color: "#94a3b8", flexShrink: 0, marginTop: 1 }} />
         <p className="text-xs" style={{ color: "#94a3b8", lineHeight: 1.55 }}>
-          LOYAGO Versicherungsservice GmbH · Registriert bei der IHK Frankfurt a. M. ·
-          Eintrag im Vermittlerregister unter Nr. D-XXXX-XXXXXX-XX ·
+          LOYAGO GmbH · Europa-Allee 165 · 60486 Frankfurt am Main ·
+          Tätig als Versicherungsvertreter (Mehrfachagent) gem. § 34d Abs. 1 GewO ·
+          Registrierungsnummer: D-O2E6-73ICR-16 ·
+          Registrierungsbehörde: IHK Frankfurt am Main, Börsenplatz 4, 60313 Frankfurt ·
+          Vermittlerregister: www.vermittlerregister.info ·
           Aufsichtsbehörde: Bundesanstalt für Finanzdienstleistungsaufsicht (BaFin) ·
           Pflichtangaben gem. § 11 VersVermV
         </p>

@@ -16,21 +16,19 @@ interface FieldProps {
   type?: string;
   icon: React.ReactNode;
   autoComplete?: string;
+  optional?: boolean;
 }
 
-function Field({ label, value, onChange, placeholder, type = "text", icon, autoComplete }: FieldProps) {
+function Field({ label, value, onChange, placeholder, type = "text", icon, autoComplete, optional }: FieldProps) {
   return (
     <div>
-      <label className="text-xs font-semibold mb-1.5 block" style={{ color: "#475569" }}>
+      <label className="text-xs font-semibold mb-1.5 flex items-center gap-1.5" style={{ color: "#475569" }}>
         {label}
+        {optional && <span className="font-normal" style={{ color: "#94a3b8" }}>(optional)</span>}
       </label>
       <div
         className="flex items-center gap-2.5 px-3 rounded-xl"
-        style={{
-          background: "white",
-          border: "1.5px solid #e2e8f0",
-          height: 46,
-        }}
+        style={{ background: "white", border: "1.5px solid #e2e8f0", height: 46 }}
       >
         <span style={{ color: "#94a3b8", flexShrink: 0 }}>{icon}</span>
         <input
@@ -41,6 +39,8 @@ function Field({ label, value, onChange, placeholder, type = "text", icon, autoC
           autoComplete={autoComplete}
           className="flex-1 text-sm outline-none bg-transparent"
           style={{ color: "#1a1f3a" }}
+          onFocus={e => (e.target.parentElement!.style.borderColor = "#4a6da8")}
+          onBlur={e => (e.target.parentElement!.style.borderColor = "#e2e8f0")}
         />
       </div>
     </div>
@@ -52,7 +52,9 @@ export default function Step2PersonalData({ data, onChange, onNext }: Step2Perso
     data.firstName.trim() &&
     data.lastName.trim() &&
     data.email.trim() &&
-    data.birthDate.trim();
+    data.street.trim() &&
+    data.zip.trim() &&
+    data.city.trim();
 
   return (
     <motion.div
@@ -60,12 +62,10 @@ export default function Step2PersonalData({ data, onChange, onNext }: Step2Perso
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -30 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col gap-4"
+      className="flex flex-col gap-4 pt-4"
     >
-      <div className="mb-2">
-        <h3 className="text-lg font-bold" style={{ color: "#1a1f3a" }}>
-          Ihre Angaben
-        </h3>
+      <div className="mb-1">
+        <h3 className="text-lg font-bold" style={{ color: "#1a1f3a" }}>Ihre Angaben</h3>
         <p className="text-sm mt-1" style={{ color: "#64748b" }}>
           Damit wir Ihren Betreuungswunsch korrekt einrichten können.
         </p>
@@ -77,7 +77,7 @@ export default function Step2PersonalData({ data, onChange, onNext }: Step2Perso
           label="Vorname"
           value={data.firstName}
           onChange={(v) => onChange({ firstName: v })}
-          placeholder="Max"
+          placeholder="Marco"
           icon={<User size={15} />}
           autoComplete="given-name"
         />
@@ -85,79 +85,69 @@ export default function Step2PersonalData({ data, onChange, onNext }: Step2Perso
           label="Nachname"
           value={data.lastName}
           onChange={(v) => onChange({ lastName: v })}
-          placeholder="Mustermann"
+          placeholder="Adelt"
           icon={<User size={15} />}
           autoComplete="family-name"
         />
       </div>
 
       <Field
-        label="Geburtsdatum"
-        value={data.birthDate}
-        onChange={(v) => onChange({ birthDate: v })}
-        placeholder="TT.MM.JJJJ"
-        type="date"
-        icon={<span style={{ fontSize: 14 }}>📅</span>}
-        autoComplete="bday"
-      />
-
-      <Field
         label="E-Mail"
         value={data.email}
         onChange={(v) => onChange({ email: v })}
-        placeholder="max@beispiel.de"
+        placeholder="marco.adelt@gmx.de"
         type="email"
         icon={<Mail size={15} />}
         autoComplete="email"
       />
 
       <Field
-        label="Telefon (optional)"
+        label="Telefon"
         value={data.phone}
         onChange={(v) => onChange({ phone: v })}
         placeholder="+49 170 1234567"
         type="tel"
         icon={<Phone size={15} />}
         autoComplete="tel"
+        optional
       />
 
-      {/* Address section */}
-      <div
-        className="rounded-2xl p-4 flex flex-col gap-3"
-        style={{ background: "#f8faff", border: "1px solid #e8f0fd" }}
-      >
-        <div className="flex items-center gap-2">
-          <MapPin size={14} style={{ color: "#3b82f6" }} />
-          <span className="text-xs font-semibold" style={{ color: "#475569" }}>
-            Adresse (optional)
+      {/* Address — required */}
+      <div>
+        <div className="flex items-center gap-1.5 mb-2">
+          <MapPin size={13} style={{ color: "#4a6da8" }} />
+          <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "#94a3b8" }}>
+            Adresse
           </span>
         </div>
-        <Field
-          label="Straße & Hausnummer"
-          value={data.street}
-          onChange={(v) => onChange({ street: v })}
-          placeholder="Musterstraße 42"
-          icon={<MapPin size={15} />}
-          autoComplete="street-address"
-        />
-        <div className="grid grid-cols-3 gap-2">
+        <div className="flex flex-col gap-3 rounded-2xl p-4" style={{ background: "#f4f8fe", border: "1px solid #e8eef8" }}>
           <Field
-            label="PLZ"
-            value={data.zip}
-            onChange={(v) => onChange({ zip: v })}
-            placeholder="80331"
-            icon={<span style={{ fontSize: 12 }}>📍</span>}
-            autoComplete="postal-code"
+            label="Straße & Hausnummer"
+            value={data.street}
+            onChange={(v) => onChange({ street: v })}
+            placeholder="Europa-Allee 165"
+            icon={<MapPin size={15} />}
+            autoComplete="street-address"
           />
-          <div className="col-span-2">
+          <div className="grid grid-cols-3 gap-2">
             <Field
-              label="Stadt"
-              value={data.city}
-              onChange={(v) => onChange({ city: v })}
-              placeholder="München"
-              icon={<span style={{ fontSize: 12 }}>🏙️</span>}
-              autoComplete="address-level2"
+              label="PLZ"
+              value={data.zip}
+              onChange={(v) => onChange({ zip: v })}
+              placeholder="60486"
+              icon={<MapPin size={12} />}
+              autoComplete="postal-code"
             />
+            <div className="col-span-2">
+              <Field
+                label="Stadt"
+                value={data.city}
+                onChange={(v) => onChange({ city: v })}
+                placeholder="Frankfurt am Main"
+                icon={<MapPin size={12} />}
+                autoComplete="address-level2"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -166,16 +156,15 @@ export default function Step2PersonalData({ data, onChange, onNext }: Step2Perso
         whileTap={{ scale: 0.97 }}
         onClick={onNext}
         disabled={!isValid}
-        className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-base font-bold mt-2"
+        className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-sm font-bold mt-2"
         style={{
           background: isValid ? "#1a1f3a" : "#e2e8f0",
           color: isValid ? "white" : "#94a3b8",
-          border: "none",
           transition: "background 0.2s",
         }}
       >
         Weiter
-        <ChevronRight size={18} />
+        <ChevronRight size={17} />
       </motion.button>
     </motion.div>
   );

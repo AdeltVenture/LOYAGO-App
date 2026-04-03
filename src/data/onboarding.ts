@@ -34,14 +34,14 @@ export interface OnboardingData {
 }
 
 export const emptyOnboardingData: OnboardingData = {
-  firstName: "",
-  lastName: "",
+  firstName: "Marco",
+  lastName: "Adelt",
   birthDate: "",
-  email: "",
+  email: "marco.adelt@gmx.de",
   phone: "",
-  street: "",
-  city: "",
-  zip: "",
+  street: "Europa-Allee 165",
+  city: "Frankfurt am Main",
+  zip: "60486",
   selectedInsurers: [],
   consentGiven: false,
 };
