@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Shield, Clock, CheckCircle, ChevronRight } from "lucide-react";
+import { ChevronRight, Users, BookOpen, HeartHandshake, BadgeCheck } from "lucide-react";
 
 interface Step1WelcomeProps {
   onNext: () => void;
@@ -7,22 +7,24 @@ interface Step1WelcomeProps {
 
 const benefits = [
   {
-    icon: Shield,
-    title: "Alle Verträge auf einen Blick",
-    desc: "Wir holen Ihre bestehenden Versicherungen digital ab — Sie müssen nichts suchen.",
-    color: "#3b82f6",
+    icon: Users,
+    title: "Persönliche Betreuung durch erfahrene Experten",
+    desc: "Ob telefonisch oder per Mail – unser Team ist für Sie da, wann und wo es Ihnen passt.",
   },
   {
-    icon: Clock,
-    title: "Kostenlos & unverbindlich",
-    desc: "Der Betreuungswunsch ist für Sie völlig kostenlos. Keine versteckten Kosten.",
-    color: "#10b981",
+    icon: BookOpen,
+    title: "Breites Fachwissen aus 25 Jahren Praxis",
+    desc: "Unsere Berater kennen mehr als 100 Versicherungsgesellschaften und unterstützen Sie fachkundig.",
   },
   {
-    icon: CheckCircle,
-    title: "Persönlicher Ansprechpartner",
-    desc: "Ein LOYAGO-Experte analysiert Ihren Schutz und ist jederzeit für Sie da.",
-    color: "#8b5cf6",
+    icon: HeartHandshake,
+    title: "Rundum-Service, unkompliziert und freundlich",
+    desc: "Von Vertragsfragen über Schadenmeldungen bis hin zu einer fundierten Zweitmeinung.",
+  },
+  {
+    icon: BadgeCheck,
+    title: "Komplett kostenfrei für Sie",
+    desc: "Dieser Service ist für Sie ohne zusätzliche Kosten – kein Kleingedrucktes.",
   },
 ];
 
@@ -33,62 +35,52 @@ export default function Step1Welcome({ onNext }: Step1WelcomeProps) {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -30 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col"
+      className="flex flex-col pt-4"
     >
-      {/* Hero illustration */}
-      <div
-        className="rounded-3xl mb-6 flex flex-col items-center justify-center pt-8 pb-6 relative overflow-hidden"
+      {/* Reassurance banner */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="rounded-3xl p-5 mb-5"
         style={{
-          background: "linear-gradient(135deg, #cbdafb 0%, #a8c0f8 60%, #7ba3f5 100%)",
+          background: "linear-gradient(135deg, #1a1f3a 0%, #2d3a6b 100%)",
         }}
       >
-        {/* Floating cloud shapes */}
-        <div
-          className="absolute rounded-full opacity-40"
-          style={{ width: 120, height: 60, background: "white", top: 10, left: -20 }}
-        />
-        <div
-          className="absolute rounded-full opacity-30"
-          style={{ width: 80, height: 40, background: "white", top: 30, right: -10 }}
-        />
-
-        <motion.div
-          animate={{ y: [0, -8, 0] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          className="relative z-10"
-          style={{ fontSize: 64 }}
-        >
-          🛡️
-        </motion.div>
-        <p className="text-lg font-bold mt-3 relative z-10" style={{ color: "#1a1f3a" }}>
-          Ihr Versicherungs-Check
+        <p className="font-bold text-base mb-2 leading-snug" style={{ color: "white" }}>
+          An Ihrem bestehenden Versicherungsvertrag ändert sich nichts.
         </p>
-        <p className="text-sm mt-1 relative z-10 text-center px-6" style={{ color: "#3d4a6a" }}>
-          In 3 Minuten haben wir alle Ihre Verträge im Blick
+        <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.72)" }}>
+          Sie können sich weiterhin direkt an Ihren Versicherer wenden. Zusätzlich steht Ihnen ab sofort unser erweiterter Premium-Service zur Verfügung: ein ganzes Team an Ihrer Seite.
         </p>
-      </div>
+      </motion.div>
 
-      {/* Benefits */}
-      <div className="flex flex-col gap-3 mb-8">
+      {/* Benefits heading */}
+      <p className="text-xs font-bold mb-3 px-1 uppercase tracking-widest" style={{ color: "#94a3b8" }}>
+        Was Sie ab sofort kostenlos nutzen können
+      </p>
+
+      {/* Benefits list */}
+      <div className="flex flex-col gap-3 mb-7">
         {benefits.map((b, i) => {
           const Icon = b.icon;
           return (
             <motion.div
               key={b.title}
-              initial={{ opacity: 0, y: 12 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + i * 0.08 }}
+              transition={{ delay: 0.1 + i * 0.07 }}
               className="flex items-start gap-3 p-4 rounded-2xl"
               style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}
             >
               <div
-                className="flex items-center justify-center rounded-xl flex-shrink-0"
-                style={{ width: 40, height: 40, background: `${b.color}15` }}
+                className="flex items-center justify-center rounded-xl flex-shrink-0 mt-0.5"
+                style={{ width: 36, height: 36, background: "#eaeff8" }}
               >
-                <Icon size={18} style={{ color: b.color }} />
+                <Icon size={17} style={{ color: "#4a6da8" }} />
               </div>
               <div>
-                <p className="text-sm font-semibold" style={{ color: "#1a1f3a" }}>
+                <p className="text-sm font-semibold leading-snug" style={{ color: "#1a1f3a" }}>
                   {b.title}
                 </p>
                 <p className="text-xs mt-0.5 leading-relaxed" style={{ color: "#64748b" }}>
@@ -103,15 +95,15 @@ export default function Step1Welcome({ onNext }: Step1WelcomeProps) {
       <motion.button
         whileTap={{ scale: 0.97 }}
         onClick={onNext}
-        className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-base font-bold"
-        style={{ background: "#1a1f3a", color: "white", border: "none" }}
+        className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-sm font-bold"
+        style={{ background: "#1a1f3a", color: "white" }}
       >
-        Jetzt starten
-        <ChevronRight size={18} />
+        Betreuungswunsch einrichten
+        <ChevronRight size={17} />
       </motion.button>
 
       <p className="text-center text-xs mt-3" style={{ color: "#94a3b8" }}>
-        Kein Konto erforderlich · Dauert ca. 3 Minuten
+        Kostenlos · Unverbindlich · Jederzeit kündbar
       </p>
     </motion.div>
   );

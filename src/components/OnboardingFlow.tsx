@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, X } from "lucide-react";
-import StepIndicator from "./onboarding/StepIndicator";
 import Step1Welcome from "./onboarding/Step1Welcome";
+import StepPhotoUpload from "./onboarding/StepPhotoUpload";
 import Step2PersonalData from "./onboarding/Step2PersonalData";
-import Step3Insurers from "./onboarding/Step3Insurers";
 import Step4Consent from "./onboarding/Step4Consent";
 import Step5Success from "./onboarding/Step5Success";
 import { type OnboardingData, emptyOnboardingData } from "../data/onboarding";
@@ -16,7 +15,12 @@ interface OnboardingFlowProps {
   onCall: () => void;
 }
 
-const STEP_LABELS = ["Start", "Angaben", "Versicherer", "Bestätigung", "Fertig"];
+// Step mapping:
+// 1 = Welcome/Benefits
+// 2 = Photo Upload
+// 3 = Personal Data
+// 4 = Consent
+// 5 = Success
 
 export default function OnboardingFlow({
   onClose,
@@ -43,7 +47,7 @@ export default function OnboardingFlow({
     }
   }
 
-  const showIndicator = step >= 2 && step <= 4;
+  const progressPercent = step >= 2 && step <= 4 ? ((step - 1) / 3) * 100 : 0;
 
   return (
     <motion.div
@@ -70,14 +74,17 @@ export default function OnboardingFlow({
 
           <div className="flex-1">
             <p className="text-xs font-medium" style={{ color: "#94a3b8" }}>
-              Betreuungswunsch einrichten
+              {step === 1 && "Ihr Premium-Service"}
+              {step === 2 && "Versicherungsschein hochladen"}
+              {step === 3 && "Ihre Angaben"}
+              {step === 4 && "Bestätigung"}
             </p>
-            {step > 1 && step < 5 && (
+            {step >= 2 && step <= 4 && (
               <div className="mt-1 rounded-full overflow-hidden" style={{ height: 3, background: "#e2e8f0" }}>
                 <motion.div
                   className="h-full rounded-full"
                   style={{ background: "linear-gradient(90deg, #cbdafb, #1a1f3a)" }}
-                  animate={{ width: `${((step - 1) / 3) * 100}%` }}
+                  animate={{ width: `${progressPercent}%` }}
                   transition={{ duration: 0.4, ease: "easeOut" }}
                 />
               </div>
@@ -94,23 +101,14 @@ export default function OnboardingFlow({
         </div>
       )}
 
-      {/* Step indicator */}
-      {showIndicator && (
-        <div className="px-4 pt-4">
-          <StepIndicator current={step} total={4} labels={STEP_LABELS.slice(1)} />
-        </div>
-      )}
-
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 pb-8">
         <AnimatePresence mode="wait">
           <motion.div key={step}>
             {step === 1 && <Step1Welcome onNext={next} />}
-            {step === 2 && (
-              <Step2PersonalData data={data} onChange={updateData} onNext={next} />
-            )}
+            {step === 2 && <StepPhotoUpload onNext={next} />}
             {step === 3 && (
-              <Step3Insurers data={data} onChange={updateData} onNext={next} />
+              <Step2PersonalData data={data} onChange={updateData} onNext={next} />
             )}
             {step === 4 && (
               <Step4Consent data={data} onChange={updateData} onSubmit={next} />
