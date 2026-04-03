@@ -174,7 +174,7 @@ export default function App() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {!showSplash && isReady && !isLoggedIn && (
+        {!showSplash && !authLoading && !isLoggedIn && (
           <LoginScreen key="login" onLogin={() => {}} />
         )}
       </AnimatePresence>
