@@ -264,29 +264,30 @@ export default function ContractDetail({
           )}
 
           {/* Documents */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-            className="rounded-2xl mb-4"
-            style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}
-          >
-            <button className="flex items-center gap-3 w-full px-4 py-3.5">
-              <FileText size={17} style={{ color: "#3b82f6" }} />
-              <span className="flex-1 text-sm font-medium text-left" style={{ color: "#1a1f3a" }}>
-                Versicherungsschein anzeigen
-              </span>
-              <ChevronRight size={16} style={{ color: "#cbd5e1" }} />
-            </button>
-            <div style={{ height: "1px", background: "#f1f5f9", marginLeft: 52 }} />
-            <button className="flex items-center gap-3 w-full px-4 py-3.5">
-              <FileText size={17} style={{ color: "#3b82f6" }} />
-              <span className="flex-1 text-sm font-medium text-left" style={{ color: "#1a1f3a" }}>
-                Alle Dokumente
-              </span>
-              <ChevronRight size={16} style={{ color: "#cbd5e1" }} />
-            </button>
-          </motion.div>
+          {contract.documentUrl && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25 }}
+              className="rounded-2xl mb-4"
+              style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}
+            >
+              <button
+                onClick={() => window.open(contract.documentUrl, "_blank", "noopener,noreferrer")}
+                className="flex items-center gap-3 w-full px-4 py-3.5"
+              >
+                <div className="flex items-center justify-center rounded-lg flex-shrink-0"
+                  style={{ width: 34, height: 34, background: "#eaeff8" }}>
+                  <FileText size={17} style={{ color: "#4a6da8" }} />
+                </div>
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-medium" style={{ color: "#1a1f3a" }}>Versicherungsschein</p>
+                  <p className="text-xs mt-0.5" style={{ color: "#94a3b8" }}>PDF öffnen</p>
+                </div>
+                <ChevronRight size={16} style={{ color: "#cbd5e1" }} />
+              </button>
+            </motion.div>
+          )}
         </div>
 
         {/* Bottom actions */}

@@ -35,6 +35,7 @@ export interface Contract {
   notes?: string;
   color: string;
   optimization?: ContractOptimization;
+  documentUrl?: string;
 }
 
 export const contracts: Contract[] = [
@@ -54,6 +55,7 @@ export const contracts: Contract[] = [
     deductible: "–",
     notes: "Versicherungssumme prüfen – ggf. an aktuelle Wohnverhältnisse anpassen",
     color: "#5e559c",
+    documentUrl: "https://drive.google.com/file/d/1v7U4ye_JMBqZgxGiRRVfxX6YVU41Enkd/view?usp=sharing",
   },
   {
     id: "2",
@@ -71,6 +73,7 @@ export const contracts: Contract[] = [
     deductible: "mit Selbstbeteiligung",
     notes: "SEPA-Lastschrift via Targobank · Gläubiger-ID: DE73HK000000020189",
     color: "#4a6da8",
+    documentUrl: "https://drive.google.com/file/d/1WgHR2nL6vupl819Hh9kvlkgyPs3am-Zc/view?usp=sharing",
   },
   {
     id: "3",
@@ -88,6 +91,7 @@ export const contracts: Contract[] = [
     deductible: "–",
     notes: "Jährliche Zahlungsweise",
     color: "#4a5294",
+    documentUrl: "https://drive.google.com/file/d/1UU9kMd0QcHshZ2RQMYHrs1GjaZcXPDsa/view?usp=sharing",
     optimization: {
       headline: "Bis zu 88 € / Jahr einsparen",
       saving: "ca. 88 €",
@@ -110,6 +114,7 @@ export const contracts: Contract[] = [
     deductible: "–",
     notes: "Tarif SBU2600C*M · Dynamik 3 % p.a. · max. 48.000 € Jahresrente · Nettobeitrag nach Überschuss: 59,94 €/Monat",
     color: "#8a4a68",
+    documentUrl: "https://drive.google.com/file/d/1cF_PxkQa6oAeZzAvamojp7jCK9HOMZGa/view?usp=sharing",
   },
 ];
 
