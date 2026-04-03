@@ -120,9 +120,10 @@ function Detail({ label, value }: { label: string; value: string }) {
 
 interface AdminPageProps {
   onBack: () => void;
+  backLabel?: string;
 }
 
-export default function AdminPage({ onBack }: AdminPageProps) {
+export default function AdminPage({ onBack, backLabel }: AdminPageProps) {
   const { requests, loading } = useCareRequests();
   const [filter, setFilter] = useState<CareRequest["status"] | "all">("all");
 
@@ -137,10 +138,10 @@ export default function AdminPage({ onBack }: AdminPageProps) {
 
   return (
     <motion.div
-      initial={{ y: "100%", opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: "100%", opacity: 0 }}
-      transition={{ type: "spring", damping: 30, stiffness: 300 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
       className="fixed inset-0 z-50 flex flex-col"
       style={{ background: "#f4f8fe", maxWidth: "430px", marginInline: "auto" }}
     >
@@ -148,10 +149,11 @@ export default function AdminPage({ onBack }: AdminPageProps) {
       <div className="flex items-center gap-3 px-4 pb-4" style={{ paddingTop: "max(env(safe-area-inset-top), 14px)", background: "rgba(244,248,254,0.95)", backdropFilter: "blur(12px)" }}>
         <button
           onClick={onBack}
-          className="flex items-center justify-center rounded-xl flex-shrink-0"
-          style={{ width: 38, height: 38, background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
+          className="flex items-center justify-center gap-1.5 rounded-xl flex-shrink-0 px-3"
+          style={{ height: 38, background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}
         >
-          <ArrowLeft size={17} color="#1a1f3a" />
+          <ArrowLeft size={15} color="#1a1f3a" />
+          {backLabel && <span className="text-xs font-semibold" style={{ color: "#1a1f3a" }}>{backLabel}</span>}
         </button>
         <div>
           <h1 className="text-base font-bold" style={{ color: "#1a1f3a" }}>Betreuungsanfragen</h1>

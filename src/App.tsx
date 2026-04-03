@@ -174,7 +174,13 @@ export default function App() {
         )}
       </AnimatePresence>
 
-    {isLoggedIn && <div
+    {isLoggedIn && profile?.role === "admin" && (
+      <div className="relative mx-auto" style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}>
+        <AdminPage onBack={async () => { await supabase.auth.signOut(); }} backLabel="Abmelden" />
+      </div>
+    )}
+
+    {isLoggedIn && profile?.role !== "admin" && <div
       className="relative mx-auto"
       style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}
     >
