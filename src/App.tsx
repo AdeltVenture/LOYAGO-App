@@ -41,8 +41,13 @@ export default function App() {
   const { session, loading: authLoading } = useAuth();
   const isLoggedIn = !!session;
   const { contracts, loading: contractsLoading } = useContracts();
-  const { profile } = useProfile();
+  const { profile, loading: profileLoading } = useProfile();
   const activeContracts = contractsLoading ? fallbackContracts : contracts;
+
+  // Wait until both auth and profile are confirmed before branching
+  const isReady = !authLoading && !profileLoading;
+  const isAdmin = isReady && isLoggedIn && profile?.role === "admin";
+  const isCustomer = isReady && isLoggedIn && profile?.role !== "admin";
 
   useEffect(() => {
     const t = setTimeout(() => setShowSplash(false), 5000);
@@ -169,18 +174,18 @@ export default function App() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {!showSplash && !authLoading && !isLoggedIn && (
+        {!showSplash && isReady && !isLoggedIn && (
           <LoginScreen key="login" onLogin={() => {}} />
         )}
       </AnimatePresence>
 
-    {isLoggedIn && profile?.role === "admin" && (
+    {isAdmin && (
       <div className="relative mx-auto" style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}>
         <AdminPage onBack={async () => { await supabase.auth.signOut(); }} backLabel="Abmelden" />
       </div>
     )}
 
-    {isLoggedIn && profile?.role !== "admin" && <div
+    {isCustomer && <div
       className="relative mx-auto"
       style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}
     >
