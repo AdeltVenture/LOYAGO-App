@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Bell } from "lucide-react";
 
@@ -10,6 +10,7 @@ import OnboardingFlow from "./components/OnboardingFlow";
 import BottomNav, { type Tab } from "./components/BottomNav";
 import FloatingActions from "./components/FloatingActions";
 import CallModal from "./components/CallModal";
+import SplashScreen from "./components/SplashScreen";
 import { type Contract } from "./data/contracts";
 
 type Screen = "main" | "detail" | "chat" | "onboarding";
@@ -19,6 +20,12 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>("main");
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
   const [callModalOpen, setCallModalOpen] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setShowSplash(false), 2600);
+    return () => clearTimeout(t);
+  }, []);
 
   function handleSelectContract(contract: Contract) {
     setSelectedContract(contract);
@@ -103,6 +110,11 @@ export default function App() {
   };
 
   return (
+    <>
+      <AnimatePresence>
+        {showSplash && <SplashScreen key="splash" />}
+      </AnimatePresence>
+
     <div
       className="relative mx-auto"
       style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}
@@ -190,5 +202,6 @@ export default function App() {
 
       <CallModal isOpen={callModalOpen} onClose={() => setCallModalOpen(false)} />
     </div>
+    </>
   );
 }
