@@ -7,18 +7,22 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for existing session on mount
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
+    // onAuthStateChange fires immediately with the current session state –
+    // this is the most reliable way to initialise and replaces getSession()
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+        setLoading(false);
+      }
+    );
 
-    // Listen for login/logout events
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+    // Safety-net: if Supabase never fires within 3 s, unblock the UI anyway
+    const timeout = setTimeout(() => setLoading(false), 3000);
 
-    return () => subscription.unsubscribe();
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   return { session, loading };
