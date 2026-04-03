@@ -66,7 +66,7 @@ export default function App() {
   const tabContent: Record<Exclude<Tab, "expert">, React.ReactNode> = {
     home: (
       <div>
-        <HeroSection onCall={() => setCallModalOpen(true)} />
+        <HeroSection onCall={() => setCallModalOpen(true)} onSelectContract={handleSelectContract} />
         <div className="px-4 pb-32">
           <WalletView onSelectContract={handleSelectContract} onAddContract={handleOpenOnboarding} />
         </div>

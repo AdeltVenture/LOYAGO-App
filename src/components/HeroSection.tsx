@@ -1,8 +1,9 @@
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import CloudBackground from "./CloudBackground";
-import { contracts } from "../data/contracts";
-import { CheckCircle, AlertTriangle, Phone } from "lucide-react";
+import { contracts, type Contract } from "../data/contracts";
+import { CheckCircle, AlertTriangle, Phone, X, ArrowRight, Sparkles } from "lucide-react";
+import ContractCard from "./ContractCard";
 
 const R = 52;
 const CX = 66;
@@ -69,11 +70,13 @@ function ScoreRing({ score }: { score: number }) {
   );
 }
 
-export default function HeroSection({ onCall }: { onCall: () => void }) {
+export default function HeroSection({ onCall, onSelectContract }: { onCall: () => void; onSelectContract: (c: Contract) => void }) {
+  const [showIssues, setShowIssues] = useState(false);
   const totalMonthly = contracts.reduce((s, c) => s + c.monthlyPremium, 0);
   const totalAnnual = contracts.reduce((s, c) => s + c.annualPremium, 0);
   const optimalCount = contracts.filter((c) => c.status === "gut").length;
-  const issueCount = contracts.filter((c) => c.status === "mangelhaft").length;
+  const issueContracts = contracts.filter((c) => c.status === "mangelhaft");
+  const issueCount = issueContracts.length;
   const coverageScore = Math.round((optimalCount / contracts.length) * 100);
 
   return (
@@ -110,10 +113,15 @@ export default function HeroSection({ onCall }: { onCall: () => void }) {
               {optimalCount} Gut
             </div>
             {issueCount > 0 && (
-              <div className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold" style={{ background: "#ef4444", color: "white" }}>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowIssues(true)}
+                className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold"
+                style={{ background: "#ef4444", color: "white" }}
+              >
                 <AlertTriangle size={12} />
                 {issueCount} Handlungsbedarf
-              </div>
+              </motion.button>
             )}
           </motion.div>
         </motion.div>
@@ -130,6 +138,75 @@ export default function HeroSection({ onCall }: { onCall: () => void }) {
           </div>
         </motion.div>
       </div>
+
+      {/* Handlungsbedarf sheet */}
+      <AnimatePresence>
+        {showIssues && (
+          <>
+            <motion.div
+              className="fixed inset-0 z-40"
+              style={{ background: "rgba(26,31,58,0.45)", backdropFilter: "blur(4px)" }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowIssues(false)}
+            />
+            <motion.div
+              className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl pb-10"
+              style={{ background: "white", maxWidth: 430, margin: "0 auto", boxShadow: "0 -4px 32px rgba(26,31,58,0.14)" }}
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 340, damping: 34 }}
+            >
+              <div className="flex items-center justify-between px-5 pt-5 pb-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex items-center justify-center rounded-xl" style={{ width: 36, height: 36, background: "#fee2e2" }}>
+                    <AlertTriangle size={17} color="#dc2626" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold" style={{ color: "#1a1f3a" }}>Handlungsbedarf</p>
+                    <p className="text-xs" style={{ color: "#94a3b8" }}>
+                      {issueCount} {issueCount === 1 ? "Vertrag" : "Verträge"} mit Optimierungspotenzial
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowIssues(false)}
+                  className="flex items-center justify-center rounded-xl"
+                  style={{ width: 32, height: 32, background: "#f1f5f9" }}
+                >
+                  <X size={15} color="#64748b" />
+                </button>
+              </div>
+
+              <div style={{ height: 1, background: "#f1f5f9" }} />
+
+              <div className="px-4 pt-4 flex flex-col gap-3">
+                {issueContracts.map((contract) => (
+                  <div key={contract.id}>
+                    <ContractCard contract={contract} index={0} onClick={() => { setShowIssues(false); onSelectContract(contract); }} />
+                    {contract.optimization && (
+                      <motion.button
+                        whileTap={{ scale: 0.97 }}
+                        onClick={() => { setShowIssues(false); onSelectContract(contract); }}
+                        className="flex items-center justify-between w-full rounded-2xl px-4 py-3 mt-2"
+                        style={{ background: "#1a1f3a", color: "white" }}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Sparkles size={14} color="#fbbf24" />
+                          <span className="text-sm font-bold">{contract.optimization.saving} / Jahr einsparen</span>
+                        </div>
+                        <ArrowRight size={15} color="white" />
+                      </motion.button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
