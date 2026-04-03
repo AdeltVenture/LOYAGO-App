@@ -10,7 +10,7 @@ interface CloudProps {
 }
 
 function Cloud({ x, y, scale, delay, opacity, speed }: CloudProps) {
-  const durations = { slow: 9, normal: 6, fast: 4 };
+  const durations = { slow: 7, normal: 5, fast: 3.2 };
   const duration = durations[speed];
 
   return (
@@ -18,8 +18,8 @@ function Cloud({ x, y, scale, delay, opacity, speed }: CloudProps) {
       className="absolute pointer-events-none"
       style={{ left: `${x}%`, top: `${y}%`, opacity }}
       animate={{
-        y: [0, -16, -8, 0],
-        x: [0, 8, -5, 0],
+        y: [0, -38, -18, 0],
+        x: [0, 20, -12, 0],
       }}
       transition={{
         duration,
@@ -45,7 +45,7 @@ function Cloud({ x, y, scale, delay, opacity, speed }: CloudProps) {
 }
 
 function SmallCloud({ x, y, scale, delay, opacity, speed }: CloudProps) {
-  const durations = { slow: 8, normal: 5, fast: 3.5 };
+  const durations = { slow: 6, normal: 4, fast: 2.8 };
   const duration = durations[speed];
 
   return (
@@ -53,8 +53,8 @@ function SmallCloud({ x, y, scale, delay, opacity, speed }: CloudProps) {
       className="absolute pointer-events-none"
       style={{ left: `${x}%`, top: `${y}%`, opacity }}
       animate={{
-        y: [0, -10, -4, 0],
-        x: [0, 5, -3, 0],
+        y: [0, -24, -10, 0],
+        x: [0, 12, -7, 0],
       }}
       transition={{
         duration,

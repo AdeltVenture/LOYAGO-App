@@ -48,7 +48,7 @@ export default function HeroSection() {
           transition={{ duration: 0.5, delay: 0.1 }}
         >
           <p className="font-semibold" style={{ fontSize: "15px", color: "#1a1f3a" }}>
-            Hallo, Marco 👋
+            Hallo, Marco.
           </p>
           <p className="text-xs mt-0.5" style={{ color: "#3d4a6a", opacity: 0.8 }}>
             Ihr persönliches Versicherungscockpit

@@ -25,7 +25,7 @@ export default function App() {
   const [legalPage, setLegalPage] = useState<LegalType | null>(null);
 
   useEffect(() => {
-    const t = setTimeout(() => setShowSplash(false), 2600);
+    const t = setTimeout(() => setShowSplash(false), 5000);
     return () => clearTimeout(t);
   }, []);
 
