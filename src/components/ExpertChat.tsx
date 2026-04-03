@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Send, Phone } from "lucide-react";
-import { anthropic } from "../lib/anthropic";
+import { streamChat } from "../lib/anthropic";
 import { useMessages } from "../hooks/useMessages";
 import type { Contract } from "../data/contracts";
 
@@ -67,21 +67,11 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
         { role: "user" as const, content: text.trim() },
       ];
 
-      let fullResponse = "";
-
-      const stream = anthropic.messages.stream({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 400,
-        system: buildSystemPrompt(contracts, firstName),
-        messages: history,
-      });
-
-      for await (const chunk of stream) {
-        if (chunk.type === "content_block_delta" && chunk.delta.type === "text_delta") {
-          fullResponse += chunk.delta.text;
-          setStreamingText(fullResponse);
-        }
-      }
+      const fullResponse = await streamChat(
+        history,
+        buildSystemPrompt(contracts, firstName),
+        (text) => setStreamingText(text)
+      );
 
       setStreamingText("");
       await saveMessage("assistant", fullResponse);
