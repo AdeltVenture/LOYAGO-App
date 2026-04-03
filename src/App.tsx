@@ -11,6 +11,7 @@ import BottomNav, { type Tab } from "./components/BottomNav";
 import FloatingActions from "./components/FloatingActions";
 import CallModal from "./components/CallModal";
 import SplashScreen from "./components/SplashScreen";
+import LoginScreen from "./components/LoginScreen";
 import LegalPage, { type LegalType } from "./components/LegalPage";
 import FaqPage from "./components/FaqPage";
 import ProfilePage from "./components/ProfilePage";
@@ -24,6 +25,7 @@ export default function App() {
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
   const [callModalOpen, setCallModalOpen] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [legalPage, setLegalPage] = useState<LegalType | null>(null);
   const [showFaq, setShowFaq] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
@@ -147,9 +149,15 @@ export default function App() {
         {showSplash && <SplashScreen key="splash" />}
       </AnimatePresence>
 
+      <AnimatePresence>
+        {!showSplash && !isLoggedIn && (
+          <LoginScreen key="login" onLogin={() => setIsLoggedIn(true)} />
+        )}
+      </AnimatePresence>
+
     <div
       className="relative mx-auto"
-      style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}
+      style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe", display: isLoggedIn ? undefined : "none" }}
     >
       {/* Top bar — non-sticky, only on non-home tabs */}
       {screen === "main" && tab !== "home" && (
@@ -246,7 +254,18 @@ export default function App() {
 
       {/* Profile */}
       <AnimatePresence>
-        {showProfile && <ProfilePage key="profile" onBack={() => setShowProfile(false)} />}
+        {showProfile && (
+        <ProfilePage
+          key="profile"
+          onBack={() => setShowProfile(false)}
+          onLogout={() => {
+            setShowProfile(false);
+            setIsLoggedIn(false);
+            setTab("home");
+            setScreen("main");
+          }}
+        />
+      )}
       </AnimatePresence>
     </div>
     </>

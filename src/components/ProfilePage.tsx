@@ -42,7 +42,7 @@ function Divider() {
   return <div style={{ height: 1, background: "#f1f5f9" }} />;
 }
 
-export default function ProfilePage({ onBack }: { onBack: () => void }) {
+export default function ProfilePage({ onBack, onLogout }: { onBack: () => void; onLogout: () => void }) {
   const [notifications, setNotifications] = useState(true);
 
   return (
@@ -153,7 +153,7 @@ export default function ProfilePage({ onBack }: { onBack: () => void }) {
             <Smartphone size={15} style={{ color: "#cbd5e1" }} />
           </div>
           <Divider />
-          <button className="flex items-center gap-3 w-full py-3.5">
+          <button onClick={onLogout} className="flex items-center gap-3 w-full py-3.5">
             <div className="flex-1 text-left">
               <p className="text-xs mb-0.5" style={{ color: "#94a3b8" }}>Sitzung</p>
               <p className="text-sm font-medium" style={{ color: "#ef4444" }}>Abmelden</p>
