@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Search, SlidersHorizontal } from "lucide-react";
-import { contracts, type Contract, type ContractStatus } from "../data/contracts";
+import { type Contract, type ContractStatus } from "../data/contracts";
 import ContractCard from "./ContractCard";
 
 interface WalletViewProps {
+  contracts: Contract[];
   onSelectContract: (contract: Contract) => void;
   onAddContract?: () => void;
 }
@@ -15,7 +16,7 @@ const filters: { label: string; value: ContractStatus | "all" }[] = [
   { label: "Mangelhaft", value: "mangelhaft" },
 ];
 
-export default function WalletView({ onSelectContract, onAddContract }: WalletViewProps) {
+export default function WalletView({ contracts, onSelectContract, onAddContract }: WalletViewProps) {
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState<ContractStatus | "all">("all");
 

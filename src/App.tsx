@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Phone, User, HelpCircle, Building2, Lock, Leaf, FileText } from "lucide-react";
 import { supabase } from "./lib/supabase";
 import { useAuth } from "./hooks/useAuth";
+import { useContracts } from "./hooks/useContracts";
+import { useProfile } from "./hooks/useProfile";
 
 const menuItemStyle = { background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" } as const;
 
@@ -20,6 +22,7 @@ import LegalPage, { type LegalType } from "./components/LegalPage";
 import FaqPage from "./components/FaqPage";
 import ProfilePage from "./components/ProfilePage";
 import { type Contract } from "./data/contracts";
+import { contracts as fallbackContracts } from "./data/contracts";
 
 type Screen = "main" | "detail" | "chat" | "onboarding";
 
@@ -35,6 +38,9 @@ export default function App() {
 
   const { session, loading: authLoading } = useAuth();
   const isLoggedIn = !!session;
+  const { contracts, loading: contractsLoading } = useContracts();
+  const { profile } = useProfile();
+  const activeContracts = contractsLoading ? fallbackContracts : contracts;
 
   useEffect(() => {
     const t = setTimeout(() => setShowSplash(false), 5000);
@@ -72,9 +78,9 @@ export default function App() {
   const tabContent: Record<Exclude<Tab, "expert">, React.ReactNode> = {
     home: (
       <div>
-        <HeroSection onCall={() => setCallModalOpen(true)} onSelectContract={handleSelectContract} />
+        <HeroSection contracts={activeContracts} firstName={profile?.firstName} onCall={() => setCallModalOpen(true)} onSelectContract={handleSelectContract} />
         <div className="px-4 pb-32">
-          <WalletView onSelectContract={handleSelectContract} onAddContract={handleOpenOnboarding} />
+          <WalletView contracts={activeContracts} onSelectContract={handleSelectContract} onAddContract={handleOpenOnboarding} />
         </div>
       </div>
     ),
@@ -88,7 +94,7 @@ export default function App() {
             Alle Versicherungen im Überblick
           </p>
         </div>
-        <WalletView onSelectContract={handleSelectContract} onAddContract={handleOpenOnboarding} />
+        <WalletView contracts={activeContracts} onSelectContract={handleSelectContract} onAddContract={handleOpenOnboarding} />
       </div>
     ),
     more: (

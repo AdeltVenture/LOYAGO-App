@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 import CloudBackground from "./CloudBackground";
-import { contracts, type Contract } from "../data/contracts";
+import { type Contract } from "../data/contracts";
 import { CheckCircle, AlertTriangle, Phone, X, ArrowRight, Sparkles } from "lucide-react";
 import ContractCard from "./ContractCard";
 
@@ -70,14 +70,14 @@ function ScoreRing({ score }: { score: number }) {
   );
 }
 
-export default function HeroSection({ onCall, onSelectContract }: { onCall: () => void; onSelectContract: (c: Contract) => void }) {
+export default function HeroSection({ contracts, firstName, onCall, onSelectContract }: { contracts: Contract[]; firstName?: string; onCall: () => void; onSelectContract: (c: Contract) => void }) {
   const [showIssues, setShowIssues] = useState(false);
   const totalMonthly = contracts.reduce((s, c) => s + c.monthlyPremium, 0);
   const totalAnnual = contracts.reduce((s, c) => s + c.annualPremium, 0);
   const optimalCount = contracts.filter((c) => c.status === "gut").length;
   const issueContracts = contracts.filter((c) => c.status === "mangelhaft");
   const issueCount = issueContracts.length;
-  const coverageScore = Math.round((optimalCount / contracts.length) * 100);
+  const coverageScore = contracts.length > 0 ? Math.round((optimalCount / contracts.length) * 100) : 0;
 
   return (
     <div className="relative overflow-hidden" style={{ minHeight: "360px" }}>
@@ -94,7 +94,7 @@ export default function HeroSection({ onCall, onSelectContract }: { onCall: () =
 
         {/* Greeting */}
         <motion.div className="text-center mb-5" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.1 }}>
-          <p className="font-bold" style={{ fontSize: "17px", color: "#1a1f3a" }}>Hallo, Marco.</p>
+          <p className="font-bold" style={{ fontSize: "17px", color: "#1a1f3a" }}>Hallo, {firstName || "Marco"}.</p>
           <p className="text-xs mt-0.5" style={{ color: "#3d4a6a", opacity: 0.75 }}>Ihr persönliches Versicherungscockpit</p>
         </motion.div>
 
