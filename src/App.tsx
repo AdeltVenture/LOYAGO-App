@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Bell } from "lucide-react";
+import { Bell, User, BellIcon, HelpCircle, Building2, Lock, Leaf, FileText } from "lucide-react";
 
 import HeroSection from "./components/HeroSection";
 import WalletView from "./components/WalletView";
@@ -87,19 +87,22 @@ export default function App() {
 
         {/* General items */}
         <div className="flex flex-col gap-3 mb-6">
-          {[
-            { label: "Profil & Einstellungen", icon: "👤" },
-            { label: "Benachrichtigungen",     icon: "🔔" },
-            { label: "Hilfe & FAQ",            icon: "❓" },
-          ].map((item) => (
+          {([
+            { label: "Profil & Einstellungen", Icon: User },
+            { label: "Benachrichtigungen",     Icon: BellIcon },
+            { label: "Hilfe & FAQ",            Icon: HelpCircle },
+          ] as const).map((item) => (
             <button
               key={item.label}
               className="flex items-center gap-3 w-full px-4 py-4 rounded-2xl text-left"
               style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}
             >
-              <span className="text-xl">{item.icon}</span>
+              <div className="flex items-center justify-center rounded-xl flex-shrink-0"
+                style={{ width: 36, height: 36, background: "#eaeff8" }}>
+                <item.Icon size={17} color="#4a6da8" />
+              </div>
               <span className="flex-1 text-sm font-medium" style={{ color: "#1a1f3a" }}>{item.label}</span>
-              <span style={{ color: "#cbd5e1" }}>›</span>
+              <span style={{ color: "#cbd5e1", fontSize: 18 }}>›</span>
             </button>
           ))}
         </div>
@@ -110,10 +113,10 @@ export default function App() {
         </p>
         <div className="flex flex-col gap-3">
           {([
-            { label: "Impressum",       icon: "🏢", type: "impressum"       },
-            { label: "Datenschutz",     icon: "🔒", type: "datenschutz"     },
-            { label: "Transparenz",     icon: "🌿", type: "transparenz"     },
-            { label: "Erstinformation", icon: "📋", type: "erstinformation" },
+            { label: "Impressum",       Icon: Building2,  type: "impressum"       },
+            { label: "Datenschutz",     Icon: Lock,       type: "datenschutz"     },
+            { label: "Transparenz",     Icon: Leaf,       type: "transparenz"     },
+            { label: "Erstinformation", Icon: FileText,   type: "erstinformation" },
           ] as const).map((item) => (
             <button
               key={item.label}
@@ -121,9 +124,12 @@ export default function App() {
               className="flex items-center gap-3 w-full px-4 py-4 rounded-2xl text-left"
               style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}
             >
-              <span className="text-xl">{item.icon}</span>
+              <div className="flex items-center justify-center rounded-xl flex-shrink-0"
+                style={{ width: 36, height: 36, background: "#eaeff8" }}>
+                <item.Icon size={17} color="#4a6da8" />
+              </div>
               <span className="flex-1 text-sm font-medium" style={{ color: "#1a1f3a" }}>{item.label}</span>
-              <span style={{ color: "#cbd5e1" }}>›</span>
+              <span style={{ color: "#cbd5e1", fontSize: 18 }}>›</span>
             </button>
           ))}
         </div>
