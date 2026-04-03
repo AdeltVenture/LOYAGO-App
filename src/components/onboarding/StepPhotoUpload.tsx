@@ -1,28 +1,51 @@
 import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, ImagePlus, ChevronRight, X, CheckCircle, FileText } from "lucide-react";
+import { Camera, ImagePlus, ChevronRight, X, CheckCircle, FileText, Loader2 } from "lucide-react";
+import { supabase } from "../../lib/supabase";
 
 interface StepPhotoUploadProps {
-  onNext: () => void;
+  onNext: (documentUrl?: string) => void;
 }
 
 export default function StepPhotoUpload({ onNext }: StepPhotoUploadProps) {
   const [preview, setPreview] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
   const cameraRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
 
   function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const url = URL.createObjectURL(file);
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const url = URL.createObjectURL(f);
     setPreview(url);
-    // Reset input so the same file can be re-selected
+    setFile(f);
     e.target.value = "";
   }
 
   function clearPhoto() {
     if (preview) URL.revokeObjectURL(preview);
     setPreview(null);
+    setFile(null);
+  }
+
+  async function handleNext() {
+    if (!file) { onNext(); return; }
+    setUploading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id ?? "anon";
+      const ext = file.name.split(".").pop() ?? "jpg";
+      const path = `${userId}/${Date.now()}.${ext}`;
+      const { error } = await supabase.storage.from("documents").upload(path, file, { upsert: true });
+      if (error) { onNext(); return; }
+      const { data: { publicUrl } } = supabase.storage.from("documents").getPublicUrl(path);
+      onNext(publicUrl);
+    } catch {
+      onNext();
+    } finally {
+      setUploading(false);
+    }
   }
 
   return (
@@ -159,7 +182,8 @@ export default function StepPhotoUpload({ onNext }: StepPhotoUploadProps) {
       {/* CTA */}
       <motion.button
         whileTap={{ scale: 0.97 }}
-        onClick={onNext}
+        onClick={handleNext}
+        disabled={uploading}
         className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-sm font-bold"
         style={{
           background: preview ? "#1a1f3a" : "#94a3b8",
@@ -167,13 +191,15 @@ export default function StepPhotoUpload({ onNext }: StepPhotoUploadProps) {
           transition: "background 0.25s",
         }}
       >
-        {preview ? "Weiter" : "Jetzt hochladen & fortfahren"}
-        <ChevronRight size={17} />
+        {uploading
+          ? <><Loader2 size={17} className="animate-spin" /> Wird hochgeladen …</>
+          : <>{preview ? "Weiter" : "Jetzt hochladen & fortfahren"}<ChevronRight size={17} /></>
+        }
       </motion.button>
 
       {!preview && (
         <button
-          onClick={onNext}
+          onClick={() => onNext()}
           className="text-center text-xs mt-3 w-full"
           style={{ color: "#94a3b8" }}
         >

@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { type Contract, type ContractStatus } from "../data/contracts";
 import ContractCard from "./ContractCard";
+import CareRequestsSection from "./CareRequestsSection";
 
 interface WalletViewProps {
   contracts: Contract[];
@@ -108,6 +109,9 @@ export default function WalletView({ contracts, onSelectContract, onAddContract 
           ))
         )}
       </div>
+
+      {/* Submitted care requests */}
+      <CareRequestsSection />
 
       {/* Add contract CTA */}
       <motion.button

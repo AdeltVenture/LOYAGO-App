@@ -31,6 +31,7 @@ export default function OnboardingFlow({
 }: OnboardingFlowProps) {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<OnboardingData>(emptyOnboardingData);
+  const [documentUrl, setDocumentUrl] = useState<string | undefined>();
 
   function updateData(partial: Partial<OnboardingData>) {
     setData((d) => ({ ...d, ...partial }));
@@ -107,7 +108,7 @@ export default function OnboardingFlow({
         <AnimatePresence mode="wait">
           <motion.div key={step}>
             {step === 1 && <Step1Welcome onNext={next} />}
-            {step === 2 && <StepPhotoUpload onNext={next} />}
+            {step === 2 && <StepPhotoUpload onNext={(url) => { if (url) setDocumentUrl(url); next(); }} />}
             {step === 3 && (
               <Step2PersonalData data={data} onChange={updateData} onNext={next} />
             )}
@@ -126,6 +127,7 @@ export default function OnboardingFlow({
                   city: data.city,
                   insurers: data.selectedInsurers,
                   consent_given: data.consentGiven,
+                  document_url: documentUrl ?? null,
                 });
                 next();
               }} />
