@@ -179,6 +179,14 @@ export default function App() {
         )}
       </AnimatePresence>
 
+      {/* Loading: eingeloggt aber Profil noch nicht geladen */}
+      {!showSplash && isLoggedIn && profileLoading && (
+        <div className="fixed inset-0 flex items-center justify-center" style={{ background: "#f4f8fe" }}>
+          <div style={{ width: 32, height: 32, border: "3px solid #e2e8f0", borderTopColor: "#4a6da8", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+        </div>
+      )}
+
     {isAdmin && (
       <div className="relative mx-auto" style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}>
         <AdminPage onBack={async () => { await supabase.auth.signOut(); }} backLabel="Abmelden" />
