@@ -117,8 +117,8 @@ export default function ContractCard({ contract, index, onClick }: ContractCardP
               style={{ color: renewalUrgent ? "#ef4444" : "#d97706" }}
             >
               {daysUntilRenewal === 0
-                ? "Läuft heute aus"
-                : `Läuft in ${daysUntilRenewal} Tagen aus`}
+                ? "Kündigungsfrist endet heute"
+                : `Kündigungsfrist endet in ${daysUntilRenewal} Tagen`}
             </p>
           </div>
         ) : (
