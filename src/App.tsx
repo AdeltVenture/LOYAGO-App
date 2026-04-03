@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Phone, User, HelpCircle, Building2, Lock, Leaf, FileText, ShieldCheck } from "lucide-react";
-import AdminPage from "./components/AdminPage";
+import { Phone, User, HelpCircle, Building2, Lock, Leaf, FileText } from "lucide-react";
 import { supabase } from "./lib/supabase";
 import { useAuth } from "./hooks/useAuth";
 import { useContracts } from "./hooks/useContracts";
@@ -36,18 +35,12 @@ export default function App() {
   const [legalPage, setLegalPage] = useState<LegalType | null>(null);
   const [showFaq, setShowFaq] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
-  const [showAdmin, setShowAdmin] = useState(false);
 
   const { session, loading: authLoading } = useAuth();
   const isLoggedIn = !!session;
   const { contracts, loading: contractsLoading } = useContracts();
-  const { profile, loading: profileLoading } = useProfile();
+  const { profile } = useProfile();
   const activeContracts = contractsLoading ? fallbackContracts : contracts;
-
-  // Wait until both auth and profile are confirmed before branching
-  const isReady = !authLoading && !profileLoading;
-  const isAdmin = isReady && isLoggedIn && profile?.role === "admin";
-  const isCustomer = isReady && isLoggedIn && profile?.role !== "admin";
 
   useEffect(() => {
     const t = setTimeout(() => setShowSplash(false), 5000);
@@ -115,9 +108,6 @@ export default function App() {
           {([
             { label: "Profil & Einstellungen", Icon: User,        action: () => setShowProfile(true) },
             { label: "Hilfe & FAQ",            Icon: HelpCircle,  action: () => setShowFaq(true) },
-            ...(profile?.role === "admin"
-              ? [{ label: "Admin – Anfragen", Icon: ShieldCheck, action: () => setShowAdmin(true) }]
-              : []),
           ] as const).map((item) => (
             <motion.button
               key={item.label}
@@ -179,21 +169,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* Loading: eingeloggt aber Profil noch nicht geladen */}
-      {!showSplash && isLoggedIn && profileLoading && (
-        <div className="fixed inset-0 flex items-center justify-center" style={{ background: "#f4f8fe" }}>
-          <div style={{ width: 32, height: 32, border: "3px solid #e2e8f0", borderTopColor: "#4a6da8", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-        </div>
-      )}
-
-    {isAdmin && (
-      <div className="relative mx-auto" style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}>
-        <AdminPage onBack={async () => { await supabase.auth.signOut(); }} backLabel="Abmelden" />
-      </div>
-    )}
-
-    {isCustomer && <div
+    {isLoggedIn && <div
       className="relative mx-auto"
       style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}
     >
@@ -306,12 +282,6 @@ export default function App() {
       )}
       </AnimatePresence>
 
-      {/* Admin */}
-      <AnimatePresence>
-        {showAdmin && (
-          <AdminPage key="admin" onBack={() => setShowAdmin(false)} />
-        )}
-      </AnimatePresence>
     </div>}
     </>
   );
