@@ -27,26 +27,30 @@ interface DbProfile {
   role: string | null;
 }
 
-async function fetchProfile(userId: string): Promise<UserProfile | null> {
-  const { data } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", userId)
-    .single();
-  if (!data) return null;
-  const row = data as DbProfile;
-  return {
-    id: row.id,
-    firstName: row.first_name ?? "",
-    lastName: row.last_name ?? "",
-    title: row.title ?? "",
-    phone: row.phone ?? "",
-    street: row.street ?? "",
-    zip: row.zip ?? "",
-    city: row.city ?? "",
-    score: row.score ?? 75,
-    role: row.role === "admin" ? "admin" : "user",
-  };
+function defaultProfile(id: string): UserProfile {
+  return { id, firstName: "", lastName: "", title: "", phone: "", street: "", zip: "", city: "", score: 75, role: "user" };
+}
+
+async function fetchProfile(userId: string): Promise<UserProfile> {
+  try {
+    const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
+    if (error || !data) return defaultProfile(userId);
+    const row = data as DbProfile;
+    return {
+      id: row.id,
+      firstName: row.first_name ?? "",
+      lastName: row.last_name ?? "",
+      title: row.title ?? "",
+      phone: row.phone ?? "",
+      street: row.street ?? "",
+      zip: row.zip ?? "",
+      city: row.city ?? "",
+      score: row.score ?? 75,
+      role: row.role === "admin" ? "admin" : "user",
+    };
+  } catch {
+    return defaultProfile(userId);
+  }
 }
 
 export function useProfile() {
@@ -54,26 +58,36 @@ export function useProfile() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load profile for current session
+    let cancelled = false;
+
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (cancelled) return;
       if (!session) { setLoading(false); return; }
-      setProfile(await fetchProfile(session.user.id));
-      setLoading(false);
+      const p = await fetchProfile(session.user.id);
+      if (!cancelled) { setProfile(p); setLoading(false); }
     });
 
-    // Re-load whenever auth state changes (login / logout / user switch)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        if (!session) {
-          setProfile(null);
-        } else {
-          setProfile(await fetchProfile(session.user.id));
-        }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (cancelled) return;
+      if (!session) {
+        setProfile(null);
         setLoading(false);
+      } else {
+        const p = await fetchProfile(session.user.id);
+        if (!cancelled) { setProfile(p); setLoading(false); }
       }
-    );
+    });
 
-    return () => subscription.unsubscribe();
+    // Safety-net: never block UI longer than 4 seconds
+    const timeout = setTimeout(() => {
+      if (!cancelled) setLoading(false);
+    }, 4000);
+
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   return { profile, loading };
