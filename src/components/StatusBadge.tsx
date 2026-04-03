@@ -16,7 +16,7 @@ export default function StatusBadge({ status, size = "md" }: StatusBadgeProps) {
         backgroundColor: colors.bg,
         color: colors.text,
         fontSize: size === "sm" ? "10px" : "11px",
-        padding: size === "sm" ? "2px 8px" : "3px 10px",
+        padding: size === "sm" ? "2px 8px" : "4px 10px",
       }}
     >
       <span

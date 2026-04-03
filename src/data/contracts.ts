@@ -127,3 +127,5 @@ export const statusColors: Record<ContractStatus, { bg: string; text: string; do
   gut:        { bg: "#dcfce7", text: "#16a34a", dot: "#22c55e" },
   mangelhaft: { bg: "#fee2e2", text: "#dc2626", dot: "#ef4444" },
 };
+
+// v2
