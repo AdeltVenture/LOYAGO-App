@@ -11,6 +11,7 @@ import BottomNav, { type Tab } from "./components/BottomNav";
 import FloatingActions from "./components/FloatingActions";
 import CallModal from "./components/CallModal";
 import SplashScreen from "./components/SplashScreen";
+import LegalPage, { type LegalType } from "./components/LegalPage";
 import { type Contract } from "./data/contracts";
 
 type Screen = "main" | "detail" | "chat" | "onboarding";
@@ -21,6 +22,7 @@ export default function App() {
   const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
   const [callModalOpen, setCallModalOpen] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
+  const [legalPage, setLegalPage] = useState<LegalType | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setShowSplash(false), 2600);
@@ -80,17 +82,15 @@ export default function App() {
     more: (
       <div className="px-4 pt-4 pb-32">
         <div className="mb-5">
-          <h2 className="text-xl font-bold" style={{ color: "#1a1f3a" }}>
-            Mehr
-          </h2>
+          <h2 className="text-xl font-bold" style={{ color: "#1a1f3a" }}>Mehr</h2>
         </div>
-        <div className="flex flex-col gap-3">
+
+        {/* General items */}
+        <div className="flex flex-col gap-3 mb-6">
           {[
             { label: "Profil & Einstellungen", icon: "👤" },
-            { label: "Benachrichtigungen", icon: "🔔" },
-            { label: "Datenschutz", icon: "🔒" },
-            { label: "Hilfe & FAQ", icon: "❓" },
-            { label: "Über LOYAGO", icon: "ℹ️" },
+            { label: "Benachrichtigungen",     icon: "🔔" },
+            { label: "Hilfe & FAQ",            icon: "❓" },
           ].map((item) => (
             <button
               key={item.label}
@@ -98,9 +98,31 @@ export default function App() {
               style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}
             >
               <span className="text-xl">{item.icon}</span>
-              <span className="flex-1 text-sm font-medium" style={{ color: "#1a1f3a" }}>
-                {item.label}
-              </span>
+              <span className="flex-1 text-sm font-medium" style={{ color: "#1a1f3a" }}>{item.label}</span>
+              <span style={{ color: "#cbd5e1" }}>›</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Legal section */}
+        <p className="text-xs font-semibold mb-3 px-1" style={{ color: "#94a3b8", letterSpacing: "0.06em" }}>
+          RECHTLICHES
+        </p>
+        <div className="flex flex-col gap-3">
+          {([
+            { label: "Impressum",       icon: "🏢", type: "impressum"       },
+            { label: "Datenschutz",     icon: "🔒", type: "datenschutz"     },
+            { label: "Transparenz",     icon: "🌿", type: "transparenz"     },
+            { label: "Erstinformation", icon: "📋", type: "erstinformation" },
+          ] as const).map((item) => (
+            <button
+              key={item.label}
+              onClick={() => setLegalPage(item.type)}
+              className="flex items-center gap-3 w-full px-4 py-4 rounded-2xl text-left"
+              style={{ background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.05)" }}
+            >
+              <span className="text-xl">{item.icon}</span>
+              <span className="flex-1 text-sm font-medium" style={{ color: "#1a1f3a" }}>{item.label}</span>
               <span style={{ color: "#cbd5e1" }}>›</span>
             </button>
           ))}
@@ -201,6 +223,13 @@ export default function App() {
       )}
 
       <CallModal isOpen={callModalOpen} onClose={() => setCallModalOpen(false)} />
+
+      {/* Legal pages */}
+      <AnimatePresence>
+        {legalPage && (
+          <LegalPage key={legalPage} type={legalPage} onBack={() => setLegalPage(null)} />
+        )}
+      </AnimatePresence>
     </div>
     </>
   );
