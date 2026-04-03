@@ -223,7 +223,7 @@ export default function App() {
       {/* Chat overlay */}
       <AnimatePresence>
         {screen === "chat" && (
-          <ExpertChat onBack={handleBack} onCall={() => setCallModalOpen(true)} />
+          <ExpertChat onBack={handleBack} onCall={() => setCallModalOpen(true)} contracts={activeContracts} firstName={profile?.firstName} />
         )}
       </AnimatePresence>
 
