@@ -36,12 +36,13 @@ export function useMessages() {
   }, []);
 
   async function saveMessage(role: "user" | "assistant", content: string) {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-
+    // Always show immediately in UI
     const tempId = `temp-${Date.now()}-${Math.random()}`;
     const tempMsg: ChatMessage = { id: tempId, role, content, createdAt: new Date().toISOString() };
     setMessages((prev) => [...prev, tempMsg]);
+
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
 
     const { data } = await supabase
       .from("messages")
