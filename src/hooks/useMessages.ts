@@ -39,13 +39,19 @@ export function useMessages() {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) return;
 
+    const tempId = `temp-${Date.now()}-${Math.random()}`;
+    const tempMsg: ChatMessage = { id: tempId, role, content, createdAt: new Date().toISOString() };
+    setMessages((prev) => [...prev, tempMsg]);
+
     const { data } = await supabase
       .from("messages")
       .insert({ user_id: session.user.id, role, content })
       .select("id, role, content, created_at")
       .single();
 
-    if (data) setMessages((prev) => [...prev, toMessage(data as DbMessage)]);
+    if (data) {
+      setMessages((prev) => prev.map((m) => m.id === tempId ? toMessage(data as DbMessage) : m));
+    }
   }
 
   return { messages, loading, saveMessage };
