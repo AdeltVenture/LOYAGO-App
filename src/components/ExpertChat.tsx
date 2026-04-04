@@ -53,31 +53,31 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping, streamingText]);
 
-  async function sendMessage(text: string) {
+    async function sendMessage(text: string) {
     if (!text.trim() || isTyping) return;
+    const trimmed = text.trim();
     setInput("");
     setIsTyping(true);
     setStreamingText("");
 
-    await saveMessage("user", text.trim());
+    const history = [
+      ...messages.map((m) => ({ role: m.role, content: m.content })),
+      { role: "user" as const, content: trimmed },
+    ];
+
+    saveMessage("user", trimmed).catch(console.error);
 
     try {
-      const history = [
-        ...messages.map((m) => ({ role: m.role, content: m.content })),
-        { role: "user" as const, content: text.trim() },
-      ];
-
       const fullResponse = await streamChat(
         history,
         buildSystemPrompt(contracts, firstName),
-        (text) => setStreamingText(text)
+        (chunk) => setStreamingText(chunk)
       );
-
       setStreamingText("");
-      await saveMessage("assistant", fullResponse);
+      saveMessage("assistant", fullResponse).catch(console.error);
     } catch (err) {
-      await saveMessage("assistant", "Entschuldigung, es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder rufen Sie uns an.");
-      console.error(err);
+      console.error("Chat error:", err);
+      saveMessage("assistant", `Fehler: ${err instanceof Error ? err.message : "unbekannt"}. Bitte rufen Sie uns an.`).catch(console.error);
     } finally {
       setIsTyping(false);
     }
