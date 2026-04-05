@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Send, Phone } from "lucide-react";
+import { ArrowLeft, Send, Phone, Info, X, Bot } from "lucide-react";
 import { streamChat } from "../lib/anthropic";
 import { useMessages } from "../hooks/useMessages";
 import type { Contract } from "../data/contracts";
@@ -44,7 +44,8 @@ Verhaltensgrundsätze:
 - Halte Antworten kurz (3-5 Sätze) – das ist ein Chat, kein Bericht
 - Bei komplexen Themen empfiehl ein Telefonat
 - Empfehle nie Produkte außerhalb des LOYAGO-Portfolios
-- Du bist kein Chatbot – stelle dich nicht als KI vor`;
+- Weise bei komplexen oder verbindlichen Fragen immer auf das persönliche Beratungsgespräch hin
+- Du bist ein KI-Assistent – sei transparent wenn du direkt danach gefragt wirst`;
 }
 
 function getTime() {
@@ -63,6 +64,7 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [streamingText, setStreamingText] = useState("");
+  const [showDisclaimer, setShowDisclaimer] = useState(true);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -111,28 +113,75 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
       style={{ background: "#f4f8fe", maxWidth: "430px", marginInline: "auto", height: "100dvh" }}
     >
       {/* Header — always visible, pinned top like WhatsApp */}
-      <div className="flex-shrink-0 flex items-center gap-3 px-4 pt-12 pb-4"
+      <div className="flex-shrink-0"
         style={{ background: "rgba(244,248,254,0.97)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(0,0,0,0.05)" }}>
-        <button onClick={onBack} className="flex items-center justify-center rounded-xl"
-          style={{ width: 38, height: 38, background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
-          <ArrowLeft size={18} color="#1a1f3a" />
-        </button>
-        <div className="flex items-center gap-3 flex-1">
-          <div className="relative">
-            <img src="/LOYAGO-App/expert.jpg" alt="LOYAGO-Experte"
-              className="rounded-full object-cover object-top" style={{ width: 40, height: 40 }} />
-            <div className="absolute -bottom-0.5 -right-0.5 rounded-full border-2 border-white"
-              style={{ width: 12, height: 12, background: "#22c55e" }} />
+        <div className="flex items-center gap-3 px-4 pt-12 pb-3">
+          <button onClick={onBack} className="flex items-center justify-center rounded-xl"
+            style={{ width: 38, height: 38, background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
+            <ArrowLeft size={18} color="#1a1f3a" />
+          </button>
+          <div className="flex items-center gap-3 flex-1">
+            <div className="relative">
+              <img src="/LOYAGO-App/expert.jpg" alt="LOYAGO-Experte"
+                className="rounded-full object-cover object-top" style={{ width: 40, height: 40 }} />
+              <div className="absolute -bottom-0.5 -right-0.5 rounded-full border-2 border-white flex items-center justify-center"
+                style={{ width: 16, height: 16, background: "#6366f1" }}>
+                <Bot size={8} color="white" strokeWidth={2.5} />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <p className="text-sm font-bold" style={{ color: "#1a1f3a" }}>LOYAGO KI-Assistent</p>
+                <span className="text-xs px-1.5 py-0.5 rounded-full font-medium"
+                  style={{ background: "#ede9fe", color: "#6366f1", fontSize: "9px", letterSpacing: "0.03em" }}>KI</span>
+              </div>
+              <p className="text-xs" style={{ color: "#94a3b8" }}>Erste Orientierung · unverbindlich</p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm font-bold" style={{ color: "#1a1f3a" }}>Ihr LOYAGO-Experte</p>
-            <p className="text-xs" style={{ color: "#22c55e" }}>Online – antwortet sofort</p>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setShowDisclaimer(v => !v)}
+              className="flex items-center justify-center rounded-xl"
+              style={{ width: 34, height: 34, background: showDisclaimer ? "#ede9fe" : "white", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
+              <Info size={15} color={showDisclaimer ? "#6366f1" : "#94a3b8"} />
+            </button>
+            <button onClick={onCall} className="flex items-center justify-center rounded-xl"
+              style={{ width: 34, height: 34, background: "linear-gradient(135deg, #cbdafb 0%, #a8c0f8 100%)" }}>
+              <Phone size={15} color="#1a1f3a" />
+            </button>
           </div>
         </div>
-        <button onClick={onCall} className="flex items-center justify-center rounded-xl"
-          style={{ width: 38, height: 38, background: "linear-gradient(135deg, #cbdafb 0%, #a8c0f8 100%)" }}>
-          <Phone size={17} color="#1a1f3a" />
-        </button>
+
+        {/* Disclaimer banner — collapsible */}
+        <AnimatePresence>
+          {showDisclaimer && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{ overflow: "hidden" }}
+            >
+              <div className="mx-4 mb-3 rounded-2xl px-4 py-3 flex gap-3"
+                style={{ background: "#ede9fe", border: "1px solid #c4b5fd" }}>
+                <Bot size={15} color="#6366f1" style={{ flexShrink: 0, marginTop: 1 }} />
+                <div className="flex-1">
+                  <p className="text-xs leading-relaxed" style={{ color: "#4c1d95" }}>
+                    Dieser Chat wird von einer <strong>künstlichen Intelligenz</strong> beantwortet und dient der <strong>ersten, unverbindlichen Orientierung</strong>. Für verbindliche Auskünfte und persönliche Beratung sprechen Sie direkt mit einem LOYAGO-Experten.
+                  </p>
+                  <button onClick={onCall}
+                    className="mt-2 flex items-center gap-1.5 text-xs font-semibold"
+                    style={{ color: "#6366f1" }}>
+                    <Phone size={11} />
+                    Jetzt echten Experten anrufen
+                  </button>
+                </div>
+                <button onClick={() => setShowDisclaimer(false)}>
+                  <X size={14} color="#8b5cf6" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Messages */}
