@@ -94,7 +94,7 @@ export default function HeroSection({ contracts, firstName, onCall, onSelectCont
 
         {/* Greeting */}
         <motion.div className="text-center mb-5" initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, delay: 0.1 }}>
-          <p className="font-bold" style={{ fontSize: "17px", color: "#1a1f3a" }}>Hallo {firstName || "Marco"}!.</p>
+          <p className="font-bold" style={{ fontSize: "17px", color: "#1a1f3a" }}>Hallo {firstName || "Marco"}!</p>
           <p className="text-xs mt-0.5" style={{ color: "#3d4a6a", opacity: 0.75 }}>Ihr persönliches Versicherungscockpit</p>
         </motion.div>
 
