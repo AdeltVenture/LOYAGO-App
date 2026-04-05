@@ -8,14 +8,6 @@ interface StepPhotoUploadProps {
 }
 
 const ACCEPTED = "image/*,application/pdf";
-const UPLOAD_TIMEOUT_MS = 30_000;
-
-function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
-  const timeout = new Promise<never>((_, reject) =>
-    setTimeout(() => reject(new Error(`${label} timed out after ${ms / 1000}s`)), ms)
-  );
-  return Promise.race([promise, timeout]);
-}
 
 export default function StepPhotoUpload({ onNext }: StepPhotoUploadProps) {
   const [preview, setPreview] = useState<string | null>(null);
