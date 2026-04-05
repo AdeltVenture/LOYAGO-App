@@ -20,7 +20,10 @@ export function useMessages() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
     supabase.auth.getSession().then(async ({ data: { session } }) => {
+      if (cancelled) return;
       if (!session) { setLoading(false); return; }
 
       const { data } = await supabase
@@ -30,9 +33,12 @@ export function useMessages() {
         .order("created_at", { ascending: true })
         .limit(100);
 
+      if (cancelled) return;
       if (data) setMessages((data as DbMessage[]).map(toMessage));
       setLoading(false);
     });
+
+    return () => { cancelled = true; };
   }, []);
 
   async function saveMessage(role: "user" | "assistant", content: string) {

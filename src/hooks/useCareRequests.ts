@@ -53,14 +53,19 @@ const SELECT = "id, first_name, last_name, email, phone, street, zip, city, insu
 export function useCareRequests() {
   const [requests, setRequests] = useState<CareRequest[]>([]);
   const [loading, setLoading] = useState(true);
+  const [realtimeError, setRealtimeError] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
+
     // Initial load
     supabase
       .from("care_requests")
       .select(SELECT)
       .order("created_at", { ascending: false })
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) console.error("care_requests load error:", error.message);
         if (data) setRequests((data as DbCareRequest[]).map(toRequest));
         setLoading(false);
       });
@@ -72,6 +77,7 @@ export function useCareRequests() {
         "postgres_changes",
         { event: "*", schema: "public", table: "care_requests" },
         (payload) => {
+          if (cancelled) return;
           if (payload.eventType === "INSERT") {
             setRequests((prev) => [toRequest(payload.new as DbCareRequest), ...prev]);
           } else if (payload.eventType === "UPDATE") {
@@ -83,10 +89,18 @@ export function useCareRequests() {
           }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === "CHANNEL_ERROR") {
+          console.error("Realtime subscription failed for care_requests");
+          setRealtimeError(true);
+        }
+      });
 
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      cancelled = true;
+      supabase.removeChannel(channel);
+    };
   }, []);
 
-  return { requests, loading };
+  return { requests, loading, realtimeError };
 }

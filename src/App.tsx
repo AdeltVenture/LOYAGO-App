@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy, Suspense } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Phone, User, HelpCircle, Building2, Lock, Leaf, FileText } from "lucide-react";
+import { Phone, User, HelpCircle, Building2, Lock, Leaf, FileText, AlertCircle } from "lucide-react";
 import { supabase } from "./lib/supabase";
 import { useAuth } from "./hooks/useAuth";
 import { useContracts } from "./hooks/useContracts";
@@ -12,17 +12,20 @@ import HeroSection from "./components/HeroSection";
 import WalletView from "./components/WalletView";
 import ContractDetail from "./components/ContractDetail";
 import ExpertChat from "./components/ExpertChat";
-import OnboardingFlow from "./components/OnboardingFlow";
 import BottomNav, { type Tab } from "./components/BottomNav";
 import FloatingActions from "./components/FloatingActions";
 import CallModal from "./components/CallModal";
 import SplashScreen from "./components/SplashScreen";
 import LoginScreen from "./components/LoginScreen";
-import LegalPage, { type LegalType } from "./components/LegalPage";
-import FaqPage from "./components/FaqPage";
-import ProfilePage from "./components/ProfilePage";
+type LegalType = "impressum" | "datenschutz" | "transparenz" | "erstinformation";
 import { type Contract } from "./data/contracts";
 import { contracts as fallbackContracts } from "./data/contracts";
+
+// Lazy-loaded overlays — split into separate chunks
+const LegalPage    = lazy(() => import("./components/LegalPage"));
+const FaqPage      = lazy(() => import("./components/FaqPage"));
+const ProfilePage  = lazy(() => import("./components/ProfilePage"));
+const OnboardingFlow = lazy(() => import("./components/OnboardingFlow"));
 
 type Screen = "main" | "detail" | "chat" | "onboarding";
 
@@ -38,7 +41,7 @@ export default function App() {
 
   const { session, loading: authLoading } = useAuth();
   const isLoggedIn = !!session;
-  const { contracts, loading: contractsLoading } = useContracts();
+  const { contracts, loading: contractsLoading, error: contractsError } = useContracts();
   const { profile } = useProfile();
   const activeContracts = contractsLoading ? fallbackContracts : contracts;
 
@@ -193,6 +196,15 @@ export default function App() {
         </div>
       )}
 
+      {/* Contracts fetch error */}
+      {contractsError && !contractsLoading && (
+        <div className="mx-4 mt-3 flex items-center gap-2 rounded-2xl px-4 py-3 text-xs"
+          style={{ background: "#fef2f2", border: "1px solid #fecaca", color: "#991b1b" }}>
+          <AlertCircle size={14} style={{ flexShrink: 0 }} />
+          Verträge konnten nicht geladen werden. Bitte App neu starten.
+        </div>
+      )}
+
       {/* Main content */}
       <AnimatePresence mode="wait">
         {screen === "main" && (
@@ -230,12 +242,14 @@ export default function App() {
       {/* Onboarding overlay */}
       <AnimatePresence>
         {screen === "onboarding" && (
-          <OnboardingFlow
-            onClose={handleBack}
-            onFinish={handleFinishOnboarding}
-            onChat={() => { setScreen("chat"); }}
-            onCall={() => { setScreen("main"); setCallModalOpen(true); }}
-          />
+          <Suspense fallback={null}>
+            <OnboardingFlow
+              onClose={handleBack}
+              onFinish={handleFinishOnboarding}
+              onChat={() => { setScreen("chat"); }}
+              onCall={() => { setScreen("main"); setCallModalOpen(true); }}
+            />
+          </Suspense>
         )}
       </AnimatePresence>
 
@@ -257,29 +271,37 @@ export default function App() {
       {/* Legal pages */}
       <AnimatePresence>
         {legalPage && (
-          <LegalPage key={legalPage} type={legalPage} onBack={() => setLegalPage(null)} />
+          <Suspense fallback={null}>
+            <LegalPage key={legalPage} type={legalPage} onBack={() => setLegalPage(null)} />
+          </Suspense>
         )}
       </AnimatePresence>
 
       {/* FAQ */}
       <AnimatePresence>
-        {showFaq && <FaqPage key="faq" onBack={() => setShowFaq(false)} />}
+        {showFaq && (
+          <Suspense fallback={null}>
+            <FaqPage key="faq" onBack={() => setShowFaq(false)} />
+          </Suspense>
+        )}
       </AnimatePresence>
 
       {/* Profile */}
       <AnimatePresence>
         {showProfile && (
-        <ProfilePage
-          key="profile"
-          onBack={() => setShowProfile(false)}
-          onLogout={async () => {
-            await supabase.auth.signOut();
-            setShowProfile(false);
-            setTab("home");
-            setScreen("main");
-          }}
-        />
-      )}
+          <Suspense fallback={null}>
+            <ProfilePage
+              key="profile"
+              onBack={() => setShowProfile(false)}
+              onLogout={async () => {
+                await supabase.auth.signOut();
+                setShowProfile(false);
+                setTab("home");
+                setScreen("main");
+              }}
+            />
+          </Suspense>
+        )}
       </AnimatePresence>
 
     </div>}

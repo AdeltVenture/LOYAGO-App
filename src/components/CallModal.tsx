@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Phone, X, Clock } from "lucide-react";
+import { LOYAGO_PHONE, LOYAGO_PHONE_DISPLAY, LOYAGO_HOURS } from "../lib/constants";
 
 interface CallModalProps {
   isOpen: boolean;
@@ -65,20 +66,20 @@ export default function CallModal({ isOpen, onClose }: CallModalProps) {
               </div>
               <div>
                 <p className="text-sm font-semibold" style={{ color: "#1a1f3a" }}>
-                  Mo–Fr 08:00–18:00 Uhr
+                  {LOYAGO_HOURS}
                 </p>
               </div>
             </div>
 
             {/* Call button */}
             <a
-              href="tel:+4969247471400"
+              href={`tel:${LOYAGO_PHONE}`}
               className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl text-base font-bold mb-5"
               style={{ background: "#1a1f3a", color: "white", textDecoration: "none" }}
               onClick={onClose}
             >
               <Phone size={18} />
-              069 247 471 400
+              {LOYAGO_PHONE_DISPLAY}
             </a>
 
             <button

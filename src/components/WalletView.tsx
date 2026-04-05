@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search } from "lucide-react";
 import { type Contract, type ContractStatus } from "../data/contracts";
 import ContractCard from "./ContractCard";
 import CareRequestsSection from "./CareRequestsSection";
@@ -78,13 +78,6 @@ export default function WalletView({ contracts, onSelectContract, onAddContract 
             {f.label}
           </button>
         ))}
-        <button
-          className="flex-shrink-0 flex items-center gap-1 text-xs font-medium px-3 py-1.5 rounded-full"
-          style={{ background: "white", color: "#64748b", border: "1.5px solid #e8f0fd" }}
-        >
-          <SlidersHorizontal size={12} />
-          Filter
-        </button>
       </div>
 
       {/* Contract list */}

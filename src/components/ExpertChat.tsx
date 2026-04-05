@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Send, Phone, Info, X, Bot } from "lucide-react";
 import { streamChat } from "../lib/anthropic";
@@ -65,18 +65,24 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
   const [isTyping, setIsTyping] = useState(false);
   const [streamingText, setStreamingText] = useState("");
   const [showDisclaimer, setShowDisclaimer] = useState(true);
+  const [chatError, setChatError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping, streamingText]);
 
-    async function sendMessage(text: string) {
+  // Abort ongoing request when chat closes
+  useEffect(() => () => { abortRef.current?.abort(); }, []);
+
+  const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || isTyping) return;
     const trimmed = text.trim();
     setInput("");
     setIsTyping(true);
     setStreamingText("");
+    setChatError(null);
 
     const history = [
       ...messages.map((m) => ({ role: m.role, content: m.content })),
@@ -85,21 +91,26 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
 
     saveMessage("user", trimmed).catch(console.error);
 
+    abortRef.current = new AbortController();
+
     try {
       const fullResponse = await streamChat(
         history,
         buildSystemPrompt(contracts, firstName),
-        (chunk) => setStreamingText(chunk)
+        (chunk) => setStreamingText(chunk),
+        abortRef.current.signal
       );
       setStreamingText("");
       saveMessage("assistant", fullResponse).catch(console.error);
     } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") return;
       console.error("Chat error:", err);
-      saveMessage("assistant", `Fehler: ${err instanceof Error ? err.message : "unbekannt"}. Bitte rufen Sie uns an.`).catch(console.error);
+      setChatError("Antwort konnte nicht geladen werden. Bitte versuchen Sie es erneut oder rufen Sie uns an.");
     } finally {
       setIsTyping(false);
+      abortRef.current = null;
     }
-  }
+  }, [messages, contracts, firstName, isTyping, saveMessage]);
 
   const showWelcome = !loading && messages.length === 0;
 
@@ -244,6 +255,18 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
                   </div>
                 )}
               </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Error notice */}
+        <AnimatePresence>
+          {chatError && (
+            <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              className="rounded-2xl px-4 py-3 text-xs flex items-start gap-2"
+              style={{ background: "#fef2f2", border: "1px solid #fecaca", color: "#991b1b" }}>
+              <span style={{ flexShrink: 0 }}>⚠️</span>
+              <span>{chatError}</span>
             </motion.div>
           )}
         </AnimatePresence>

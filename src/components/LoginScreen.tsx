@@ -45,7 +45,7 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
     e.preventDefault();
     if (!forgotEmail.trim()) return;
     await supabase.auth.resetPasswordForEmail(forgotEmail.trim(), {
-      redirectTo: `${window.location.origin}/LOYAGO-App/`,
+      redirectTo: `${window.location.origin}${import.meta.env.BASE_URL}`,
     });
     // Always show success (security best practice – don't reveal if email exists)
     setForgotSent(true);

@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, ChevronRight, LogOut, Smartphone } from "lucide-react";
+import { supabase } from "../lib/supabase";
+import { useProfile } from "../hooks/useProfile";
 
 interface FieldRowProps {
   label: string;
@@ -15,7 +17,7 @@ function FieldRow({ label, value, editable = true }: FieldRowProps) {
     >
       <div className="flex-1">
         <p className="text-xs mb-0.5" style={{ color: "#94a3b8" }}>{label}</p>
-        <p className="text-sm font-medium" style={{ color: "#1a1f3a" }}>{value}</p>
+        <p className="text-sm font-medium" style={{ color: "#1a1f3a" }}>{value || "Noch nicht hinterlegt"}</p>
       </div>
       {editable && <ChevronRight size={16} style={{ color: "#cbd5e1", flexShrink: 0 }} />}
     </div>
@@ -44,6 +46,17 @@ function Divider() {
 
 export default function ProfilePage({ onBack, onLogout }: { onBack: () => void; onLogout: () => void }) {
   const [notifications, setNotifications] = useState(true);
+  const [email, setEmail] = useState("");
+  const { profile } = useProfile();
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.email) setEmail(user.email);
+    });
+  }, []);
+
+  const fullName = [profile?.title, profile?.firstName, profile?.lastName].filter(Boolean).join(" ");
+  const initials = [profile?.firstName?.[0], profile?.lastName?.[0]].filter(Boolean).join("").toUpperCase() || "?";
 
   return (
     <motion.div
@@ -78,40 +91,41 @@ export default function ProfilePage({ onBack, onLogout }: { onBack: () => void; 
             className="flex items-center justify-center rounded-2xl flex-shrink-0 font-bold text-lg"
             style={{ width: 60, height: 60, background: "linear-gradient(140deg, #1a1f3a, #2d3a6b)", color: "white", letterSpacing: "-0.5px" }}
           >
-            MA
+            {initials}
           </div>
           <div>
-            <p className="font-bold text-base" style={{ color: "#1a1f3a" }}>Dr. Marco Adelt</p>
-            <p className="text-sm mt-0.5" style={{ color: "#64748b" }}>marco.adelt@loyago.de</p>
-            <p className="text-xs mt-1 font-medium" style={{ color: "#4a6da8" }}>Kunde seit Mai 2024</p>
+            <p className="font-bold text-base" style={{ color: "#1a1f3a" }}>{fullName || "Mein Profil"}</p>
+            {email && <p className="text-sm mt-0.5" style={{ color: "#64748b" }}>{email}</p>}
           </div>
         </div>
 
         {/* Persönliche Daten */}
         <Section title="PERSÖNLICHE DATEN">
-          <FieldRow label="Vorname" value="Marco" />
+          <FieldRow label="Vorname" value={profile?.firstName ?? ""} />
           <Divider />
-          <FieldRow label="Nachname" value="Adelt" />
-          <Divider />
-          <FieldRow label="Titel" value="Dr." />
-          <Divider />
-          <FieldRow label="Geburtsdatum" value="19.04.1979" />
+          <FieldRow label="Nachname" value={profile?.lastName ?? ""} />
+          {profile?.title ? (
+            <>
+              <Divider />
+              <FieldRow label="Titel" value={profile.title} />
+            </>
+          ) : null}
         </Section>
 
         {/* Adresse */}
         <Section title="ADRESSE">
-          <FieldRow label="Straße und Hausnummer" value="Europa-Allee 165" />
+          <FieldRow label="Straße und Hausnummer" value={profile?.street ?? ""} />
           <Divider />
-          <FieldRow label="PLZ / Ort" value="60486 Frankfurt am Main" />
+          <FieldRow label="PLZ / Ort" value={[profile?.zip, profile?.city].filter(Boolean).join(" ")} />
           <Divider />
           <FieldRow label="Land" value="Deutschland" editable={false} />
         </Section>
 
         {/* Kontakt */}
         <Section title="KONTAKTDATEN">
-          <FieldRow label="E-Mail" value="marco.adelt@loyago.de" />
+          <FieldRow label="E-Mail" value={email} />
           <Divider />
-          <FieldRow label="Telefon" value="Noch nicht hinterlegt" />
+          <FieldRow label="Telefon" value={profile?.phone ?? ""} />
         </Section>
 
         {/* Einstellungen */}
