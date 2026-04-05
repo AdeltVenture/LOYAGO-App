@@ -47,7 +47,7 @@ export default function FloatingActions({ onChat, onCall }: FloatingActionsProps
                 className="text-xs font-medium px-3 py-1.5 rounded-full shadow-sm"
                 style={{ background: "white", color: "#1a1f3a" }}
               >
-                Experte fragen
+                Jetzt chatten
               </span>
               <button
                 onClick={() => { onChat(); setExpanded(false); }}
