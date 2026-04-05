@@ -11,7 +11,7 @@ interface BottomNavProps {
 const items: { tab: Tab; icon: React.FC<LucideProps>; label: string }[] = [
   { tab: "home", icon: Home, label: "Start" },
   { tab: "wallet", icon: Wallet, label: "Verträge" },
-  { tab: "expert", icon: MessageCircle, label: "Experte" },
+  { tab: "expert", icon: MessageCircle, label: "Chat" },
   { tab: "more", icon: Menu, label: "Mehr" },
 ];
 
