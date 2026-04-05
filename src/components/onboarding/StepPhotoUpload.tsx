@@ -46,14 +46,12 @@ export default function StepPhotoUpload({ onNext }: StepPhotoUploadProps) {
     setUploading(true);
     setError(null);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const userId = session?.user?.id ?? "anon";
       const ext = file.name.split(".").pop() ?? "jpg";
-      const path = `${userId}/${Date.now()}.${ext}`;
+      const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
       const { error: uploadError } = await supabase.storage
         .from("documents")
-        .upload(path, file, { upsert: true });
+        .upload(path, file);
 
       if (uploadError) {
         console.error("Upload error:", uploadError.message);
