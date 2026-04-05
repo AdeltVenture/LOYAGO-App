@@ -35,13 +35,8 @@ export function useMessages() {
     });
   }, []);
 
-   async function saveMessage(role: "user" | "assistant", content: string) {
+  async function saveMessage(role: "user" | "assistant", content: string) {
     const tempId = `temp-${Date.now()}-${Math.random()}`;
-    const tempMsg: ChatMessage = { id: tempId, role, content, createdAt: new Date().toISOString() };
-    setMessages((prev) => [...prev, tempMsg]);
-
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
     const tempMsg: ChatMessage = { id: tempId, role, content, createdAt: new Date().toISOString() };
     setMessages((prev) => [...prev, tempMsg]);
 
