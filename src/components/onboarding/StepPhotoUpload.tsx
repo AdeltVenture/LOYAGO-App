@@ -78,8 +78,9 @@ export default function StepPhotoUpload({ onNext }: StepPhotoUploadProps) {
       const { data: { publicUrl } } = supabase.storage.from("documents").getPublicUrl(path);
       onNext(publicUrl);
     } catch (err) {
-      console.error("Upload exception:", err);
-      setError("Upload fehlgeschlagen. Sie können den Schein auch später nachreichen.");
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error("Upload exception:", msg);
+      setError(`Fehler: ${msg}`);
     } finally {
       setUploading(false);
     }
