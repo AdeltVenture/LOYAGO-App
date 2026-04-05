@@ -34,6 +34,7 @@ export interface Contract {
   deductible: string;
   notes?: string;
   cancellationPeriod?: string;
+  coverageDetails?: string;
   color: string;
   optimization?: ContractOptimization;
   documentUrl?: string;

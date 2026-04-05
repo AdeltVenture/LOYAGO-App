@@ -23,6 +23,7 @@ function buildSystemPrompt(contracts: Contract[], firstName: string): string {
       `- Nächste Verlängerung: ${c.renewalDate || "–"}`,
       `- Kündigungsfrist: ${c.cancellationPeriod || "nicht hinterlegt"}`,
       `- Deckungsumfang: ${c.coverage || "–"}`,
+      `- Deckungsdetails: ${c.coverageDetails || "nicht hinterlegt"}`,
       `- Selbstbehalt: ${c.deductible || "–"}`,
       `- Status: ${c.status}`,
     ];

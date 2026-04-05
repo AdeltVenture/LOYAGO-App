@@ -18,6 +18,7 @@ interface DbContract {
   deductible: string;
   notes: string | null;
   cancellation_period: string | null;
+  coverage_details: string | null;
   color: string;
   document_url: string | null;
   optimization: { headline: string; saving: string; detail: string } | null;
@@ -45,6 +46,7 @@ function toContract(row: DbContract): Contract {
     deductible: row.deductible ?? "",
     notes: row.notes ?? undefined,
     cancellationPeriod: row.cancellation_period ?? undefined,
+    coverageDetails: row.coverage_details ?? undefined,
     color: row.color,
     documentUrl: row.document_url ?? undefined,
     optimization: row.optimization ?? undefined,
