@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, Phone, X, ChevronUp } from "lucide-react";
+import { MessageCircle, Phone, X } from "lucide-react";
 
 interface FloatingActionsProps {
   onChat: () => void;
@@ -88,13 +88,29 @@ export default function FloatingActions({ onChat, onCall }: FloatingActionsProps
             transition={{ duration: 2, repeat: Infinity }}
           />
         )}
-        <motion.div animate={{ rotate: expanded ? 180 : 0 }} transition={{ duration: 0.25 }}>
+        <AnimatePresence mode="wait">
           {expanded ? (
-            <X size={22} style={{ color: "white" }} />
+            <motion.div key="close"
+              initial={{ opacity: 0, rotate: -90, scale: 0.7 }}
+              animate={{ opacity: 1, rotate: 0, scale: 1 }}
+              exit={{ opacity: 0, rotate: 90, scale: 0.7 }}
+              transition={{ duration: 0.2 }}>
+              <X size={22} style={{ color: "white" }} />
+            </motion.div>
           ) : (
-            <ChevronUp size={22} style={{ color: "#1a1f3a" }} />
+            <motion.div key="icons"
+              initial={{ opacity: 0, scale: 0.7 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.7 }}
+              transition={{ duration: 0.2 }}
+              className="flex flex-col items-center"
+              style={{ gap: 2 }}>
+              <Phone size={13} strokeWidth={2.2} style={{ color: "#1a1f3a" }} />
+              <div style={{ width: 14, height: 1, background: "#1a1f3a", opacity: 0.25, borderRadius: 1 }} />
+              <MessageCircle size={13} strokeWidth={2.2} style={{ color: "#1a1f3a" }} />
+            </motion.div>
           )}
-        </motion.div>
+        </AnimatePresence>
       </motion.button>
     </div>
   );
