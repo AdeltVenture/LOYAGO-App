@@ -51,35 +51,21 @@ export default function StepPhotoUpload({ onNext }: StepPhotoUploadProps) {
 
   async function handleNext() {
     if (!file) { onNext(); return; }
+
+    // Proceed immediately — upload runs in the background
     setUploading(true);
-    setError(null);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
+    onNext(); // don't wait for upload
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
       const userId = session?.user?.id ?? "anon";
       const ext = file.name.split(".").pop() ?? "jpg";
       const path = `${userId}/${Date.now()}.${ext}`;
-
-      const { error: uploadError } = await withTimeout(
-        supabase.storage.from("documents").upload(path, file, { upsert: true }),
-        UPLOAD_TIMEOUT_MS,
-        "Upload"
-      );
-
-      if (uploadError) {
-        console.error("Upload error:", uploadError.message, uploadError);
-        setError(`Upload fehlgeschlagen (${uploadError.message}). Sie können den Schein auch später nachreichen.`);
-        return;
-      }
-
-      const { data: { publicUrl } } = supabase.storage.from("documents").getPublicUrl(path);
-      onNext(publicUrl);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      console.error("Upload exception:", msg);
-      setError(`Fehler: ${msg}`);
-    } finally {
-      setUploading(false);
-    }
+      return supabase.storage.from("documents").upload(path, file, { upsert: true });
+    }).then(({ error }) => {
+      if (error) console.error("Background upload error:", error.message);
+    }).catch((err) => {
+      console.error("Background upload exception:", err);
+    });
   }
 
   const hasFile = !!file;
