@@ -9,7 +9,7 @@ const benefits = [
   {
     icon: Users,
     title: "Persönliche Betreuung durch erfahrene Experten",
-    desc: "Ob telefonisch oder per Mail – unser Team ist für Sie da, wann und wo es Ihnen passt.",
+    desc: "Ob telefonisch oder per Mail: unser Team ist für Sie da, wann und wo es Ihnen passt.",
   },
   {
     icon: BookOpen,
@@ -24,7 +24,7 @@ const benefits = [
   {
     icon: BadgeCheck,
     title: "Komplett kostenfrei für Sie",
-    desc: "Dieser Service ist für Sie ohne zusätzliche Kosten – kein Kleingedrucktes.",
+    desc: "Dieser Service ist für Sie ohne zusätzliche Kosten. Kein Kleingedrucktes.",
   },
 ];
 
@@ -57,7 +57,7 @@ export default function Step1Welcome({ onNext }: Step1WelcomeProps) {
           Weiteren Vertrag zu LOYAGO bringen
         </h2>
         <p className="text-sm leading-relaxed" style={{ color: "#64748b" }}>
-          Sie möchten einen bestehenden Vertrag von uns betreuen lassen — kostenlos und unverbindlich. Was das für Sie bedeutet:
+          Sie möchten einen bestehenden Vertrag zu LOYAGO bringen. Was das für Sie bedeutet:
         </p>
       </motion.div>
 
