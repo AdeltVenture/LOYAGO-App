@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import {
   ArrowLeft,
   Calendar,
@@ -11,7 +11,7 @@ import {
   Sparkles,
   CalendarClock,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { type Contract } from "../data/contracts";
 import StatusBadge from "./StatusBadge";
 import CategoryIcon from "./CategoryIcon";
@@ -60,10 +60,15 @@ export default function ContractDetail({
   onCall,
 }: ContractDetailProps) {
   const [showBooking, setShowBooking] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ container: scrollRef });
+  // Buttons follow scroll: move from top-third to bottom-third as user scrolls
+  const sidebarY = useTransform(scrollYProgress, [0, 1], ["25vh", "60vh"]);
 
   return (
     <AnimatePresence>
       <motion.div
+        ref={scrollRef}
         initial={{ x: "100%", opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: "100%", opacity: 0 }}
@@ -327,11 +332,10 @@ export default function ContractDetail({
         </div>
 
         {/* Desktop sidebar buttons — outside content column, anchored right */}
-        <div
+        <motion.div
           className="hidden md:flex flex-col gap-3 fixed"
           style={{
-            top: "50%",
-            transform: "translateY(-50%)",
+            top: sidebarY,
             right: "max(16px, calc((100vw - 430px) / 2 - 160px))",
           }}
         >
@@ -355,7 +359,7 @@ export default function ContractDetail({
             <Phone size={16} />
             Jetzt anrufen
           </motion.button>
-        </div>
+        </motion.div>
       </motion.div>
 
       {/* Booking sheet */}
