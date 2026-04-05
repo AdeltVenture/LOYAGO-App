@@ -7,7 +7,7 @@ import StepPhotoUpload from "./onboarding/StepPhotoUpload";
 import Step2PersonalData from "./onboarding/Step2PersonalData";
 import Step4Consent from "./onboarding/Step4Consent";
 import Step5Success from "./onboarding/Step5Success";
-import { type OnboardingData, emptyOnboardingData } from "../data/onboarding";
+import { type OnboardingData, emptyOnboardingData, popularInsurers } from "../data/onboarding";
 
 interface OnboardingFlowProps {
   onClose: () => void;
@@ -126,6 +126,7 @@ export default function OnboardingFlow({
                   zip: data.zip,
                   city: data.city,
                   insurers: data.selectedInsurers,
+                  contract_name: data.contractName || null,
                   consent_given: data.consentGiven,
                   document_url: documentUrl ?? null,
                 });
@@ -135,6 +136,11 @@ export default function OnboardingFlow({
             {step === 5 && (
               <Step5Success
                 firstName={data.firstName}
+                insurerNames={data.selectedInsurers.map((id) => {
+                  const found = popularInsurers.find((ins) => ins.id === id);
+                  return found ? found.name : id.replace("custom-", "").replace(/-/g, " ");
+                })}
+                contractName={data.contractName}
                 onFinish={onFinish}
                 onChat={onChat}
                 onCall={onCall}

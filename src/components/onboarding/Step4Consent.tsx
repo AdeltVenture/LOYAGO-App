@@ -67,6 +67,17 @@ export default function Step4Consent({ data, onChange, onSubmit }: Step4ConsentP
               </span>
             </div>
           )}
+          <div className="flex flex-col gap-1 pt-1">
+            <span style={{ color: "#64748b", fontSize: "14px" }}>Produkt / Vertragsart</span>
+            <input
+              type="text"
+              value={data.contractName}
+              onChange={(e) => onChange({ contractName: e.target.value })}
+              placeholder="z. B. Reisekrankenversicherung"
+              className="w-full rounded-xl px-3 py-2 text-sm outline-none"
+              style={{ background: "#f8fafc", border: "1.5px solid #e2e8f0", color: "#1a1f3a" }}
+            />
+          </div>
         </div>
       </div>
 

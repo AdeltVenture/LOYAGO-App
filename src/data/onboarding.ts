@@ -30,6 +30,7 @@ export interface OnboardingData {
   city: string;
   zip: string;
   selectedInsurers: string[];
+  contractName: string;
   consentGiven: boolean;
 }
 
@@ -43,5 +44,6 @@ export const emptyOnboardingData: OnboardingData = {
   city: "Frankfurt am Main",
   zip: "60486",
   selectedInsurers: [],
+  contractName: "",
   consentGiven: false,
 };

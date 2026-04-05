@@ -3,13 +3,16 @@ import { Phone, ArrowRight, CheckCircle, Clock, MessageCircle } from "lucide-rea
 
 interface Step5SuccessProps {
   firstName: string;
+  insurerNames?: string[];
+  contractName?: string;
   onFinish: () => void;
   onChat: () => void;
   onCall: () => void;
 }
 
-export default function Step5Success({ firstName, onFinish, onChat, onCall }: Step5SuccessProps) {
+export default function Step5Success({ firstName, insurerNames = [], contractName, onFinish, onChat, onCall }: Step5SuccessProps) {
   const name = firstName ? firstName.charAt(0).toUpperCase() + firstName.slice(1) : "";
+  const details = [insurerNames.join(", "), contractName].filter(Boolean).join(" – ");
 
   return (
     <motion.div
@@ -56,6 +59,11 @@ export default function Step5Success({ firstName, onFinish, onChat, onCall }: St
         <p className="text-sm leading-relaxed" style={{ color: "#64748b" }}>
           Ihr Betreuungsauftrag ist bei uns eingegangen. Wir kümmern uns ab sofort darum.
         </p>
+        {details && (
+          <p className="text-sm font-semibold mt-2" style={{ color: "#1a1f3a" }}>
+            {details}
+          </p>
+        )}
       </motion.div>
 
       {/* What happens next — single card */}
