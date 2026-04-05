@@ -9,13 +9,11 @@ import {
   MessageCircle,
   Phone,
   Sparkles,
-  CalendarClock,
 } from "lucide-react";
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import { type Contract } from "../data/contracts";
 import StatusBadge from "./StatusBadge";
 import CategoryIcon from "./CategoryIcon";
-import BookingSheet from "./BookingSheet";
 
 interface ContractDetailProps {
   contract: Contract;
@@ -59,10 +57,8 @@ export default function ContractDetail({
   onAskExpert,
   onCall,
 }: ContractDetailProps) {
-  const [showBooking, setShowBooking] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ container: scrollRef });
-  // Buttons follow scroll: move from top-third to bottom-third as user scrolls
   const sidebarY = useTransform(scrollYProgress, [0, 1], ["25vh", "60vh"]);
 
   return (
@@ -161,7 +157,7 @@ export default function ContractDetail({
             </div>
           </motion.div>
 
-          {/* Optimization CTA — only shown when contract has optimization data */}
+          {/* Optimization banner — info only, no buttons */}
           {contract.optimization && (
             <motion.div
               initial={{ opacity: 0, y: 14 }}
@@ -171,7 +167,7 @@ export default function ContractDetail({
               style={{ background: "#1a1f3a" }}
             >
               {/* Amber accent bar */}
-              <div style={{ height: 4, background: "linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b)", backgroundSize: "200% 100%" }} />
+              <div style={{ height: 4, background: "linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b)" }} />
 
               <div className="p-5">
                 <div className="flex items-center gap-2 mb-3">
@@ -186,29 +182,23 @@ export default function ContractDetail({
                 <p className="font-bold mb-2" style={{ fontSize: 22, color: "white", lineHeight: 1.2 }}>
                   {contract.optimization.headline}
                 </p>
-                <p className="text-sm mb-5" style={{ color: "rgba(255,255,255,0.65)", lineHeight: 1.6 }}>
+                <p className="text-sm mb-4" style={{ color: "rgba(255,255,255,0.65)", lineHeight: 1.6 }}>
                   {contract.optimization.detail}
                 </p>
 
-                <div className="flex gap-3">
-                  <motion.button
-                    whileTap={{ scale: 0.96 }}
-                    onClick={onAskExpert}
-                    className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-semibold"
-                    style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1.5px solid rgba(255,255,255,0.18)" }}
-                  >
-                    <MessageCircle size={15} />
-                    Im Chat besprechen
-                  </motion.button>
-                  <motion.button
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => setShowBooking(true)}
-                    className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold"
-                    style={{ background: "#f59e0b", color: "#1a1f3a" }}
-                  >
-                    <CalendarClock size={15} />
-                    Termin buchen
-                  </motion.button>
+                {/* Subtle nudge toward the two action buttons below */}
+                <div className="flex items-center gap-2 pt-3" style={{ borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+                  <span style={{ fontSize: 11, color: "rgba(255,255,255,0.45)", letterSpacing: "0.02em" }}>
+                    Sprechen Sie jetzt mit uns — per Chat oder Telefon.
+                  </span>
+                  <div className="flex gap-1 ml-auto flex-shrink-0">
+                    <div className="flex items-center justify-center rounded-full" style={{ width: 22, height: 22, background: "rgba(255,255,255,0.1)" }}>
+                      <MessageCircle size={11} color="rgba(255,255,255,0.5)" />
+                    </div>
+                    <div className="flex items-center justify-center rounded-full" style={{ width: 22, height: 22, background: "rgba(255,255,255,0.1)" }}>
+                      <Phone size={11} color="rgba(255,255,255,0.5)" />
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -295,21 +285,18 @@ export default function ContractDetail({
           )}
         </div>
 
-        {/* Bottom actions — mobile: sticky bar, desktop: vertical sidebar right of content */}
+        {/* Bottom actions — two channels only: Chat + Call */}
         <div
-          className="fixed bottom-0 px-4 pb-8 pt-4 md:bottom-auto md:top-1/2 md:px-0 md:pb-0 md:pt-0 md:flex md:flex-col md:gap-3"
+          className="fixed bottom-0 px-4 pb-8 pt-4 md:hidden"
           style={{
-            // Mobile: full-width bottom bar centered in 430px
             left: 0,
             right: 0,
             background: "linear-gradient(to top, #f4f8fe 70%, transparent)",
             maxWidth: "430px",
             marginInline: "auto",
-            // Desktop overrides via inline for positioning outside content
           }}
         >
-          {/* Mobile layout */}
-          <div className="grid grid-cols-2 gap-3 md:hidden">
+          <div className="grid grid-cols-2 gap-3">
             <motion.button
               whileTap={{ scale: 0.96 }}
               onClick={onAskExpert}
@@ -317,7 +304,7 @@ export default function ContractDetail({
               style={{ background: "linear-gradient(135deg, #cbdafb 0%, #a8c0f8 100%)", color: "#1a1f3a" }}
             >
               <MessageCircle size={16} />
-              Experte fragen
+              Jetzt chatten
             </motion.button>
             <motion.button
               whileTap={{ scale: 0.96 }}
@@ -331,7 +318,7 @@ export default function ContractDetail({
           </div>
         </div>
 
-        {/* Desktop sidebar buttons — outside content column, anchored right */}
+        {/* Desktop sidebar buttons */}
         <motion.div
           className="hidden md:flex flex-col gap-3 fixed"
           style={{
@@ -347,7 +334,7 @@ export default function ContractDetail({
             style={{ background: "linear-gradient(135deg, #cbdafb 0%, #a8c0f8 100%)", color: "#1a1f3a", whiteSpace: "nowrap" }}
           >
             <MessageCircle size={16} />
-            Experte fragen
+            Jetzt chatten
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.04 }}
@@ -361,16 +348,6 @@ export default function ContractDetail({
           </motion.button>
         </motion.div>
       </motion.div>
-
-      {/* Booking sheet */}
-      <AnimatePresence>
-        {showBooking && (
-          <BookingSheet
-            contractName={contract.name}
-            onClose={() => setShowBooking(false)}
-          />
-        )}
-      </AnimatePresence>
     </AnimatePresence>
   );
 }
