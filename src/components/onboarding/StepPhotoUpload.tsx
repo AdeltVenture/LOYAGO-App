@@ -54,11 +54,7 @@ export default function StepPhotoUpload({ onNext }: StepPhotoUploadProps) {
     setUploading(true);
     setError(null);
     try {
-      const { data: { session } } = await withTimeout(
-        supabase.auth.getSession(),
-        10_000,
-        "Session"
-      );
+      const { data: { session } } = await supabase.auth.getSession();
       const userId = session?.user?.id ?? "anon";
       const ext = file.name.split(".").pop() ?? "jpg";
       const path = `${userId}/${Date.now()}.${ext}`;
