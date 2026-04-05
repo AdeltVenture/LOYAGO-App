@@ -54,10 +54,10 @@ export default function Step1Welcome({ onNext }: Step1WelcomeProps) {
           </span>
         </div>
         <h2 className="text-xl font-bold leading-snug mb-1.5" style={{ color: "#1a1f3a" }}>
-          Weiteren Vertrag zu LOYAGO bringen
+          Weiteren Vertrag hinzufügen
         </h2>
         <p className="text-sm leading-relaxed" style={{ color: "#64748b" }}>
-          Sie möchten einen bestehenden Vertrag zu LOYAGO bringen. Was das für Sie bedeutet:
+          Sie möchten einen weiteren bereits bestehenden Versicherungsvertrag durch LOYAGO betreuen lassen. Was das für Sie bedeutet:
         </p>
       </motion.div>
 
