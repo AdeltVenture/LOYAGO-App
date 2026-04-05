@@ -25,7 +25,9 @@ import { contracts as fallbackContracts } from "./data/contracts";
 const LegalPage    = lazy(() => import("./components/LegalPage"));
 const FaqPage      = lazy(() => import("./components/FaqPage"));
 const ProfilePage  = lazy(() => import("./components/ProfilePage"));
-const OnboardingFlow = lazy(() => import("./components/OnboardingFlow"));
+
+// OnboardingFlow loaded statically — lazy chunks cause stale-module errors on gh-pages after redeploy
+import OnboardingFlow from "./components/OnboardingFlow";
 
 type Screen = "main" | "detail" | "chat" | "onboarding";
 
@@ -242,14 +244,12 @@ export default function App() {
       {/* Onboarding overlay */}
       <AnimatePresence>
         {screen === "onboarding" && (
-          <Suspense fallback={null}>
-            <OnboardingFlow
-              onClose={handleBack}
-              onFinish={handleFinishOnboarding}
-              onChat={() => { setScreen("chat"); }}
-              onCall={() => { setScreen("main"); setCallModalOpen(true); }}
-            />
-          </Suspense>
+          <OnboardingFlow
+            onClose={handleBack}
+            onFinish={handleFinishOnboarding}
+            onChat={() => { setScreen("chat"); }}
+            onCall={() => { setScreen("main"); setCallModalOpen(true); }}
+          />
         )}
       </AnimatePresence>
 
