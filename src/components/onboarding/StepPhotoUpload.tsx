@@ -61,7 +61,7 @@ export default function StepPhotoUpload({ onNext }: StepPhotoUploadProps) {
       );
       const userId = session?.user?.id ?? "anon";
       const ext = file.name.split(".").pop() ?? "jpg";
-      const path = `uploads/${userId}/${Date.now()}.${ext}`;
+      const path = `${userId}/${Date.now()}.${ext}`;
 
       const { error: uploadError } = await withTimeout(
         supabase.storage.from("documents").upload(path, file, { upsert: true }),
@@ -70,8 +70,8 @@ export default function StepPhotoUpload({ onNext }: StepPhotoUploadProps) {
       );
 
       if (uploadError) {
-        console.error("Upload error:", uploadError.message);
-        setError("Upload fehlgeschlagen. Sie können den Schein auch später nachreichen.");
+        console.error("Upload error:", uploadError.message, uploadError);
+        setError(`Upload fehlgeschlagen (${uploadError.message}). Sie können den Schein auch später nachreichen.`);
         return;
       }
 
