@@ -107,12 +107,12 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: "100%", opacity: 0 }}
       transition={{ type: "spring", damping: 28, stiffness: 300 }}
-      className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: "#f4f8fe", maxWidth: "430px", marginInline: "auto" }}
+      className="fixed inset-x-0 top-0 z-50 flex flex-col"
+      style={{ background: "#f4f8fe", maxWidth: "430px", marginInline: "auto", height: "100dvh" }}
     >
-      {/* Header */}
-      <div className="flex items-center gap-3 px-4 pt-12 pb-4"
-        style={{ background: "rgba(244,248,254,0.95)", backdropFilter: "blur(12px)" }}>
+      {/* Header — always visible, pinned top like WhatsApp */}
+      <div className="flex-shrink-0 flex items-center gap-3 px-4 pt-12 pb-4"
+        style={{ background: "rgba(244,248,254,0.97)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(0,0,0,0.05)" }}>
         <button onClick={onBack} className="flex items-center justify-center rounded-xl"
           style={{ width: 38, height: 38, background: "white", boxShadow: "0 1px 3px rgba(0,0,0,0.08)" }}>
           <ArrowLeft size={18} color="#1a1f3a" />
@@ -217,18 +217,22 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
         </div>
       )}
 
-      {/* Input */}
-      <div className="px-4 pb-8 pt-3" style={{ background: "rgba(244,248,254,0.95)", backdropFilter: "blur(12px)" }}>
+      {/* Input — flex-shrink-0 so it stays at bottom when keyboard opens */}
+      <div className="flex-shrink-0 px-4 pt-3 pb-4" style={{ background: "rgba(244,248,254,0.97)", backdropFilter: "blur(12px)", paddingBottom: "max(16px, env(safe-area-inset-bottom))" }}>
         <div className="flex items-end gap-2 px-4 py-2 rounded-2xl"
           style={{ background: "white", boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }}>
           <textarea
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value);
+              e.target.style.height = "auto";
+              e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+            }}
             onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(input); } }}
             placeholder="Schreiben Sie eine Nachricht …"
             rows={1}
             className="flex-1 resize-none outline-none text-sm bg-transparent py-1"
-            style={{ color: "#1a1f3a", maxHeight: "100px", lineHeight: "1.5" }}
+            style={{ color: "#1a1f3a", lineHeight: "1.5", height: "24px", maxHeight: "120px" }}
           />
           <motion.button
             whileTap={{ scale: 0.9 }}
