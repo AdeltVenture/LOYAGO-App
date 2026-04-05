@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, X } from "lucide-react";
-import { supabase } from "../lib/supabase";
 import { restInsert, getUserId } from "../lib/supabaseDirect";
 import Step1Welcome from "./onboarding/Step1Welcome";
 import StepPhotoUpload from "./onboarding/StepPhotoUpload";
