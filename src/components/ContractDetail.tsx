@@ -290,16 +290,21 @@ export default function ContractDetail({
           )}
         </div>
 
-        {/* Bottom actions */}
+        {/* Bottom actions — mobile: sticky bar, desktop: vertical sidebar right of content */}
         <div
-          className="fixed bottom-0 left-0 right-0 px-4 pb-8 pt-4"
+          className="fixed bottom-0 px-4 pb-8 pt-4 md:bottom-auto md:top-1/2 md:px-0 md:pb-0 md:pt-0 md:flex md:flex-col md:gap-3"
           style={{
+            // Mobile: full-width bottom bar centered in 430px
+            left: 0,
+            right: 0,
             background: "linear-gradient(to top, #f4f8fe 70%, transparent)",
             maxWidth: "430px",
             marginInline: "auto",
+            // Desktop overrides via inline for positioning outside content
           }}
         >
-          <div className="grid grid-cols-2 gap-3">
+          {/* Mobile layout */}
+          <div className="grid grid-cols-2 gap-3 md:hidden">
             <motion.button
               whileTap={{ scale: 0.96 }}
               onClick={onAskExpert}
@@ -319,6 +324,37 @@ export default function ContractDetail({
               Jetzt anrufen
             </motion.button>
           </div>
+        </div>
+
+        {/* Desktop sidebar buttons — outside content column, anchored right */}
+        <div
+          className="hidden md:flex flex-col gap-3 fixed"
+          style={{
+            top: "50%",
+            transform: "translateY(-50%)",
+            right: "max(16px, calc((100vw - 430px) / 2 - 160px))",
+          }}
+        >
+          <motion.button
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            onClick={onAskExpert}
+            className="flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-semibold shadow-lg"
+            style={{ background: "linear-gradient(135deg, #cbdafb 0%, #a8c0f8 100%)", color: "#1a1f3a", whiteSpace: "nowrap" }}
+          >
+            <MessageCircle size={16} />
+            Experte fragen
+          </motion.button>
+          <motion.button
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            onClick={onCall}
+            className="flex items-center gap-2.5 px-4 py-3 rounded-2xl text-sm font-semibold shadow-lg"
+            style={{ background: "#1a1f3a", color: "white", whiteSpace: "nowrap" }}
+          >
+            <Phone size={16} />
+            Jetzt anrufen
+          </motion.button>
         </div>
       </motion.div>
 
