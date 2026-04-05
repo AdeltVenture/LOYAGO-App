@@ -114,10 +114,14 @@ export default function OnboardingFlow({
             )}
             {step === 4 && (
               <Step4Consent data={data} onChange={updateData} onSubmit={async () => {
-                // Store Betreuungswunsch in Supabase
-                const { data: { session } } = await supabase.auth.getSession();
+                // Read user_id from localStorage — avoids hanging getSession() call
+                const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+                const projectRef = new URL(supabaseUrl).hostname.split(".")[0];
+                const authRaw = localStorage.getItem(`sb-${projectRef}-auth-token`);
+                const userId = authRaw ? JSON.parse(authRaw).user?.id ?? null : null;
+
                 await supabase.from("care_requests").insert({
-                  user_id: session?.user?.id ?? null,
+                  user_id: userId,
                   first_name: data.firstName,
                   last_name: data.lastName,
                   email: data.email,
