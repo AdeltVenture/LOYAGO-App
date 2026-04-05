@@ -33,6 +33,7 @@ export interface Contract {
   coverage: string;
   deductible: string;
   notes?: string;
+  cancellationPeriod?: string;
   color: string;
   optimization?: ContractOptimization;
   documentUrl?: string;

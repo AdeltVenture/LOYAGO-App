@@ -13,18 +13,33 @@ const SUGGESTIONS = [
 ];
 
 function buildSystemPrompt(contracts: Contract[], firstName: string): string {
-  const contractList = contracts.map((c) =>
-    `- ${c.name} (${c.insurer}): ${c.annualPremium.toFixed(2)} €/Jahr, Status: ${c.status}${c.optimization ? `, Optimierungsbedarf: ${c.optimization.saving} Ersparnis möglich` : ""}`
-  ).join("\n");
+  const contractList = contracts.map((c) => {
+    const lines = [
+      `## ${c.name} (${c.insurer})`,
+      `- Versicherungsschein-Nr.: ${c.policyNumber || "–"}`,
+      `- Jahresbeitrag: ${c.annualPremium.toFixed(2)} €`,
+      `- Monatsbeitrag: ${c.monthlyPremium.toFixed(2)} €`,
+      `- Vertragsbeginn: ${c.startDate || "–"}`,
+      `- Nächste Verlängerung: ${c.renewalDate || "–"}`,
+      `- Kündigungsfrist: ${c.cancellationPeriod || "nicht hinterlegt"}`,
+      `- Deckungsumfang: ${c.coverage || "–"}`,
+      `- Selbstbehalt: ${c.deductible || "–"}`,
+      `- Status: ${c.status}`,
+    ];
+    if (c.notes) lines.push(`- Hinweise: ${c.notes}`);
+    if (c.optimization) lines.push(`- Optimierungspotenzial: ${c.optimization.saving} Ersparnis – ${c.optimization.detail}`);
+    return lines.join("\n");
+  }).join("\n\n");
 
   return `Du bist ein persönlicher Versicherungsberater von LOYAGO und hilfst ${firstName} bei allen Fragen rund um seine Versicherungen. Du kennst seine aktuellen Verträge genau und gibst konkrete, hilfreiche Empfehlungen.
 
 Aktuelle Verträge von ${firstName}:
+
 ${contractList}
 
 Verhaltensgrundsätze:
 - Antworte immer auf Deutsch, freundlich und professionell (Sie-Form)
-- Sei konkret und beziehe dich auf die echten Vertragsdaten
+- Sei konkret und beziehe dich auf die echten Vertragsdaten (Vertragsnummern, Beträge, Daten)
 - Halte Antworten kurz (3-5 Sätze) – das ist ein Chat, kein Bericht
 - Bei komplexen Themen empfiehl ein Telefonat
 - Empfehle nie Produkte außerhalb des LOYAGO-Portfolios
