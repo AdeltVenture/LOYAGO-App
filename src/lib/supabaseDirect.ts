@@ -79,4 +79,22 @@ export async function storageUpload(bucket: string, path: string, file: File): P
   return `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${path}`;
 }
 
-export { getUserId };
+/** Fetch rows from a table via REST API. Returns empty array on error. */
+export async function restSelect<T = Record<string, unknown>>(
+  table: string,
+  eq: Record<string, string>,
+  order?: string,
+  limit = 100
+): Promise<T[]> {
+  const params = new URLSearchParams();
+  Object.entries(eq).forEach(([col, val]) => params.set(col, `eq.${val}`));
+  if (order) params.set("order", order);
+  params.set("limit", String(limit));
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${params}`, {
+    headers: authHeaders({ "Accept": "application/json" }),
+  });
+  if (!res.ok) return [];
+  return res.json() as Promise<T[]>;
+}
+
+export { getToken, getUserId };

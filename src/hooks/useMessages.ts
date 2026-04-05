@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { getToken, getUserId, restSelect } from "../lib/supabaseDirect";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
 export interface ChatMessage {
   id: string;
@@ -22,21 +25,21 @@ export function useMessages() {
   useEffect(() => {
     let cancelled = false;
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (cancelled) return;
-      if (!session) { setLoading(false); return; }
-
-      const { data } = await supabase
-        .from("messages")
-        .select("id, role, content, created_at")
-        .eq("user_id", session.user.id)
-        .order("created_at", { ascending: true })
-        .limit(100);
-
-      if (cancelled) return;
-      if (data) setMessages((data as DbMessage[]).map(toMessage));
+    const userId = getUserId();
+    if (!userId) {
       setLoading(false);
-    });
+      return;
+    }
+
+    restSelect<DbMessage>("messages", { user_id: userId }, "created_at.asc", 100)
+      .then((data) => {
+        if (cancelled) return;
+        setMessages(data.map(toMessage));
+        setLoading(false);
+      })
+      .catch(() => {
+        if (!cancelled) setLoading(false);
+      });
 
     return () => { cancelled = true; };
   }, []);
@@ -46,17 +49,28 @@ export function useMessages() {
     const tempMsg: ChatMessage = { id: tempId, role, content, createdAt: new Date().toISOString() };
     setMessages((prev) => [...prev, tempMsg]);
 
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
+    const userId = getUserId();
+    if (!userId) return;
 
-    const { data } = await supabase
-      .from("messages")
-      .insert({ user_id: session.user.id, role, content })
-      .select("id, role, content, created_at")
-      .single();
+    // Insert via REST and fetch back the created row
+    const token = getToken();
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/messages`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "apikey": SUPABASE_ANON_KEY,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
+      },
+      body: JSON.stringify({ user_id: userId, role, content }),
+    });
 
-    if (data) {
-      setMessages((prev) => prev.map((m) => m.id === tempId ? toMessage(data as DbMessage) : m));
+    if (res.ok) {
+      const rows: DbMessage[] = await res.json();
+      const saved = rows[0];
+      if (saved) {
+        setMessages((prev) => prev.map((m) => m.id === tempId ? toMessage(saved) : m));
+      }
     }
   }
 

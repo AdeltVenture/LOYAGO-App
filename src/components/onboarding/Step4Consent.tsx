@@ -1,15 +1,17 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { FileText, ShieldCheck, ChevronDown } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FileText, ShieldCheck, ChevronDown, Loader2, AlertCircle } from "lucide-react";
 import { type OnboardingData, popularInsurers } from "../../data/onboarding";
 
 interface Step4ConsentProps {
   data: OnboardingData;
   onChange: (data: Partial<OnboardingData>) => void;
   onSubmit: () => void;
+  submitting?: boolean;
+  submitError?: string | null;
 }
 
-export default function Step4Consent({ data, onChange, onSubmit }: Step4ConsentProps) {
+export default function Step4Consent({ data, onChange, onSubmit, submitting = false, submitError = null }: Step4ConsentProps) {
   const [legalExpanded, setLegalExpanded] = useState(false);
 
   const selectedInsurerNames = data.selectedInsurers.map((id) => {
@@ -222,19 +224,38 @@ export default function Step4Consent({ data, onChange, onSubmit }: Step4ConsentP
         </p>
       </div>
 
+      {/* Submit error */}
+      <AnimatePresence>
+        {submitError && (
+          <motion.div
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            className="flex items-start gap-2 rounded-2xl px-4 py-3 text-xs"
+            style={{ background: "#fef2f2", border: "1px solid #fecaca", color: "#991b1b" }}
+          >
+            <AlertCircle size={14} style={{ flexShrink: 0, marginTop: 1 }} />
+            <span>{submitError}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.button
         whileTap={{ scale: 0.97 }}
         onClick={onSubmit}
-        disabled={!data.consentGiven}
+        disabled={!data.consentGiven || submitting}
         className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-sm font-bold"
         style={{
-          background: data.consentGiven ? "#1a1f3a" : "#e2e8f0",
-          color: data.consentGiven ? "white" : "#94a3b8",
+          background: data.consentGiven && !submitting ? "#1a1f3a" : "#e2e8f0",
+          color: data.consentGiven && !submitting ? "white" : "#94a3b8",
           transition: "background 0.2s",
         }}
       >
-        <FileText size={16} />
-        Betreuungsauftrag verbindlich erteilen
+        {submitting ? (
+          <><Loader2 size={16} className="animate-spin" /> Wird übermittelt …</>
+        ) : (
+          <><FileText size={16} /> Betreuungsauftrag verbindlich erteilen</>
+        )}
       </motion.button>
     </motion.div>
   );

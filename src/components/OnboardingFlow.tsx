@@ -32,6 +32,8 @@ export default function OnboardingFlow({
   const [step, setStep] = useState(1);
   const [data, setData] = useState<OnboardingData>(emptyOnboardingData);
   const [documentUrl, setDocumentUrl] = useState<string | undefined>();
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   function updateData(partial: Partial<OnboardingData>) {
     setData((d) => ({ ...d, ...partial }));
@@ -113,23 +115,37 @@ export default function OnboardingFlow({
               <Step2PersonalData data={data} onChange={updateData} onNext={next} />
             )}
             {step === 4 && (
-              <Step4Consent data={data} onChange={updateData} onSubmit={async () => {
-                await restInsert("care_requests", {
-                  user_id: getUserId(),
-                  first_name: data.firstName,
-                  last_name: data.lastName,
-                  email: data.email,
-                  phone: data.phone || null,
-                  street: data.street,
-                  zip: data.zip,
-                  city: data.city,
-                  insurers: data.selectedInsurers,
-                  contract_name: data.contractName || null,
-                  consent_given: data.consentGiven,
-                  document_url: documentUrl ?? null,
-                });
-                next();
-              }} />
+              <Step4Consent
+                data={data}
+                onChange={updateData}
+                submitting={submitting}
+                submitError={submitError}
+                onSubmit={async () => {
+                  setSubmitting(true);
+                  setSubmitError(null);
+                  try {
+                    await restInsert("care_requests", {
+                      user_id: getUserId(),
+                      first_name: data.firstName,
+                      last_name: data.lastName,
+                      email: data.email,
+                      phone: data.phone || null,
+                      street: data.street,
+                      zip: data.zip,
+                      city: data.city,
+                      insurers: data.selectedInsurers,
+                      contract_name: data.contractName || null,
+                      consent_given: data.consentGiven,
+                      document_url: documentUrl ?? null,
+                    });
+                    next();
+                  } catch (err) {
+                    setSubmitError(err instanceof Error ? err.message : "Übermittlung fehlgeschlagen. Bitte versuchen Sie es erneut.");
+                  } finally {
+                    setSubmitting(false);
+                  }
+                }}
+              />
             )}
             {step === 5 && (
               <Step5Success
