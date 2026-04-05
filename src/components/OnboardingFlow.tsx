@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, X } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import { restInsert, getUserId } from "../lib/supabaseDirect";
 import Step1Welcome from "./onboarding/Step1Welcome";
 import StepPhotoUpload from "./onboarding/StepPhotoUpload";
 import Step2PersonalData from "./onboarding/Step2PersonalData";
@@ -114,14 +115,8 @@ export default function OnboardingFlow({
             )}
             {step === 4 && (
               <Step4Consent data={data} onChange={updateData} onSubmit={async () => {
-                // Read user_id from localStorage — avoids hanging getSession() call
-                const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-                const projectRef = new URL(supabaseUrl).hostname.split(".")[0];
-                const authRaw = localStorage.getItem(`sb-${projectRef}-auth-token`);
-                const userId = authRaw ? JSON.parse(authRaw).user?.id ?? null : null;
-
-                await supabase.from("care_requests").insert({
-                  user_id: userId,
+                await restInsert("care_requests", {
+                  user_id: getUserId(),
                   first_name: data.firstName,
                   last_name: data.lastName,
                   email: data.email,

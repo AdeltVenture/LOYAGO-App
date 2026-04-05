@@ -1,40 +1,13 @@
 import { useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, ImagePlus, ChevronRight, X, CheckCircle, FileText, Loader2, AlertCircle } from "lucide-react";
+import { storageUpload } from "../../lib/supabaseDirect";
 
 interface StepPhotoUploadProps {
   onNext: (documentUrl?: string) => void;
 }
 
 const ACCEPTED = "image/*,application/pdf";
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
-
-// Upload directly via fetch — bypasses Supabase SDK internal getSession() hang
-async function uploadDirect(file: File, path: string): Promise<string> {
-  // Read token from localStorage — instant, no network call
-  const projectRef = new URL(SUPABASE_URL).hostname.split(".")[0];
-  const authRaw = localStorage.getItem(`sb-${projectRef}-auth-token`);
-  const token = authRaw ? JSON.parse(authRaw).access_token : SUPABASE_ANON_KEY;
-
-  const res = await fetch(`${SUPABASE_URL}/storage/v1/object/documents/${path}`, {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${token}`,
-      "apikey": SUPABASE_ANON_KEY,
-      "Content-Type": file.type || "application/octet-stream",
-      "x-upsert": "true",
-    },
-    body: file,
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }));
-    throw new Error(err.error || err.message || `HTTP ${res.status}`);
-  }
-
-  return `${SUPABASE_URL}/storage/v1/object/public/documents/${path}`;
-}
 
 export default function StepPhotoUpload({ onNext }: StepPhotoUploadProps) {
   const [preview, setPreview] = useState<string | null>(null);
@@ -75,7 +48,7 @@ export default function StepPhotoUpload({ onNext }: StepPhotoUploadProps) {
     try {
       const ext = file.name.split(".").pop() ?? "jpg";
       const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const publicUrl = await uploadDirect(file, path);
+      const publicUrl = await storageUpload("documents", path, file);
       onNext(publicUrl);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
