@@ -52,13 +52,9 @@ export default function FloatingActions({ onChat, onCall }: FloatingActionsProps
               <button
                 onClick={() => { onChat(); setExpanded(false); }}
                 className="flex items-center justify-center rounded-full shadow-lg"
-                style={{
-                  width: 48,
-                  height: 48,
-                  background: "linear-gradient(135deg, #cbdafb 0%, #7ba3f5 100%)",
-                }}
+                style={{ width: 48, height: 48, background: "#1a1f3a" }}
               >
-                <MessageCircle size={20} style={{ color: "#1a1f3a" }} />
+                <MessageCircle size={20} style={{ color: "white" }} />
               </button>
             </motion.div>
           </>
