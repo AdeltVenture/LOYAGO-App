@@ -1,11 +1,11 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ClipboardList, ChevronDown, Clock, Loader2, CheckCircle2 } from "lucide-react";
+import { ClipboardList, ChevronDown, Clock, Loader2, CheckCircle2, Building2 } from "lucide-react";
 import { useState } from "react";
 import { useCareRequests, type CareRequest } from "../hooks/useCareRequests";
 
 const statusConfig: Record<
   CareRequest["status"],
-  { label: string; bg: string; text: string; dot: string; Icon: React.ComponentType<{ size: number; color: string }> }
+  { label: string; bg: string; text: string; dot: string; Icon: React.ComponentType<{ size: number; color: string; className?: string }> }
 > = {
   pending:    { label: "Eingereicht",    bg: "#fef9c3", text: "#854d0e", dot: "#eab308", Icon: Clock },
   processing: { label: "In Bearbeitung", bg: "#dbeafe", text: "#1d4ed8", dot: "#3b82f6", Icon: Loader2 },
@@ -16,7 +16,7 @@ function StatusPill({ status }: { status: CareRequest["status"] }) {
   const cfg = statusConfig[status];
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-full font-semibold"
+      className="inline-flex items-center gap-1.5 rounded-full font-semibold flex-shrink-0"
       style={{ background: cfg.bg, color: cfg.text, fontSize: 11, padding: "3px 9px" }}
     >
       <span style={{ width: 6, height: 6, borderRadius: "50%", background: cfg.dot, display: "inline-block", flexShrink: 0 }} />
@@ -26,25 +26,39 @@ function StatusPill({ status }: { status: CareRequest["status"] }) {
 }
 
 function RequestCard({ req }: { req: CareRequest }) {
-  const date = new Date(req.createdAt).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" });
-  const insurerText = req.insurers.length > 0 ? req.insurers.join(", ") : "Keine Anbieter angegeben";
+  const date = new Date(req.createdAt).toLocaleDateString("de-DE", {
+    day: "2-digit", month: "2-digit", year: "numeric",
+  });
+
+  const title = req.contractName || "Versicherungsvertrag";
+  const insurerText = req.insurers.length > 0 ? req.insurers.join(", ") : null;
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl px-4 py-3.5 flex flex-col gap-2"
+      className="rounded-2xl px-4 py-3.5 flex flex-col gap-2.5"
       style={{ background: "white", boxShadow: "0 1px 4px rgba(26,31,58,0.07)" }}
     >
+      {/* Top row: title + status */}
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm font-semibold leading-snug" style={{ color: "#1a1f3a" }}>
-          Betreuungsauftrag
+          {title}
         </p>
         <StatusPill status={req.status} />
       </div>
-      <p className="text-xs leading-snug" style={{ color: "#64748b" }}>
-        {insurerText}
-      </p>
+
+      {/* Insurer row */}
+      {insurerText && (
+        <div className="flex items-center gap-1.5">
+          <Building2 size={12} style={{ color: "#94a3b8", flexShrink: 0 }} />
+          <p className="text-xs leading-snug" style={{ color: "#64748b" }}>
+            {insurerText}
+          </p>
+        </div>
+      )}
+
+      {/* Date */}
       <p className="text-xs" style={{ color: "#94a3b8" }}>
         Eingereicht am {date}
       </p>

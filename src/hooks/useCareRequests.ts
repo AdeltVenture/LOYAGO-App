@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { getUserId, getToken } from "../lib/supabaseDirect";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
 export interface CareRequest {
   id: string;
@@ -7,10 +10,8 @@ export interface CareRequest {
   lastName: string;
   email: string;
   phone: string | null;
-  street: string | null;
-  zip: string | null;
-  city: string | null;
   insurers: string[];
+  contractName: string | null;
   status: "pending" | "processing" | "confirmed";
   createdAt: string;
   documentUrl: string | null;
@@ -22,10 +23,8 @@ interface DbCareRequest {
   last_name: string;
   email: string;
   phone: string | null;
-  street: string | null;
-  zip: string | null;
-  city: string | null;
   insurers: string[] | null;
+  contract_name: string | null;
   status: string;
   created_at: string;
   document_url: string | null;
@@ -38,69 +37,51 @@ function toRequest(r: DbCareRequest): CareRequest {
     lastName: r.last_name,
     email: r.email,
     phone: r.phone,
-    street: r.street,
-    zip: r.zip,
-    city: r.city,
     insurers: r.insurers ?? [],
+    contractName: r.contract_name ?? null,
     status: (r.status as CareRequest["status"]) ?? "pending",
     createdAt: r.created_at,
     documentUrl: r.document_url,
   };
 }
 
-const SELECT = "id, first_name, last_name, email, phone, street, zip, city, insurers, status, created_at, document_url";
-
 export function useCareRequests() {
   const [requests, setRequests] = useState<CareRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  const [realtimeError, setRealtimeError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
 
-    // Initial load
-    supabase
-      .from("care_requests")
-      .select(SELECT)
-      .order("created_at", { ascending: false })
-      .then(({ data, error }) => {
-        if (cancelled) return;
-        if (error) console.error("care_requests load error:", error.message);
-        if (data) setRequests((data as DbCareRequest[]).map(toRequest));
-        setLoading(false);
-      });
+    const userId = getUserId();
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
 
-    // Realtime: status updates arrive instantly
-    const channel = supabase
-      .channel("care_requests_changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "care_requests" },
-        (payload) => {
-          if (cancelled) return;
-          if (payload.eventType === "INSERT") {
-            setRequests((prev) => [toRequest(payload.new as DbCareRequest), ...prev]);
-          } else if (payload.eventType === "UPDATE") {
-            setRequests((prev) =>
-              prev.map((r) => (r.id === payload.new.id ? toRequest(payload.new as DbCareRequest) : r))
-            );
-          } else if (payload.eventType === "DELETE") {
-            setRequests((prev) => prev.filter((r) => r.id !== payload.old.id));
-          }
+    // Initial load via direct REST — avoids getSession() hang
+    const params = new URLSearchParams({
+      user_id: `eq.${userId}`,
+      order: "created_at.desc",
+      select: "id,first_name,last_name,email,phone,insurers,contract_name,status,created_at,document_url",
+    });
+    fetch(`${SUPABASE_URL}/rest/v1/care_requests?${params}`, {
+      headers: {
+        "Authorization": `Bearer ${getToken()}`,
+        "apikey": SUPABASE_ANON_KEY,
+        "Accept": "application/json",
+      },
+    })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data: DbCareRequest[]) => {
+        if (!cancelled) {
+          setRequests(data.map(toRequest));
+          setLoading(false);
         }
-      )
-      .subscribe((status) => {
-        if (status === "CHANNEL_ERROR") {
-          console.error("Realtime subscription failed for care_requests");
-          setRealtimeError(true);
-        }
-      });
+      })
+      .catch(() => { if (!cancelled) setLoading(false); });
 
-    return () => {
-      cancelled = true;
-      supabase.removeChannel(channel);
-    };
+    return () => { cancelled = true; };
   }, []);
 
-  return { requests, loading, realtimeError };
+  return { requests, loading };
 }
