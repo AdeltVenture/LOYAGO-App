@@ -36,6 +36,9 @@ export const popularInsurers: InsurerOption[] = [
   { id: "hdi",           name: "HDI",                logo: "🛡️", categories: ["KFZ", "Haftpflicht", "Leben", "BU"] },
   { id: "swiss-life",    name: "Swiss Life",         logo: "🇨🇭", categories: ["Leben", "BU", "Rente"] },
   { id: "canada-life",   name: "Canada Life",        logo: "🍁", categories: ["Leben", "BU", "Rente"] },
+  { id: "huk24",         name: "HUK24",              logo: "🔴", categories: ["KFZ", "Haftpflicht", "Hausrat"] },
+  { id: "ammerlaender",  name: "Ammerländer",        logo: "🏡", categories: ["Wohngebäude", "Hausrat", "Haftpflicht"] },
+  { id: "haftpflichtkasse", name: "Haftpflichtkasse",logo: "🛡️", categories: ["Haftpflicht", "Rechtsschutz"] },
 ];
 
 export interface OnboardingData {
