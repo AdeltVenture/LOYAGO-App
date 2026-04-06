@@ -67,11 +67,34 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const [chatError, setChatError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const streamingRef = useRef<HTMLDivElement>(null);
+  const lastAssistantRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const didScrollToStreamStart = useRef(false);
 
+  // User sends → scroll to bottom to show typing indicator
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping, streamingText]);
+    if (isTyping) {
+      didScrollToStreamStart.current = false;
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [isTyping]);
+
+  // First streaming chunk → scroll to TOP of response bubble
+  useEffect(() => {
+    if (streamingText && !didScrollToStreamStart.current) {
+      didScrollToStreamStart.current = true;
+      streamingRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [streamingText]);
+
+  // Completed assistant message saved → scroll to its TOP
+  useEffect(() => {
+    const last = messages[messages.length - 1];
+    if (last?.role === "assistant") {
+      lastAssistantRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [messages]);
 
   // Abort ongoing request when chat closes
   useEffect(() => () => { abortRef.current?.abort(); }, []);
@@ -212,8 +235,9 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
         )}
 
         {/* Persisted messages */}
-        {messages.map((msg) => (
+        {messages.map((msg, idx) => (
           <motion.div key={msg.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+            ref={msg.role === "assistant" && idx === messages.length - 1 ? lastAssistantRef : undefined}
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start items-end gap-2"}`}>
             {msg.role === "assistant" && (
               <img src={`${import.meta.env.BASE_URL}expert.jpg`} alt="Experte"
@@ -237,6 +261,7 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
         <AnimatePresence>
           {isTyping && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              ref={streamingRef}
               className="flex justify-start items-end gap-2">
               <img src={`${import.meta.env.BASE_URL}expert.jpg`} alt="Experte"
                 className="rounded-full object-cover object-top flex-shrink-0 mb-1" style={{ width: 28, height: 28 }} />
