@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, Phone, X, Sparkles } from "lucide-react";
+import { MessageCircle, Phone, X } from "lucide-react";
 
 interface FloatingActionsProps {
   onChat: () => void;
@@ -65,45 +65,57 @@ export default function FloatingActions({ onChat, onCall }: FloatingActionsProps
         )}
       </AnimatePresence>
 
-      {/* Main FAB */}
+      {/* Main FAB — the "O" from LOYAGO */}
       <motion.button
         whileTap={{ scale: 0.92 }}
         onClick={() => setExpanded((v) => !v)}
-        className="flex items-center justify-center rounded-full shadow-xl relative"
+        className="flex items-center justify-center rounded-full relative"
         style={{
-          width: 56,
-          height: 56,
-          background: expanded
-            ? "#1a1f3a"
-            : "linear-gradient(135deg, #cbdafb 0%, #7ba3f5 100%)",
-          transition: "background 0.3s",
+          width: 58,
+          height: 58,
+          background: "#1a1f3a",
+          boxShadow: "0 4px 20px rgba(26,31,58,0.35), 0 1px 4px rgba(26,31,58,0.2)",
         }}
       >
-        {/* Pulse ring */}
+        {/* Subtle pulse ring when closed */}
         {!expanded && (
           <motion.div
             className="absolute inset-0 rounded-full"
-            style={{ background: "rgba(203,218,251,0.5)" }}
-            animate={{ scale: [1, 1.5, 1], opacity: [0.6, 0, 0.6] }}
-            transition={{ duration: 2, repeat: Infinity }}
+            style={{ border: "2px solid rgba(26,31,58,0.25)", background: "transparent" }}
+            animate={{ scale: [1, 1.45, 1], opacity: [0.5, 0, 0.5] }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
           />
         )}
+
         <AnimatePresence mode="wait">
           {expanded ? (
-            <motion.div key="close"
-              initial={{ opacity: 0, rotate: -90, scale: 0.7 }}
+            <motion.div
+              key="close"
+              initial={{ opacity: 0, rotate: -90, scale: 0.6 }}
               animate={{ opacity: 1, rotate: 0, scale: 1 }}
-              exit={{ opacity: 0, rotate: 90, scale: 0.7 }}
-              transition={{ duration: 0.2 }}>
+              exit={{ opacity: 0, rotate: 90, scale: 0.6 }}
+              transition={{ duration: 0.22 }}
+            >
               <X size={22} style={{ color: "white" }} />
             </motion.div>
           ) : (
-            <motion.div key="icons"
-              initial={{ opacity: 0, scale: 0.7 }}
+            <motion.div
+              key="logo-o"
+              initial={{ opacity: 0, scale: 0.6 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.7 }}
-              transition={{ duration: 0.2 }}>
-              <Sparkles size={22} strokeWidth={1.8} style={{ color: "#1a1f3a" }} />
+              exit={{ opacity: 0, scale: 0.6 }}
+              transition={{ duration: 0.22 }}
+              style={{
+                fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
+                fontWeight: 900,
+                fontSize: 28,
+                color: "white",
+                lineHeight: 1,
+                letterSpacing: "-0.04em",
+                userSelect: "none",
+              }}
+            >
+              O
             </motion.div>
           )}
         </AnimatePresence>
