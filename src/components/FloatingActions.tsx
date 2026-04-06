@@ -73,15 +73,16 @@ export default function FloatingActions({ onChat, onCall }: FloatingActionsProps
         style={{
           width: 58,
           height: 58,
-          background: "#1a1f3a",
-          boxShadow: "0 4px 20px rgba(26,31,58,0.35), 0 1px 4px rgba(26,31,58,0.2)",
+          background: expanded ? "#1a1f3a" : "linear-gradient(135deg, #cbdafb 0%, #7ba3f5 100%)",
+          boxShadow: "0 4px 20px rgba(26,31,58,0.25), 0 1px 4px rgba(26,31,58,0.15)",
+          transition: "background 0.3s",
         }}
       >
         {/* Subtle pulse ring when closed */}
         {!expanded && (
           <motion.div
             className="absolute inset-0 rounded-full"
-            style={{ border: "2px solid rgba(26,31,58,0.25)", background: "transparent" }}
+            style={{ border: "2px solid rgba(123,163,245,0.4)", background: "transparent" }}
             animate={{ scale: [1, 1.45, 1], opacity: [0.5, 0, 0.5] }}
             transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
           />
@@ -109,7 +110,7 @@ export default function FloatingActions({ onChat, onCall }: FloatingActionsProps
                 fontFamily: "'Inter', 'Helvetica Neue', Arial, sans-serif",
                 fontWeight: 900,
                 fontSize: 28,
-                color: "white",
+                color: "#1a1f3a",
                 lineHeight: 1,
                 letterSpacing: "-0.04em",
                 userSelect: "none",
