@@ -48,7 +48,7 @@ export default function App() {
   const activeContracts = contractsLoading ? fallbackContracts : contracts;
 
   useEffect(() => {
-    const t = setTimeout(() => setShowSplash(false), 5000);
+    const t = setTimeout(() => setShowSplash(false), 2500);
     return () => clearTimeout(t);
   }, []);
 

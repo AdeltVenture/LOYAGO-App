@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { getUserId, getToken } from "../lib/supabaseDirect";
 import type { Contract, ContractStatus } from "../data/contracts";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 
 interface DbContract {
   id: string;
@@ -61,16 +65,25 @@ export function useContracts() {
   async function load() {
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("contracts")
-        .select("*")
-        .order("sort_order", { ascending: true });
-      if (error) {
-        setError(error.message);
-        setContracts([]);
-      } else {
-        setContracts((data as DbContract[]).map(toContract));
-      }
+      // Direct REST call — avoids supabase.from() which internally calls
+      // getSession() and can hang in token-refresh scenarios
+      const userId = getUserId();
+      const params = new URLSearchParams({
+        order: "sort_order.asc",
+        select: "*",
+        ...(userId ? { user_id: `eq.${userId}` } : {}),
+      });
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/contracts?${params}`, {
+        headers: {
+          "Authorization": `Bearer ${getToken()}`,
+          "apikey": SUPABASE_ANON_KEY,
+          "Accept": "application/json",
+        },
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data: DbContract[] = await res.json();
+      setContracts(data.map(toContract));
+      setError(null);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Verträge konnten nicht geladen werden.");
       setContracts([]);

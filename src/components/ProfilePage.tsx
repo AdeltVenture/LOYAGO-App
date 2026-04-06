@@ -95,31 +95,31 @@ export default function ProfilePage({ onBack, onLogout }: { onBack: () => void; 
 
         {/* Persönliche Daten */}
         <Section title="PERSÖNLICHE DATEN">
-          <FieldRow label="Vorname" value={profile?.firstName ?? ""} />
+          <FieldRow label="Vorname" value={profile?.firstName ?? ""} editable={false} />
           <Divider />
-          <FieldRow label="Nachname" value={profile?.lastName ?? ""} />
+          <FieldRow label="Nachname" value={profile?.lastName ?? ""} editable={false} />
           {profile?.title ? (
             <>
               <Divider />
-              <FieldRow label="Titel" value={profile.title} />
+              <FieldRow label="Titel" value={profile.title} editable={false} />
             </>
           ) : null}
         </Section>
 
         {/* Adresse */}
         <Section title="ADRESSE">
-          <FieldRow label="Straße und Hausnummer" value={profile?.street ?? ""} />
+          <FieldRow label="Straße und Hausnummer" value={profile?.street ?? ""} editable={false} />
           <Divider />
-          <FieldRow label="PLZ / Ort" value={[profile?.zip, profile?.city].filter(Boolean).join(" ")} />
+          <FieldRow label="PLZ / Ort" value={[profile?.zip, profile?.city].filter(Boolean).join(" ")} editable={false} />
           <Divider />
           <FieldRow label="Land" value="Deutschland" editable={false} />
         </Section>
 
         {/* Kontakt */}
         <Section title="KONTAKTDATEN">
-          <FieldRow label="E-Mail" value={email} />
+          <FieldRow label="E-Mail" value={email} editable={false} />
           <Divider />
-          <FieldRow label="Telefon" value={profile?.phone ?? ""} />
+          <FieldRow label="Telefon" value={profile?.phone ?? ""} editable={false} />
         </Section>
 
         {/* Einstellungen */}
@@ -148,7 +148,7 @@ export default function ProfilePage({ onBack, onLogout }: { onBack: () => void; 
             </button>
           </div>
           <Divider />
-          <FieldRow label="Sprache" value="Deutsch" />
+          <FieldRow label="Sprache" value="Deutsch" editable={false} />
         </Section>
 
         {/* Account */}

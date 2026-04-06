@@ -77,7 +77,7 @@ export default function Step2PersonalData({ data, onChange, onNext }: Step2Perso
           label="Vorname"
           value={data.firstName}
           onChange={(v) => onChange({ firstName: v })}
-          placeholder="Marco"
+          placeholder="Max"
           icon={<User size={15} />}
           autoComplete="given-name"
         />
@@ -85,7 +85,7 @@ export default function Step2PersonalData({ data, onChange, onNext }: Step2Perso
           label="Nachname"
           value={data.lastName}
           onChange={(v) => onChange({ lastName: v })}
-          placeholder="Adelt"
+          placeholder="Mustermann"
           icon={<User size={15} />}
           autoComplete="family-name"
         />
@@ -95,7 +95,7 @@ export default function Step2PersonalData({ data, onChange, onNext }: Step2Perso
         label="E-Mail"
         value={data.email}
         onChange={(v) => onChange({ email: v })}
-        placeholder="marco.adelt@gmx.de"
+        placeholder="max@beispiel.de"
         type="email"
         icon={<Mail size={15} />}
         autoComplete="email"
@@ -105,7 +105,7 @@ export default function Step2PersonalData({ data, onChange, onNext }: Step2Perso
         label="Telefon"
         value={data.phone}
         onChange={(v) => onChange({ phone: v })}
-        placeholder="+49 170 1234567"
+        placeholder="+49 170 000 0000"
         type="tel"
         icon={<Phone size={15} />}
         autoComplete="tel"
@@ -125,7 +125,7 @@ export default function Step2PersonalData({ data, onChange, onNext }: Step2Perso
             label="Straße & Hausnummer"
             value={data.street}
             onChange={(v) => onChange({ street: v })}
-            placeholder="Europa-Allee 165"
+            placeholder="Musterstraße 1"
             icon={<MapPin size={15} />}
             autoComplete="street-address"
           />
@@ -134,7 +134,7 @@ export default function Step2PersonalData({ data, onChange, onNext }: Step2Perso
               label="PLZ"
               value={data.zip}
               onChange={(v) => onChange({ zip: v })}
-              placeholder="60486"
+              placeholder="12345"
               icon={<MapPin size={12} />}
               autoComplete="postal-code"
             />
@@ -143,7 +143,7 @@ export default function Step2PersonalData({ data, onChange, onNext }: Step2Perso
                 label="Stadt"
                 value={data.city}
                 onChange={(v) => onChange({ city: v })}
-                placeholder="Frankfurt am Main"
+                placeholder="Ihre Stadt"
                 icon={<MapPin size={12} />}
                 autoComplete="address-level2"
               />
@@ -166,6 +166,12 @@ export default function Step2PersonalData({ data, onChange, onNext }: Step2Perso
         Weiter
         <ChevronRight size={17} />
       </motion.button>
+
+      {!isValid && (
+        <p className="text-center text-xs" style={{ color: "#94a3b8" }}>
+          Bitte füllen Sie alle Pflichtfelder aus
+        </p>
+      )}
     </motion.div>
   );
 }
