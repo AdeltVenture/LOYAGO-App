@@ -1,7 +1,28 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Check, ChevronRight, Plus } from "lucide-react";
+import { Search, Check, ChevronRight, X } from "lucide-react";
 import { popularInsurers, type OnboardingData } from "../../data/onboarding";
+
+const PRODUKT_SUGGESTIONS = [
+  "KFZ-Haftpflicht",
+  "Vollkaskoversicherung",
+  "Teilkaskoversicherung",
+  "Hausratversicherung",
+  "Privathaftpflicht",
+  "Berufsunfähigkeitsversicherung (BU)",
+  "Lebensversicherung",
+  "Risikolebensversicherung",
+  "Private Krankenversicherung (PKV)",
+  "Zahnzusatzversicherung",
+  "Reisekrankenversicherung",
+  "Reiserücktrittsversicherung",
+  "Unfallversicherung",
+  "Rechtsschutzversicherung",
+  "Wohngebäudeversicherung",
+  "Elementarschadenversicherung",
+  "Tierkrankenversicherung",
+  "Pflegezusatzversicherung",
+];
 
 interface Step3InsurersProps {
   data: OnboardingData;
@@ -10,32 +31,69 @@ interface Step3InsurersProps {
 }
 
 export default function Step3Insurers({ data, onChange, onNext }: Step3InsurersProps) {
-  const [search, setSearch] = useState("");
-  const [customInsurer, setCustomInsurer] = useState("");
-  const [showCustomInput, setShowCustomInput] = useState(false);
+  const [insurerSearch, setInsurerSearch] = useState("");
+  const [insurerFocused, setInsurerFocused] = useState(false);
+  const [produktFocused, setProduktFocused] = useState(false);
+  const insurerRef = useRef<HTMLDivElement>(null);
+  const produktRef = useRef<HTMLDivElement>(null);
 
-  const filtered = popularInsurers.filter((ins) =>
-    ins.name.toLowerCase().includes(search.toLowerCase())
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (insurerRef.current && !insurerRef.current.contains(e.target as Node)) {
+        setInsurerFocused(false);
+      }
+      if (produktRef.current && !produktRef.current.contains(e.target as Node)) {
+        setProduktFocused(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const filteredInsurers = popularInsurers.filter(
+    (ins) =>
+      ins.name.toLowerCase().includes(insurerSearch.toLowerCase()) &&
+      !data.selectedInsurers.includes(ins.id)
   );
 
-  function toggleInsurer(id: string) {
-    const current = data.selectedInsurers;
-    if (current.includes(id)) {
-      onChange({ selectedInsurers: current.filter((x) => x !== id) });
-    } else {
-      onChange({ selectedInsurers: [...current, id] });
-    }
+  const filteredProdukte = PRODUKT_SUGGESTIONS.filter((p) =>
+    p.toLowerCase().includes(data.contractName.toLowerCase()) &&
+    p.toLowerCase() !== data.contractName.toLowerCase()
+  );
+
+  function selectInsurer(id: string) {
+    onChange({ selectedInsurers: [...data.selectedInsurers, id] });
+    setInsurerSearch("");
+    setInsurerFocused(false);
   }
 
-  function addCustom() {
-    if (!customInsurer.trim()) return;
-    const id = `custom-${customInsurer.toLowerCase().replace(/\s/g, "-")}`;
-    onChange({ selectedInsurers: [...data.selectedInsurers, id] });
-    setCustomInsurer("");
-    setShowCustomInput(false);
+  function removeInsurer(id: string) {
+    onChange({ selectedInsurers: data.selectedInsurers.filter((x) => x !== id) });
+  }
+
+  function getInsurerName(id: string) {
+    const found = popularInsurers.find((ins) => ins.id === id);
+    return found ? found.name : id.replace("custom-", "").replace(/-/g, " ");
+  }
+
+  function getInsurerLogo(id: string) {
+    return popularInsurers.find((ins) => ins.id === id)?.logo ?? "🏢";
+  }
+
+  function addCustomInsurer() {
+    const name = insurerSearch.trim();
+    if (!name) return;
+    const id = `custom-${name.toLowerCase().replace(/\s+/g, "-")}`;
+    if (!data.selectedInsurers.includes(id)) {
+      onChange({ selectedInsurers: [...data.selectedInsurers, id] });
+    }
+    setInsurerSearch("");
+    setInsurerFocused(false);
   }
 
   const selectedCount = data.selectedInsurers.length;
+  const canProceed = selectedCount > 0 || data.contractName.trim().length > 0;
 
   return (
     <motion.div
@@ -43,172 +101,222 @@ export default function Step3Insurers({ data, onChange, onNext }: Step3InsurersP
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -30 }}
       transition={{ duration: 0.3 }}
-      className="flex flex-col gap-4"
+      className="flex flex-col gap-5"
     >
       <div className="mb-1">
         <h3 className="text-lg font-bold" style={{ color: "#1a1f3a" }}>
-          Versicherer & Produkt
+          Versicherer &amp; Produkt
         </h3>
         <p className="text-sm mt-1" style={{ color: "#64748b" }}>
-          Wählen Sie den Versicherer und geben Sie die Produktart an.
+          Wählen Sie den Versicherer und die Produktart aus.
         </p>
       </div>
 
-      {/* Contract name */}
+      {/* ── Versicherer ── */}
+      <div>
+        <label className="block text-xs font-semibold mb-1.5" style={{ color: "#475569" }}>
+          Versicherer
+        </label>
+
+        {/* Selected chips */}
+        <AnimatePresence>
+          {selectedCount > 0 && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="flex flex-wrap gap-1.5 mb-2"
+            >
+              {data.selectedInsurers.map((id) => (
+                <motion.span
+                  key={id}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold"
+                  style={{ background: "#1a1f3a", color: "white" }}
+                >
+                  <span>{getInsurerLogo(id)}</span>
+                  {getInsurerName(id)}
+                  <button
+                    onClick={() => removeInsurer(id)}
+                    className="flex items-center justify-center rounded-full"
+                    style={{ width: 14, height: 14, background: "rgba(255,255,255,0.2)", flexShrink: 0 }}
+                  >
+                    <X size={9} style={{ color: "white" }} />
+                  </button>
+                </motion.span>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Search input with dropdown */}
+        <div ref={insurerRef} className="relative">
+          <div
+            className="flex items-center gap-2 px-3 rounded-xl"
+            style={{
+              background: "white",
+              border: `1.5px solid ${insurerFocused ? "#4a6da8" : "#e2e8f0"}`,
+              height: 46,
+              transition: "border-color 0.15s",
+            }}
+          >
+            <Search size={15} style={{ color: "#94a3b8", flexShrink: 0 }} />
+            <input
+              value={insurerSearch}
+              onChange={(e) => setInsurerSearch(e.target.value)}
+              onFocus={() => setInsurerFocused(true)}
+              onKeyDown={(e) => { if (e.key === "Enter" && filteredInsurers.length === 0 && insurerSearch.trim()) addCustomInsurer(); }}
+              placeholder="Versicherer suchen …"
+              className="flex-1 text-sm outline-none bg-transparent"
+              style={{ color: "#1a1f3a" }}
+            />
+          </div>
+
+          <AnimatePresence>
+            {insurerFocused && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.15 }}
+                className="absolute left-0 right-0 z-20 rounded-2xl overflow-hidden"
+                style={{
+                  top: "calc(100% + 6px)",
+                  background: "white",
+                  boxShadow: "0 8px 24px rgba(26,31,58,0.12)",
+                  border: "1px solid #e2e8f0",
+                  maxHeight: 240,
+                  overflowY: "auto",
+                }}
+              >
+                {filteredInsurers.length > 0 ? (
+                  filteredInsurers.map((ins) => (
+                    <button
+                      key={ins.id}
+                      onMouseDown={() => selectInsurer(ins.id)}
+                      className="w-full flex items-center gap-3 px-4 py-3 text-left"
+                      style={{ borderBottom: "1px solid #f8fafc" }}
+                      onMouseEnter={e => (e.currentTarget.style.background = "#f4f8fe")}
+                      onMouseLeave={e => (e.currentTarget.style.background = "white")}
+                    >
+                      <span style={{ fontSize: 18 }}>{ins.logo}</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate" style={{ color: "#1a1f3a" }}>{ins.name}</p>
+                        <p className="text-xs truncate" style={{ color: "#94a3b8" }}>{ins.categories.join(", ")}</p>
+                      </div>
+                    </button>
+                  ))
+                ) : insurerSearch.trim() ? (
+                  <button
+                    onMouseDown={addCustomInsurer}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-left"
+                    onMouseEnter={e => (e.currentTarget.style.background = "#f4f8fe")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "white")}
+                  >
+                    <span style={{ fontSize: 18 }}>🏢</span>
+                    <div>
+                      <p className="text-sm font-semibold" style={{ color: "#1a1f3a" }}>„{insurerSearch}" hinzufügen</p>
+                      <p className="text-xs" style={{ color: "#94a3b8" }}>Nicht in der Liste</p>
+                    </div>
+                  </button>
+                ) : (
+                  popularInsurers
+                    .filter((ins) => !data.selectedInsurers.includes(ins.id))
+                    .map((ins) => (
+                      <button
+                        key={ins.id}
+                        onMouseDown={() => selectInsurer(ins.id)}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left"
+                        style={{ borderBottom: "1px solid #f8fafc" }}
+                        onMouseEnter={e => (e.currentTarget.style.background = "#f4f8fe")}
+                        onMouseLeave={e => (e.currentTarget.style.background = "white")}
+                      >
+                        <span style={{ fontSize: 18 }}>{ins.logo}</span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold truncate" style={{ color: "#1a1f3a" }}>{ins.name}</p>
+                          <p className="text-xs truncate" style={{ color: "#94a3b8" }}>{ins.categories.join(", ")}</p>
+                        </div>
+                      </button>
+                    ))
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* ── Produktart ── */}
       <div>
         <label className="block text-xs font-semibold mb-1.5" style={{ color: "#475569" }}>
           Produktart / Vertragsart
         </label>
-        <input
-          type="text"
-          value={data.contractName}
-          onChange={(e) => onChange({ contractName: e.target.value })}
-          placeholder="z. B. Reisekrankenversicherung, KFZ-Haftpflicht …"
-          className="w-full rounded-xl px-3 py-3 text-sm outline-none"
-          style={{ background: "white", border: "1.5px solid #e2e8f0", color: "#1a1f3a" }}
-          onFocus={e => (e.target.style.borderColor = "#4a6da8")}
-          onBlur={e => (e.target.style.borderColor = "#e2e8f0")}
-        />
+        <div ref={produktRef} className="relative">
+          <input
+            type="text"
+            value={data.contractName}
+            onChange={(e) => onChange({ contractName: e.target.value })}
+            onFocus={() => setProduktFocused(true)}
+            placeholder="z. B. Reisekrankenversicherung …"
+            className="w-full rounded-xl px-3 py-3 text-sm outline-none"
+            style={{
+              background: "white",
+              border: `1.5px solid ${produktFocused ? "#4a6da8" : "#e2e8f0"}`,
+              color: "#1a1f3a",
+              transition: "border-color 0.15s",
+            }}
+          />
+
+          <AnimatePresence>
+            {produktFocused && filteredProdukte.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -4 }}
+                transition={{ duration: 0.15 }}
+                className="absolute left-0 right-0 z-20 rounded-2xl overflow-hidden"
+                style={{
+                  top: "calc(100% + 6px)",
+                  background: "white",
+                  boxShadow: "0 8px 24px rgba(26,31,58,0.12)",
+                  border: "1px solid #e2e8f0",
+                  maxHeight: 220,
+                  overflowY: "auto",
+                }}
+              >
+                {filteredProdukte.map((p) => (
+                  <button
+                    key={p}
+                    onMouseDown={() => { onChange({ contractName: p }); setProduktFocused(false); }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-left text-sm"
+                    style={{ borderBottom: "1px solid #f8fafc", color: "#1a1f3a" }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "#f4f8fe")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "white")}
+                  >
+                    <Check size={13} style={{ color: "#94a3b8", flexShrink: 0 }} />
+                    {p}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
-
-      {/* Search */}
-      <div
-        className="flex items-center gap-2 px-3 rounded-xl"
-        style={{ background: "white", border: "1.5px solid #e2e8f0", height: 44 }}
-      >
-        <Search size={15} style={{ color: "#94a3b8" }} />
-        <input
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Versicherer suchen …"
-          className="flex-1 text-sm outline-none bg-transparent"
-          style={{ color: "#1a1f3a" }}
-        />
-      </div>
-
-      {/* Insurer grid */}
-      <div className="grid grid-cols-2 gap-2">
-        {filtered.map((ins) => {
-          const isSelected = data.selectedInsurers.includes(ins.id);
-          return (
-            <motion.button
-              key={ins.id}
-              whileTap={{ scale: 0.96 }}
-              onClick={() => toggleInsurer(ins.id)}
-              className="flex items-center gap-2.5 px-3 py-3 rounded-xl text-left relative"
-              style={{
-                background: isSelected ? "#1a1f3a" : "white",
-                border: `1.5px solid ${isSelected ? "#1a1f3a" : "#e2e8f0"}`,
-                transition: "all 0.2s",
-              }}
-            >
-              <span style={{ fontSize: 20 }}>{ins.logo}</span>
-              <div className="flex-1 min-w-0">
-                <p
-                  className="text-xs font-semibold truncate"
-                  style={{ color: isSelected ? "white" : "#1a1f3a" }}
-                >
-                  {ins.name}
-                </p>
-                <p
-                  className="text-xs truncate mt-0.5"
-                  style={{ color: isSelected ? "rgba(255,255,255,0.6)" : "#94a3b8", fontSize: "10px" }}
-                >
-                  {ins.categories[0]}
-                  {ins.categories.length > 1 ? ` +${ins.categories.length - 1}` : ""}
-                </p>
-              </div>
-              {isSelected && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  className="absolute top-2 right-2 rounded-full flex items-center justify-center"
-                  style={{ width: 18, height: 18, background: "#22c55e" }}
-                >
-                  <Check size={11} style={{ color: "white" }} />
-                </motion.div>
-              )}
-            </motion.button>
-          );
-        })}
-      </div>
-
-      {/* Add custom insurer */}
-      <AnimatePresence>
-        {showCustomInput ? (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="flex gap-2"
-          >
-            <div
-              className="flex-1 flex items-center gap-2 px-3 rounded-xl"
-              style={{ background: "white", border: "1.5px solid #cbdafb", height: 44 }}
-            >
-              <input
-                value={customInsurer}
-                onChange={(e) => setCustomInsurer(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && addCustom()}
-                placeholder="Name des Versicherers …"
-                autoFocus
-                className="flex-1 text-sm outline-none bg-transparent"
-                style={{ color: "#1a1f3a" }}
-              />
-            </div>
-            <button
-              onClick={addCustom}
-              className="px-4 rounded-xl text-sm font-semibold"
-              style={{ background: "#1a1f3a", color: "white" }}
-            >
-              Hinzufügen
-            </button>
-          </motion.div>
-        ) : (
-          <motion.button
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            onClick={() => setShowCustomInput(true)}
-            className="flex items-center gap-2 text-sm font-medium py-2"
-            style={{ color: "#3b82f6", background: "transparent", border: "none" }}
-          >
-            <Plus size={15} />
-            Anderer Versicherer (nicht in der Liste)
-          </motion.button>
-        )}
-      </AnimatePresence>
-
-      {/* Selection summary */}
-      <AnimatePresence>
-        {selectedCount > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-            className="rounded-xl px-4 py-3 flex items-center gap-2"
-            style={{ background: "#f0fdf4", border: "1px solid #bbf7d0" }}
-          >
-            <Check size={14} style={{ color: "#16a34a" }} />
-            <p className="text-sm font-medium" style={{ color: "#166534" }}>
-              {selectedCount} Versicherer ausgewählt
-            </p>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <motion.button
         whileTap={{ scale: 0.97 }}
         onClick={onNext}
-        className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-base font-bold"
-        style={{ background: "#1a1f3a", color: "white", border: "none" }}
+        className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl text-base font-bold mt-2"
+        style={{ background: "#1a1f3a", color: "white" }}
       >
-        {selectedCount === 0 ? "Überspringen" : "Weiter"}
+        {canProceed ? "Weiter" : "Überspringen"}
         <ChevronRight size={18} />
       </motion.button>
 
-      {selectedCount === 0 && (
+      {!canProceed && (
         <p className="text-center text-xs" style={{ color: "#94a3b8" }}>
-          Sie können Versicherer auch später manuell eintragen
+          Angaben können auch später ergänzt werden
         </p>
       )}
     </motion.div>
