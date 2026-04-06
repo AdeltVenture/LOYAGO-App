@@ -47,11 +47,28 @@ export default function Step3Insurers({ data, onChange, onNext }: Step3InsurersP
     >
       <div className="mb-1">
         <h3 className="text-lg font-bold" style={{ color: "#1a1f3a" }}>
-          Ihre Versicherer
+          Versicherer & Produkt
         </h3>
         <p className="text-sm mt-1" style={{ color: "#64748b" }}>
-          Wählen Sie alle Versicherungsgesellschaften, bei denen Sie Verträge haben. Wir holen den Rest für Sie.
+          Wählen Sie den Versicherer und geben Sie die Produktart an.
         </p>
+      </div>
+
+      {/* Contract name */}
+      <div>
+        <label className="block text-xs font-semibold mb-1.5" style={{ color: "#475569" }}>
+          Produktart / Vertragsart
+        </label>
+        <input
+          type="text"
+          value={data.contractName}
+          onChange={(e) => onChange({ contractName: e.target.value })}
+          placeholder="z. B. Reisekrankenversicherung, KFZ-Haftpflicht …"
+          className="w-full rounded-xl px-3 py-3 text-sm outline-none"
+          style={{ background: "white", border: "1.5px solid #e2e8f0", color: "#1a1f3a" }}
+          onFocus={e => (e.target.style.borderColor = "#4a6da8")}
+          onBlur={e => (e.target.style.borderColor = "#e2e8f0")}
+        />
       </div>
 
       {/* Search */}

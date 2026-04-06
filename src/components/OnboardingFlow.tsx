@@ -5,6 +5,7 @@ import { restInsert, getUserId } from "../lib/supabaseDirect";
 import Step1Welcome from "./onboarding/Step1Welcome";
 import StepPhotoUpload from "./onboarding/StepPhotoUpload";
 import Step2PersonalData from "./onboarding/Step2PersonalData";
+import Step3Insurers from "./onboarding/Step3Insurers";
 import Step4Consent from "./onboarding/Step4Consent";
 import Step5Success from "./onboarding/Step5Success";
 import { type OnboardingData, emptyOnboardingData, popularInsurers } from "../data/onboarding";
@@ -20,8 +21,9 @@ interface OnboardingFlowProps {
 // 1 = Welcome/Benefits
 // 2 = Photo Upload
 // 3 = Personal Data
-// 4 = Consent
-// 5 = Success
+// 4 = Insurers + Contract Type
+// 5 = Consent
+// 6 = Success
 
 export default function OnboardingFlow({
   onClose,
@@ -40,7 +42,7 @@ export default function OnboardingFlow({
   }
 
   function next() {
-    setStep((s) => Math.min(s + 1, 5));
+    setStep((s) => Math.min(s + 1, 6));
   }
 
   function back() {
@@ -51,7 +53,15 @@ export default function OnboardingFlow({
     }
   }
 
-  const progressPercent = step >= 2 && step <= 4 ? ((step - 1) / 3) * 100 : 0;
+  const progressPercent = step >= 2 && step <= 5 ? ((step - 1) / 4) * 100 : 0;
+
+  const stepLabel: Record<number, string> = {
+    1: "Ihr Premium-Service",
+    2: "Versicherungsschein hochladen",
+    3: "Ihre Angaben",
+    4: "Versicherer & Produkt",
+    5: "Bestätigung",
+  };
 
   return (
     <motion.div
@@ -63,7 +73,7 @@ export default function OnboardingFlow({
       style={{ background: "#f4f8fe", maxWidth: "430px", marginInline: "auto" }}
     >
       {/* Header */}
-      {step < 5 && (
+      {step < 6 && (
         <div
           className="flex items-center gap-3 px-4 pt-12 pb-4"
           style={{ background: "rgba(244,248,254,0.95)", backdropFilter: "blur(12px)" }}
@@ -78,12 +88,9 @@ export default function OnboardingFlow({
 
           <div className="flex-1">
             <p className="text-xs font-medium" style={{ color: "#94a3b8" }}>
-              {step === 1 && "Ihr Premium-Service"}
-              {step === 2 && "Versicherungsschein hochladen"}
-              {step === 3 && "Ihre Angaben"}
-              {step === 4 && "Bestätigung"}
+              {stepLabel[step] ?? ""}
             </p>
-            {step >= 2 && step <= 4 && (
+            {step >= 2 && step <= 5 && (
               <div className="mt-1 rounded-full overflow-hidden" style={{ height: 3, background: "#e2e8f0" }}>
                 <motion.div
                   className="h-full rounded-full"
@@ -115,6 +122,9 @@ export default function OnboardingFlow({
               <Step2PersonalData data={data} onChange={updateData} onNext={next} />
             )}
             {step === 4 && (
+              <Step3Insurers data={data} onChange={updateData} onNext={next} />
+            )}
+            {step === 5 && (
               <Step4Consent
                 data={data}
                 onChange={updateData}
@@ -147,7 +157,7 @@ export default function OnboardingFlow({
                 }}
               />
             )}
-            {step === 5 && (
+            {step === 6 && (
               <Step5Success
                 firstName={data.firstName}
                 insurerNames={data.selectedInsurers.map((id) => {
