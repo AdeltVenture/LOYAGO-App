@@ -97,4 +97,19 @@ export async function restSelect<T = Record<string, unknown>>(
   return res.json() as Promise<T[]>;
 }
 
+/** Read the logged-in user's email from the localStorage auth token (no network call). */
+export function getUserEmail(): string | null {
+  try {
+    const projectRef = new URL(SUPABASE_URL).hostname.split(".")[0];
+    const raw = localStorage.getItem(`sb-${projectRef}-auth-token`);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return parsed.user?.email ?? null;
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
 export { getToken, getUserId };

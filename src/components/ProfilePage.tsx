@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, ChevronRight, LogOut, Smartphone } from "lucide-react";
-import { supabase } from "../lib/supabase";
+import { getUserEmail } from "../lib/supabaseDirect";
 import { useProfile } from "../hooks/useProfile";
 
 interface FieldRowProps {
@@ -46,14 +46,8 @@ function Divider() {
 
 export default function ProfilePage({ onBack, onLogout }: { onBack: () => void; onLogout: () => void }) {
   const [notifications, setNotifications] = useState(true);
-  const [email, setEmail] = useState("");
   const { profile } = useProfile();
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user?.email) setEmail(user.email);
-    });
-  }, []);
+  const email = getUserEmail() ?? "";
 
   const fullName = [profile?.title, profile?.firstName, profile?.lastName].filter(Boolean).join(" ");
   const initials = [profile?.firstName?.[0], profile?.lastName?.[0]].filter(Boolean).join("").toUpperCase() || "?";

@@ -25,7 +25,7 @@ export default function StepPhotoUpload({ onNext }: StepPhotoUploadProps) {
     setFileName(f.name);
     setFile(f);
     if (f.type.startsWith("image/")) {
-      setPreview(URL.createObjectURL(f));
+      setPreview((prev) => { if (prev) URL.revokeObjectURL(prev); return URL.createObjectURL(f); });
     } else {
       // PDF or other — show name instead of image preview
       setPreview(null);

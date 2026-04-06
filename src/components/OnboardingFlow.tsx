@@ -134,8 +134,10 @@ export default function OnboardingFlow({
                   setSubmitting(true);
                   setSubmitError(null);
                   try {
+                    const userId = getUserId();
+                    if (!userId) throw new Error("Authentifizierung erforderlich. Bitte melden Sie sich erneut an.");
                     await restInsert("care_requests", {
-                      user_id: getUserId(),
+                      user_id: userId,
                       first_name: data.firstName,
                       last_name: data.lastName,
                       email: data.email,

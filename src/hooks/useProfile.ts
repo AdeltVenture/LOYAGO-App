@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { getUserId } from "../lib/supabaseDirect";
 
 export interface UserProfile {
   id: string;
@@ -60,13 +61,17 @@ export function useProfile() {
   useEffect(() => {
     let cancelled = false;
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (cancelled) return;
-      if (!session) { setLoading(false); return; }
-      const p = await fetchProfile(session.user.id);
-      if (!cancelled) { setProfile(p); setLoading(false); }
-    });
+    // Initial load: read userId directly from localStorage (no getSession() hang)
+    const userId = getUserId();
+    if (userId) {
+      fetchProfile(userId).then((p) => {
+        if (!cancelled) { setProfile(p); setLoading(false); }
+      });
+    } else {
+      setLoading(false);
+    }
 
+    // Keep in sync when auth state changes (login / logout / token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (cancelled) return;
       if (!session) {
@@ -78,15 +83,9 @@ export function useProfile() {
       }
     });
 
-    // Safety-net: never block UI longer than 4 seconds
-    const timeout = setTimeout(() => {
-      if (!cancelled) setLoading(false);
-    }, 4000);
-
     return () => {
       cancelled = true;
       subscription.unsubscribe();
-      clearTimeout(timeout);
     };
   }, []);
 

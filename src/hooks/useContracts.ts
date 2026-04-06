@@ -58,21 +58,25 @@ export function useContracts() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  function load() {
+  async function load() {
     setLoading(true);
-    supabase
-      .from("contracts")
-      .select("*")
-      .order("sort_order", { ascending: true })
-      .then(({ data, error }) => {
-        if (error) {
-          setError(error.message);
-          setContracts([]);
-        } else {
-          setContracts((data as DbContract[]).map(toContract));
-        }
-        setLoading(false);
-      });
+    try {
+      const { data, error } = await supabase
+        .from("contracts")
+        .select("*")
+        .order("sort_order", { ascending: true });
+      if (error) {
+        setError(error.message);
+        setContracts([]);
+      } else {
+        setContracts((data as DbContract[]).map(toContract));
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Verträge konnten nicht geladen werden.");
+      setContracts([]);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {

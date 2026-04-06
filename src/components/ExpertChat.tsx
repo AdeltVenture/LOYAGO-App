@@ -133,7 +133,7 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
           </button>
           <div className="flex items-center gap-3 flex-1">
             <div className="relative">
-              <img src="/LOYAGO-App/expert.jpg" alt="LOYAGO-Experte"
+              <img src={`${import.meta.env.BASE_URL}expert.jpg`} alt="LOYAGO-Experte"
                 className="rounded-full object-cover object-top" style={{ width: 40, height: 40 }} />
               <div className="absolute -bottom-0.5 -right-0.5 rounded-full border-2 border-white flex items-center justify-center"
                 style={{ width: 16, height: 16, background: "#6366f1" }}>
@@ -201,7 +201,7 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
         {showWelcome && (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
             className="flex justify-start items-end gap-2">
-            <img src="/LOYAGO-App/expert.jpg" alt="Experte"
+            <img src={`${import.meta.env.BASE_URL}expert.jpg`} alt="Experte"
               className="rounded-full object-cover object-top flex-shrink-0 mb-1" style={{ width: 28, height: 28 }} />
             <div className="max-w-xs rounded-2xl px-4 py-3 text-sm leading-relaxed"
               style={{ background: "white", color: "#1a1f3a", borderBottomLeftRadius: 4, boxShadow: "0 1px 2px rgba(0,0,0,0.06)" }}>
@@ -216,7 +216,7 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
           <motion.div key={msg.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
             className={`flex ${msg.role === "user" ? "justify-end" : "justify-start items-end gap-2"}`}>
             {msg.role === "assistant" && (
-              <img src="/LOYAGO-App/expert.jpg" alt="Experte"
+              <img src={`${import.meta.env.BASE_URL}expert.jpg`} alt="Experte"
                 className="rounded-full object-cover object-top flex-shrink-0 mb-1" style={{ width: 28, height: 28 }} />
             )}
             <div className="max-w-xs rounded-2xl px-4 py-3 text-sm leading-relaxed"
@@ -238,7 +238,7 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
           {isTyping && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
               className="flex justify-start items-end gap-2">
-              <img src="/LOYAGO-App/expert.jpg" alt="Experte"
+              <img src={`${import.meta.env.BASE_URL}expert.jpg`} alt="Experte"
                 className="rounded-full object-cover object-top flex-shrink-0 mb-1" style={{ width: 28, height: 28 }} />
               <div className="max-w-xs rounded-2xl px-4 py-3 text-sm leading-relaxed"
                 style={{ background: "white", color: "#1a1f3a", borderBottomLeftRadius: 4, boxShadow: "0 1px 2px rgba(0,0,0,0.06)" }}>

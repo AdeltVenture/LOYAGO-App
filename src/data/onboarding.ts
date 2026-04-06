@@ -56,14 +56,14 @@ export interface OnboardingData {
 }
 
 export const emptyOnboardingData: OnboardingData = {
-  firstName: "Marco",
-  lastName: "Adelt",
+  firstName: "",
+  lastName: "",
   birthDate: "",
-  email: "marco.adelt@gmx.de",
+  email: "",
   phone: "",
-  street: "Europa-Allee 165",
-  city: "Frankfurt am Main",
-  zip: "60486",
+  street: "",
+  city: "",
+  zip: "",
   selectedInsurers: [],
   contractName: "",
   consentGiven: false,
