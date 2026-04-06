@@ -4,9 +4,7 @@ import { Search, Check, ChevronRight, X } from "lucide-react";
 import { popularInsurers, type OnboardingData } from "../../data/onboarding";
 
 const PRODUKT_SUGGESTIONS = [
-  "KFZ-Haftpflicht",
-  "Vollkasko",
-  "Teilkasko",
+  "KFZ",
   "Hausrat",
   "Wohngebäude",
   "Haftpflicht",
@@ -22,7 +20,6 @@ const PRODUKT_SUGGESTIONS = [
   "Reisekranken",
   "Reiserücktritt",
   "Tierkranken",
-  "Elementarschaden",
 ];
 
 interface Step3InsurersProps {
