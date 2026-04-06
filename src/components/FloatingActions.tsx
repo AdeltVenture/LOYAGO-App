@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, Phone, X } from "lucide-react";
+import { MessageCircle, Phone, X, Sparkles } from "lucide-react";
 
 interface FloatingActionsProps {
   onChat: () => void;
@@ -102,12 +102,8 @@ export default function FloatingActions({ onChat, onCall }: FloatingActionsProps
               initial={{ opacity: 0, scale: 0.7 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.7 }}
-              transition={{ duration: 0.2 }}
-              className="flex flex-col items-center"
-              style={{ gap: 2 }}>
-              <Phone size={13} strokeWidth={2.2} style={{ color: "#1a1f3a" }} />
-              <div style={{ width: 14, height: 1, background: "#1a1f3a", opacity: 0.25, borderRadius: 1 }} />
-              <MessageCircle size={13} strokeWidth={2.2} style={{ color: "#1a1f3a" }} />
+              transition={{ duration: 0.2 }}>
+              <Sparkles size={22} strokeWidth={1.8} style={{ color: "#1a1f3a" }} />
             </motion.div>
           )}
         </AnimatePresence>
