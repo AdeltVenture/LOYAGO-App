@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { getUserId } from "../lib/supabaseDirect";
+import { getUserId, restSelect } from "../lib/supabaseDirect";
 
 export interface UserProfile {
   id: string;
@@ -34,9 +34,9 @@ function defaultProfile(id: string): UserProfile {
 
 async function fetchProfile(userId: string): Promise<UserProfile> {
   try {
-    const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
-    if (error || !data) return defaultProfile(userId);
-    const row = data as DbProfile;
+    const rows = await restSelect<DbProfile>("profiles", { id: userId }, undefined, 1);
+    if (!rows.length) return defaultProfile(userId);
+    const row = rows[0];
     return {
       id: row.id,
       firstName: row.first_name ?? "",
