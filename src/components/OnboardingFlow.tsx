@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, X } from "lucide-react";
-import { restInsert, getUserId } from "../lib/supabaseDirect";
+import { restInsert, getUserId, getUserEmail } from "../lib/supabaseDirect";
+import { useProfile } from "../hooks/useProfile";
 import Step1Welcome from "./onboarding/Step1Welcome";
 import StepPhotoUpload from "./onboarding/StepPhotoUpload";
 import Step2PersonalData from "./onboarding/Step2PersonalData";
@@ -37,12 +38,36 @@ export default function OnboardingFlow({
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // Pre-fill form with logged-in user's profile data
+  const { profile } = useProfile();
+  useEffect(() => {
+    if (!profile) return;
+    const email = getUserEmail() ?? "";
+    setData((d) => ({
+      ...d,
+      firstName: d.firstName || profile.firstName,
+      lastName:  d.lastName  || profile.lastName,
+      phone:     d.phone     || profile.phone,
+      street:    d.street    || profile.street,
+      zip:       d.zip       || profile.zip,
+      city:      d.city      || profile.city,
+      email:     d.email     || email,
+    }));
+  }, [profile]);
+
   function updateData(partial: Partial<OnboardingData>) {
     setData((d) => ({ ...d, ...partial }));
   }
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  function scrollToTop() {
+    scrollRef.current?.scrollTo({ top: 0, behavior: "instant" });
+  }
+
   function next() {
     setStep((s) => Math.min(s + 1, 6));
+    scrollToTop();
   }
 
   function back() {
@@ -50,6 +75,7 @@ export default function OnboardingFlow({
       onClose();
     } else {
       setStep((s) => s - 1);
+      scrollToTop();
     }
   }
 
@@ -113,7 +139,7 @@ export default function OnboardingFlow({
       )}
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-4 pb-8">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pb-8">
         <AnimatePresence mode="wait">
           <motion.div key={step}>
             {step === 1 && <Step1Welcome onNext={next} />}

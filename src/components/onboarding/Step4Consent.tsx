@@ -69,17 +69,14 @@ export default function Step4Consent({ data, onChange, onSubmit, submitting = fa
               </span>
             </div>
           )}
-          <div className="flex flex-col gap-1 pt-1">
-            <span style={{ color: "#64748b", fontSize: "14px" }}>Produkt / Vertragsart</span>
-            <input
-              type="text"
-              value={data.contractName}
-              onChange={(e) => onChange({ contractName: e.target.value })}
-              placeholder="z. B. Reisekrankenversicherung"
-              className="w-full rounded-xl px-3 py-2 text-sm outline-none"
-              style={{ background: "#f8fafc", border: "1.5px solid #e2e8f0", color: "#1a1f3a" }}
-            />
-          </div>
+          {data.contractName && (
+            <div className="flex justify-between items-start gap-3">
+              <span style={{ color: "#64748b", flexShrink: 0 }}>Produkt</span>
+              <span className="font-medium text-right" style={{ color: "#1a1f3a" }}>
+                {data.contractName}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -93,7 +90,7 @@ export default function Step4Consent({ data, onChange, onSubmit, submitting = fa
           <div className="flex items-center gap-2">
             <FileText size={14} style={{ color: "#4a6da8" }} />
             <span className="text-xs font-bold uppercase tracking-wider" style={{ color: "#1a1f3a" }}>
-              Betreuungsauftrag gem. § 59 VVG
+              Betreuungsauftrag
             </span>
           </div>
         </div>
@@ -106,10 +103,10 @@ export default function Step4Consent({ data, onChange, onSubmit, submitting = fa
             bestehenden Versicherungsverträge bei <strong>{insurerList}</strong> zu übernehmen.
           </p>
           <p className="text-xs leading-relaxed mb-3" style={{ color: "#334155" }}>
-            Ich ermächtige LOYAGO, in meinem Namen und auf meine Rechnung bei den
-            genannten Versicherungsgesellschaften als betreuender Vermittler
-            eingetragen zu werden sowie Vertragsunterlagen, Beitragsübersichten und
-            sonstige vertragsrelevante Informationen anzufordern und entgegenzunehmen.
+            Ich ermächtige LOYAGO, in meinem Namen bei den genannten
+            Versicherungsgesellschaften als betreuender Vermittler eingetragen
+            zu werden sowie Vertragsunterlagen, Beitragsübersichten und sonstige
+            vertragsrelevante Informationen anzufordern und entgegenzunehmen.
           </p>
 
           {/* Expandable section */}

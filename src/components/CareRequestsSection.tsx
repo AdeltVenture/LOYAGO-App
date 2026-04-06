@@ -2,6 +2,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ClipboardList, ChevronDown, Clock, Loader2, CheckCircle2, Building2 } from "lucide-react";
 import { useState } from "react";
 import { useCareRequests, type CareRequest } from "../hooks/useCareRequests";
+import { popularInsurers } from "../data/onboarding";
+
+function resolveInsurerName(id: string): string {
+  const found = popularInsurers.find((ins) => ins.id === id);
+  if (found) return found.name;
+  // Custom insurer: "custom-signal-iduna" → "Signal Iduna"
+  const name = id.replace(/^custom-/, "").replace(/-/g, " ");
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
 
 const statusConfig: Record<
   CareRequest["status"],
@@ -31,7 +40,9 @@ function RequestCard({ req }: { req: CareRequest }) {
   });
 
   const title = req.contractName || "Versicherungsvertrag";
-  const insurerText = req.insurers.length > 0 ? req.insurers.join(", ") : null;
+  const insurerText = req.insurers.length > 0
+    ? req.insurers.map(resolveInsurerName).join(", ")
+    : null;
 
   return (
     <motion.div

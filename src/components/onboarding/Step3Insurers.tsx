@@ -1,26 +1,30 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Check, ChevronRight, X } from "lucide-react";
+import { Search, ChevronRight, X } from "lucide-react";
 import { popularInsurers, type OnboardingData } from "../../data/onboarding";
 
 const PRODUKT_SUGGESTIONS = [
-  "KFZ",
-  "Hausrat",
-  "Wohngebäude",
-  "Haftpflicht",
-  "Rechtsschutz",
   "Berufsunfähigkeit (BU)",
-  "Lebensversicherung",
-  "Risikoleben",
-  "Unfallversicherung",
+  "Haftpflicht",
+  "Hausrat",
+  "KFZ",
   "Krankenversicherung (PKV)",
   "Krankenzusatz",
-  "Zahnzusatz",
+  "Lebensversicherung",
   "Pflegezusatz",
   "Reisekranken",
   "Reiserücktritt",
+  "Rechtsschutz",
+  "Risikoleben",
   "Tierkranken",
+  "Unfallversicherung",
+  "Wohngebäude",
+  "Zahnzusatz",
 ];
+
+const SORTED_INSURERS = [...popularInsurers].sort((a, b) =>
+  a.name.localeCompare(b.name, "de")
+);
 
 interface Step3InsurersProps {
   data: OnboardingData;
@@ -49,7 +53,7 @@ export default function Step3Insurers({ data, onChange, onNext }: Step3InsurersP
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  const filteredInsurers = popularInsurers.filter(
+  const filteredInsurers = SORTED_INSURERS.filter(
     (ins) =>
       ins.name.toLowerCase().includes(insurerSearch.toLowerCase()) &&
       !data.selectedInsurers.includes(ins.id)
@@ -73,10 +77,6 @@ export default function Step3Insurers({ data, onChange, onNext }: Step3InsurersP
   function getInsurerName(id: string) {
     const found = popularInsurers.find((ins) => ins.id === id);
     return found ? found.name : id.replace("custom-", "").replace(/-/g, " ");
-  }
-
-  function getInsurerLogo(id: string) {
-    return popularInsurers.find((ins) => ins.id === id)?.logo ?? "🏢";
   }
 
   function addCustomInsurer() {
@@ -134,7 +134,6 @@ export default function Step3Insurers({ data, onChange, onNext }: Step3InsurersP
                   className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold"
                   style={{ background: "#1a1f3a", color: "white" }}
                 >
-                  <span>{getInsurerLogo(id)}</span>
                   {getInsurerName(id)}
                   <button
                     onClick={() => removeInsurer(id)}
@@ -194,48 +193,37 @@ export default function Step3Insurers({ data, onChange, onNext }: Step3InsurersP
                     <button
                       key={ins.id}
                       onMouseDown={() => selectInsurer(ins.id)}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-left"
-                      style={{ borderBottom: "1px solid #f8fafc" }}
+                      className="w-full px-4 py-2.5 text-left text-sm font-medium"
+                      style={{ color: "#1a1f3a", borderBottom: "1px solid #f1f5f9" }}
                       onMouseEnter={e => (e.currentTarget.style.background = "#f4f8fe")}
                       onMouseLeave={e => (e.currentTarget.style.background = "white")}
                     >
-                      <span style={{ fontSize: 18 }}>{ins.logo}</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold truncate" style={{ color: "#1a1f3a" }}>{ins.name}</p>
-                        <p className="text-xs truncate" style={{ color: "#94a3b8" }}>{ins.categories.join(", ")}</p>
-                      </div>
+                      {ins.name}
                     </button>
                   ))
                 ) : insurerSearch.trim() ? (
                   <button
                     onMouseDown={addCustomInsurer}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-left"
+                    className="w-full px-4 py-2.5 text-left text-sm"
+                    style={{ color: "#4a6da8" }}
                     onMouseEnter={e => (e.currentTarget.style.background = "#f4f8fe")}
                     onMouseLeave={e => (e.currentTarget.style.background = "white")}
                   >
-                    <span style={{ fontSize: 18 }}>🏢</span>
-                    <div>
-                      <p className="text-sm font-semibold" style={{ color: "#1a1f3a" }}>„{insurerSearch}" hinzufügen</p>
-                      <p className="text-xs" style={{ color: "#94a3b8" }}>Nicht in der Liste</p>
-                    </div>
+                    „{insurerSearch}" hinzufügen
                   </button>
                 ) : (
-                  popularInsurers
+                  SORTED_INSURERS
                     .filter((ins) => !data.selectedInsurers.includes(ins.id))
                     .map((ins) => (
                       <button
                         key={ins.id}
                         onMouseDown={() => selectInsurer(ins.id)}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-left"
-                        style={{ borderBottom: "1px solid #f8fafc" }}
+                        className="w-full px-4 py-2.5 text-left text-sm font-medium"
+                        style={{ color: "#1a1f3a", borderBottom: "1px solid #f1f5f9" }}
                         onMouseEnter={e => (e.currentTarget.style.background = "#f4f8fe")}
                         onMouseLeave={e => (e.currentTarget.style.background = "white")}
                       >
-                        <span style={{ fontSize: 18 }}>{ins.logo}</span>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold truncate" style={{ color: "#1a1f3a" }}>{ins.name}</p>
-                          <p className="text-xs truncate" style={{ color: "#94a3b8" }}>{ins.categories.join(", ")}</p>
-                        </div>
+                        {ins.name}
                       </button>
                     ))
                 )}
@@ -287,12 +275,11 @@ export default function Step3Insurers({ data, onChange, onNext }: Step3InsurersP
                   <button
                     key={p}
                     onMouseDown={() => { onChange({ contractName: p }); setProduktFocused(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 text-left text-sm"
-                    style={{ borderBottom: "1px solid #f8fafc", color: "#1a1f3a" }}
+                    className="w-full px-4 py-2.5 text-left text-sm font-medium"
+                    style={{ color: "#1a1f3a", borderBottom: "1px solid #f1f5f9" }}
                     onMouseEnter={e => (e.currentTarget.style.background = "#f4f8fe")}
                     onMouseLeave={e => (e.currentTarget.style.background = "white")}
                   >
-                    <Check size={13} style={{ color: "#94a3b8", flexShrink: 0 }} />
                     {p}
                   </button>
                 ))}
