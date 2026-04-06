@@ -35,7 +35,7 @@ interface Step3InsurersProps {
 export default function Step3Insurers({ data, onChange, onNext }: Step3InsurersProps) {
   const [insurerSearch, setInsurerSearch] = useState("");
   const [insurerFocused, setInsurerFocused] = useState(false);
-  const [produktFocused, setProduktFocused] = useState(false);
+  const [produktSearch, setProduktSearch] = useState("");
   const insurerRef = useRef<HTMLDivElement>(null);
   const produktRef = useRef<HTMLDivElement>(null);
 
@@ -59,8 +59,10 @@ export default function Step3Insurers({ data, onChange, onNext }: Step3InsurersP
       !data.selectedInsurers.includes(ins.id)
   );
 
+  const [produktFocused, setProduktFocused] = useState(false);
+
   const filteredProdukte = PRODUKT_SUGGESTIONS.filter((p) =>
-    p.toLowerCase().includes(data.contractName.toLowerCase()) &&
+    p.toLowerCase().includes(produktSearch.toLowerCase()) &&
     p.toLowerCase() !== data.contractName.toLowerCase()
   );
 
@@ -238,24 +240,61 @@ export default function Step3Insurers({ data, onChange, onNext }: Step3InsurersP
         <label className="block text-xs font-semibold mb-1.5" style={{ color: "#475569" }}>
           Produktart / Vertragsart
         </label>
+
+        {/* Selected chip */}
+        <AnimatePresence>
+          {data.contractName && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              className="flex flex-wrap gap-1.5 mb-2"
+            >
+              <motion.span
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold"
+                style={{ background: "#1a1f3a", color: "white" }}
+              >
+                {data.contractName}
+                <button
+                  onClick={() => { onChange({ contractName: "" }); setProduktSearch(""); }}
+                  className="flex items-center justify-center rounded-full"
+                  style={{ width: 14, height: 14, background: "rgba(255,255,255,0.2)", flexShrink: 0 }}
+                >
+                  <X size={9} style={{ color: "white" }} />
+                </button>
+              </motion.span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Search input with dropdown */}
         <div ref={produktRef} className="relative">
-          <input
-            type="text"
-            value={data.contractName}
-            onChange={(e) => onChange({ contractName: e.target.value })}
-            onFocus={() => setProduktFocused(true)}
-            placeholder="z. B. Reisekrankenversicherung …"
-            className="w-full rounded-xl px-3 py-3 text-sm outline-none"
+          <div
+            className="flex items-center gap-2 px-3 rounded-xl"
             style={{
               background: "white",
               border: `1.5px solid ${produktFocused ? "#4a6da8" : "#e2e8f0"}`,
-              color: "#1a1f3a",
+              height: 46,
               transition: "border-color 0.15s",
             }}
-          />
+          >
+            <Search size={15} style={{ color: "#94a3b8", flexShrink: 0 }} />
+            <input
+              type="text"
+              value={produktSearch}
+              onChange={(e) => setProduktSearch(e.target.value)}
+              onFocus={() => setProduktFocused(true)}
+              placeholder="Produktart suchen …"
+              className="flex-1 text-sm outline-none bg-transparent"
+              style={{ color: "#1a1f3a" }}
+            />
+          </div>
 
           <AnimatePresence>
-            {produktFocused && filteredProdukte.length > 0 && (
+            {produktFocused && (
               <motion.div
                 initial={{ opacity: 0, y: -4 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -271,10 +310,13 @@ export default function Step3Insurers({ data, onChange, onNext }: Step3InsurersP
                   overflowY: "auto",
                 }}
               >
-                {filteredProdukte.map((p) => (
+                {(filteredProdukte.length > 0
+                  ? filteredProdukte
+                  : PRODUKT_SUGGESTIONS.filter((p) => p.toLowerCase() !== data.contractName.toLowerCase())
+                ).map((p) => (
                   <button
                     key={p}
-                    onMouseDown={() => { onChange({ contractName: p }); setProduktFocused(false); }}
+                    onMouseDown={() => { onChange({ contractName: p }); setProduktSearch(""); setProduktFocused(false); }}
                     className="w-full px-4 py-2.5 text-left text-sm font-medium"
                     style={{ color: "#1a1f3a", borderBottom: "1px solid #f1f5f9" }}
                     onMouseEnter={e => (e.currentTarget.style.background = "#f4f8fe")}
