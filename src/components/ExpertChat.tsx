@@ -1,9 +1,48 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Send, Phone, Info, X, Bot } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { streamChat } from "../lib/anthropic";
 import { useMessages } from "../hooks/useMessages";
 import type { Contract } from "../data/contracts";
+
+/** Renders assistant message content with proper Markdown styling */
+function MdMessage({ content }: { content: string }) {
+  return (
+    <ReactMarkdown
+      components={{
+        p: ({ children }) => (
+          <p className="mb-2 last:mb-0 leading-relaxed">{children}</p>
+        ),
+        strong: ({ children }) => (
+          <strong className="font-semibold" style={{ color: "#1a1f3a" }}>{children}</strong>
+        ),
+        em: ({ children }) => <em className="italic">{children}</em>,
+        h3: ({ children }) => (
+          <p className="font-bold text-sm mt-3 mb-1 first:mt-0" style={{ color: "#1a1f3a" }}>{children}</p>
+        ),
+        h4: ({ children }) => (
+          <p className="font-semibold text-xs uppercase tracking-wider mt-3 mb-1 first:mt-0" style={{ color: "#4a6da8" }}>{children}</p>
+        ),
+        ul: ({ children }) => (
+          <ul className="mt-1 mb-2 flex flex-col gap-0.5">{children}</ul>
+        ),
+        ol: ({ children }) => (
+          <ol className="mt-1 mb-2 flex flex-col gap-0.5 list-decimal pl-4">{children}</ol>
+        ),
+        li: ({ children }) => (
+          <li className="flex gap-1.5 items-start">
+            <span className="mt-1 flex-shrink-0" style={{ width: 5, height: 5, borderRadius: "50%", background: "#4a6da8", display: "inline-block" }} />
+            <span className="leading-relaxed">{children}</span>
+          </li>
+        ),
+        hr: () => <div className="my-2" style={{ height: 1, background: "#f1f5f9" }} />,
+      }}
+    >
+      {content}
+    </ReactMarkdown>
+  );
+}
 
 const SUGGESTIONS = [
   "Bin ich ausreichend versichert?",
@@ -41,7 +80,12 @@ ${contractList}
 Verhaltensgrundsätze:
 - Antworte immer auf Deutsch, freundlich und professionell (Sie-Form)
 - Sei konkret und beziehe dich auf die echten Vertragsdaten (Vertragsnummern, Beträge, Daten)
-- Halte Antworten kurz (3-5 Sätze) – das ist ein Chat, kein Bericht
+- Halte Antworten kurz (2-4 Sätze) bei einfachen Fragen — das ist ein Chat
+- Bei komplexeren Antworten nutze Markdown-Formatierung:
+  - **fett** nur für wirklich wichtige Zahlen oder Begriffe (sparsam einsetzen)
+  - ### für Zwischenüberschriften wenn eine Antwort mehrere Themen hat
+  - Bullet-Listen (- Punkt) für Aufzählungen von 3+ Punkten
+- Vermeide raw Markdown-Sonderzeichen in einfachen Sätzen — kein **fett** mitten in Fließtext ohne Mehrwert
 - Bei komplexen Themen empfiehl ein Telefonat
 - Empfehle nie Produkte außerhalb des LOYAGO-Portfolios
 - Weise bei komplexen oder verbindlichen Fragen immer auf das persönliche Beratungsgespräch hin
@@ -243,12 +287,15 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
               <img src={`${import.meta.env.BASE_URL}expert.jpg`} alt="Experte"
                 className="rounded-full object-cover object-top flex-shrink-0 mb-1" style={{ width: 28, height: 28 }} />
             )}
-            <div className="max-w-xs rounded-2xl px-4 py-3 text-sm leading-relaxed"
+            <div className="max-w-xs rounded-2xl px-4 py-3 text-sm"
               style={msg.role === "user"
                 ? { background: "#1a1f3a", color: "white", borderBottomRightRadius: 4 }
                 : { background: "white", color: "#1a1f3a", borderBottomLeftRadius: 4, boxShadow: "0 1px 2px rgba(0,0,0,0.06)" }
               }>
-              <p style={{ whiteSpace: "pre-wrap" }}>{msg.content}</p>
+              {msg.role === "user"
+                ? <p className="leading-relaxed" style={{ whiteSpace: "pre-wrap" }}>{msg.content}</p>
+                : <MdMessage content={msg.content} />
+              }
               <p className="text-right mt-1" style={{ fontSize: "10px", opacity: 0.5, color: msg.role === "user" ? "white" : "#1a1f3a" }}>
                 {new Date(msg.createdAt).toLocaleTimeString("de-DE", { hour: "2-digit", minute: "2-digit" })}
                 {msg.role === "user" && " ✓"}
@@ -268,7 +315,7 @@ export default function ExpertChat({ onBack, onCall, contracts = [], firstName =
               <div className="max-w-xs rounded-2xl px-4 py-3 text-sm leading-relaxed"
                 style={{ background: "white", color: "#1a1f3a", borderBottomLeftRadius: 4, boxShadow: "0 1px 2px rgba(0,0,0,0.06)" }}>
                 {streamingText ? (
-                  <p style={{ whiteSpace: "pre-wrap" }}>{streamingText}</p>
+                  <MdMessage content={streamingText} />
                 ) : (
                   <div className="flex gap-1.5 items-center py-0.5">
                     {[0, 1, 2].map((i) => (
