@@ -106,18 +106,35 @@ export default function WalletView({ contracts, onSelectContract, onAddContract 
       {/* Submitted care requests */}
       <CareRequestsSection />
 
-      {/* Add contract CTA */}
+      {/* Add contract CTA — shimmer sweep draws attention without being loud */}
       <motion.button
         whileTap={{ scale: 0.97 }}
         onClick={onAddContract}
-        className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-semibold mt-2"
+        className="relative overflow-hidden flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl text-sm font-semibold mt-2"
         style={{
           background: "linear-gradient(135deg, #cbdafb 0%, #a8c0f8 100%)",
           color: "#1a1f3a",
           border: "none",
         }}
       >
-        + Betreuungswunsch für weiteren Vertrag
+        {/* Shimmer overlay */}
+        <motion.span
+          aria-hidden
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background: "linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.55) 50%, transparent 65%)",
+            borderRadius: "inherit",
+          }}
+          initial={{ x: "-100%" }}
+          animate={{ x: "160%" }}
+          transition={{
+            duration: 0.75,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatDelay: 3.5,
+          }}
+        />
+        <span className="relative z-10">+ Betreuungswunsch für weiteren Vertrag</span>
       </motion.button>
     </div>
   );

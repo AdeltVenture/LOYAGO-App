@@ -74,15 +74,7 @@ export default function FloatingActions({ onChat, onCall }: FloatingActionsProps
           transition: "background 0.3s",
         }}
       >
-        {/* Subtle pulse ring when closed */}
-        {!expanded && (
-          <motion.div
-            className="absolute inset-0 rounded-full"
-            style={{ border: "2px solid rgba(123,163,245,0.4)", background: "transparent" }}
-            animate={{ scale: [1, 1.45, 1], opacity: [0.5, 0, 0.5] }}
-            transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-          />
-        )}
+        {/* Pulse ring removed — FAB stays clean */}
 
         <AnimatePresence mode="wait">
           {expanded ? (
