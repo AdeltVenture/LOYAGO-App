@@ -40,6 +40,7 @@ export default function App() {
   const [legalPage, setLegalPage] = useState<LegalType | null>(null);
   const [showFaq, setShowFaq] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [heroKey, setHeroKey] = useState(0);
 
   const { session, loading: authLoading } = useAuth();
   const isLoggedIn = !!session;
@@ -69,6 +70,7 @@ export default function App() {
   function handleBack() {
     setScreen("main");
     setSelectedContract(null);
+    setHeroKey((k) => k + 1); // force ScoreRing animation replay
   }
 
   function handleOpenOnboarding() {
@@ -83,7 +85,7 @@ export default function App() {
   const tabContent: Record<Exclude<Tab, "expert">, React.ReactNode> = {
     home: (
       <div>
-        <HeroSection contracts={activeContracts} firstName={profile?.firstName} onCall={() => setCallModalOpen(true)} onSelectContract={handleSelectContract} />
+        <HeroSection key={heroKey} contracts={activeContracts} firstName={profile?.firstName} onCall={() => setCallModalOpen(true)} onSelectContract={handleSelectContract} />
         <div className="px-4 pb-32">
           <WalletView contracts={activeContracts} onSelectContract={handleSelectContract} onAddContract={handleOpenOnboarding} />
         </div>
@@ -174,7 +176,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-    {isLoggedIn && <div
+    {!showSplash && isLoggedIn && <div
       className="relative mx-auto"
       style={{ maxWidth: "430px", minHeight: "100svh", background: "#f4f8fe" }}
     >
@@ -308,3 +310,4 @@ export default function App() {
     </>
   );
 }
+
