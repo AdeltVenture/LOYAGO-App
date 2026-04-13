@@ -1,6 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Phone, User, HelpCircle, Building2, Lock, Leaf, FileText, AlertCircle } from "lucide-react";
+import { Phone, User, HelpCircle, Building2, Lock, Leaf, FileText, AlertCircle, TrendingUp } from "lucide-react";
 import { supabase } from "./lib/supabase";
 import { useAuth } from "./hooks/useAuth";
 import { useContracts } from "./hooks/useContracts";
@@ -22,9 +22,10 @@ import { type Contract } from "./data/contracts";
 import { contracts as fallbackContracts } from "./data/contracts";
 
 // Lazy-loaded overlays — split into separate chunks
-const LegalPage    = lazy(() => import("./components/LegalPage"));
-const FaqPage      = lazy(() => import("./components/FaqPage"));
-const ProfilePage  = lazy(() => import("./components/ProfilePage"));
+const LegalPage          = lazy(() => import("./components/LegalPage"));
+const FaqPage            = lazy(() => import("./components/FaqPage"));
+const ProfilePage        = lazy(() => import("./components/ProfilePage"));
+const CommissionView     = lazy(() => import("./components/CommissionView"));
 
 // OnboardingFlow loaded statically — lazy chunks cause stale-module errors on gh-pages after redeploy
 import OnboardingFlow from "./components/OnboardingFlow";
@@ -40,6 +41,7 @@ export default function App() {
   const [legalPage, setLegalPage] = useState<LegalType | null>(null);
   const [showFaq, setShowFaq] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showCommission, setShowCommission] = useState(false);
   const [heroKey, setHeroKey] = useState(0);
 
   const { session, loading: authLoading } = useAuth();
@@ -113,8 +115,9 @@ export default function App() {
         {/* General items */}
         <div className="flex flex-col gap-3 mb-6">
           {([
-            { label: "Profil & Einstellungen", Icon: User,        action: () => setShowProfile(true) },
-            { label: "Hilfe & FAQ",            Icon: HelpCircle,  action: () => setShowFaq(true) },
+            { label: "Profil & Einstellungen",   Icon: User,         action: () => setShowProfile(true) },
+            { label: "Hilfe & FAQ",              Icon: HelpCircle,   action: () => setShowFaq(true) },
+            { label: "Provisionscontrolling",    Icon: TrendingUp,   action: () => setShowCommission(true) },
           ] as const).map((item) => (
             <motion.button
               key={item.label}
@@ -302,6 +305,15 @@ export default function App() {
                 setScreen("main");
               }}
             />
+          </Suspense>
+        )}
+      </AnimatePresence>
+
+      {/* Commission controlling */}
+      <AnimatePresence>
+        {showCommission && (
+          <Suspense fallback={null}>
+            <CommissionView key="commission" onBack={() => setShowCommission(false)} />
           </Suspense>
         )}
       </AnimatePresence>
